@@ -1,6 +1,9 @@
 # S2T4-BilBoard
 
-![Logo](https://cdn.discordapp.com/attachments/1154128301867139093/1156899050621247579/WhatsApp_Image_2023-09-27_at_23.04.41.jpeg?ex=6516a5b3&is=65155433&hm=ecad2a5b627c6642ed90acde023b7803dab58549421abdae54853a3134c029f1&)
+<!--- ![Logo](https://cdn.discordapp.com/attachments/1154128301867139093/1156899050621247579/WhatsApp_Image_2023-09-27_at_23.04.41.jpeg?ex=6516a5b3&is=65155433&hm=ecad2a5b627c6642ed90acde023b7803dab58549421abdae54853a3134c029f1&) --->
+
+<img width="489" alt="Screenshot 2023-09-28 at 18 53 08" src="https://github.com/CS319-23-FA/S2T4-BilBoard/assets/91385176/6d1fc5e8-5ca3-4b8b-9a67-dd2b429187e8">
+
 
 ## Project Name and Team Members
 The name of this web application is BilBoard, which comes from the fact that Bilkent students can create posts or notices in this application.
