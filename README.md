@@ -8,7 +8,7 @@
 ## Project Name and Team Members
 The name of this web application is BilBoard, which comes from the fact that Bilkent students can create posts or notices in this application.
 ### Our Team
-- Eren Arım
+- Eren Arım 
 - Yusuf Toraman
 - Dilara Mandıracı
 - Burak Demirel
@@ -17,7 +17,9 @@ The name of this web application is BilBoard, which comes from the fact that Bil
 ## About Our Web Application
 This web application, BilBoard, is a team project for our CS-319 course for the Fall 2023-2024 term. BilBoard aims to have four main features: secondhand sales, lost and found, borrow, and donation, and one additional feature: a complaint system. Each feature is aimed at solving some common problems among Bilkent University students. Also, this web application can only be used by the Bilkent students.
 
-What motivates us to create such a project is that this web application will solve some of the biggest problems for Bilkent students: not having secure media for exchanging personal belongings and sharing complaints. Students use unofficial Instagram accounts or WhatsApp groups to sell their secondhand stuff, post lost and found items, borrow things for a short time, make donations, and share complaints.
+What motivates us to create such a project is that this web application will solve some of the biggest problems for Bilkent students: not having secure media for exchanging personal belongings and sharing complaints. Secondhand item sales, borrowing, donations, reporting lost items, or posting school-related complaints on unofficial accounts on social media platforms like Instagram, Facebook, and Twitter are done by many students. Doing these kind of transactions through unofficial accounts raises security and reliability concerns for students. BilBoard website promises students the ability to carry out these tasks in a peaceful, secure, and convenient manner. For instance, in a secondhand sale that is done through Instagram, there may be concerns about deception between two students. However, with the implementation of BilBoard, we will act as a responsible intermediary for facilitating such transactions. While safeguarding users' personal information and all forms of data, we will also serve as a trustworthy mediator for sales, agreements and exchanges. 
+
+As it is mentioned above, one of the primary motivations behind BilBoard is to provide a secure and reliable platform for Bilkent students. We aim to delve deeper into why our platform stands out in terms of security. Our web application employs robust security measures, ensuring that all transactions and interactions on the platform are protected. We prioritize user privacy, data integrity, and trustworthiness. With strict user verification processes and stringent data encryption protocols, BilBoard safeguards the personal information and transactions of our users. Thats why BilBoard is outstanding and different from its competitors.
 
 ## Features of BilBoard 
 ### Secondhand Sales 
@@ -34,6 +36,14 @@ In our fourth feature, "Donation," we address a common challenge students face: 
 
 ### Complaint System
 For our app's additional feature, we decided to do a complaint system where students can write their complaints in a formal manner. Again, students send their complaints as posts on unofficial Instagram accounts and wait to be heard or try to find other people who support them. But sometimes, their posts can be left unseen among other posts. Because of this issue, we decided to add a complaint system feature to our application. In this feature, if other people agree with the complaint, they can upvote it, or if they disagree, they can downvote it. With this, Bilkent students can share their complaints and find support more systematically.
+
+**Goals**
+Our primary goals for BilBoard are as follows:
+
+Enhance the overall security and reliability of peer-to-peer transactions and interactions among Bilkent University students.
+Streamline and improve the efficiency of secondhand item sales, lost and found item reporting, borrowing, and donation processes within the university community.
+Create a dedicated and organized platform for students to share and address complaints effectively.
+Foster a sense of community and solidarity among Bilkent University students by facilitating resource-sharing and donations.
 
 ## Why use BilBoard?
 Users might question this application's usefulness before using it. However, we are confident that our web application will benefit most of the Bilkent students. As we stated in the previous sections, this web application can only be used by Bilkent students. So, BilBoard will be a secure place for Bilkent students to buy or sell secondhand stuff, post notices for lost items, borrow things that will be needed for a short amount of time, and donate things that are in good condition but not profitable. Also, the posts on our application will have a specific target group. As opposed to Instagram posts or WhatsApp messages, where the posts reach many people instead of a target group, our users will be students who are interested in exchanging belongings. Hence, this will accelerate the process of reaching someone interested in the item that we want to sell/buy, borrow, donate, or find. Additionally, with the complaint system, Bilkent students will have an official media where they can share their complaints. With this, their complaints can find support and can be noticed more quickly. Also, since their complaints can only be seen by Bilkent students, some might feel more secure while sharing their complaints.
