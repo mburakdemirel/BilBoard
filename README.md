@@ -40,9 +40,9 @@ For our app's additional feature, we decided to do a complaint system where stud
 ## Goals
 Our primary goals for BilBoard are as follows:
 
-1)Enhance the overall security and reliability of peer-to-peer transactions and interactions among Bilkent University students.
-2)Streamline and improve the efficiency of secondhand item sales, lost and found item reporting, borrowing, and donation processes within the university community.
-3)Create a dedicated and organized platform for students to share and address complaints effectively.
+1)Enhance the overall security and reliability of peer-to-peer transactions and interactions among Bilkent University students.<br>
+2)Streamline and improve the efficiency of secondhand item sales, lost and found item reporting, borrowing, and donation processes within the university community.<br>
+3)Create a dedicated and organized platform for students to share and address complaints effectively.<br>
 4)Foster a sense of community and solidarity among Bilkent University students by facilitating resource-sharing and donations.
 
 ## Why use BilBoard?
