@@ -1,7 +1,5 @@
 # S2T4-BilBoard
 
-<!--- ![Logo](https://cdn.discordapp.com/attachments/1154128301867139093/1156899050621247579/WhatsApp_Image_2023-09-27_at_23.04.41.jpeg?ex=6516a5b3&is=65155433&hm=ecad2a5b627c6642ed90acde023b7803dab58549421abdae54853a3134c029f1&) --->
-
 <img width="489" alt="BilBoard-Logo" src="https://github.com/CS319-23-FA/S2T4-BilBoard/assets/91385176/6d1fc5e8-5ca3-4b8b-9a67-dd2b429187e8">
 
 
@@ -13,13 +11,23 @@ The name of this web application is BilBoard, which comes from the fact that Bil
 - Dilara Mandıracı
 - Burak Demirel
 - Sıla Özel
+#### Roles of Team Members
+Each member of our team will work both on the backend and frontend when needed, so the roles might change. However, the initial formation will be as follows:
+##### Frontend
+- Sıla Özel
+- Eren Arım
+##### Backend and Database
+- Burak Demirel
+- Yusuf Toraman
+- Dilara Mandıracı
+- Eren Arım
 
 ## About Our Web Application
 This web application, BilBoard, is a team project for our CS-319 course for the Fall 2023-2024 term. BilBoard aims to have four main features: secondhand sales, lost and found, borrow, and donation, and one additional feature: a complaint system. Each feature is aimed at solving some common problems among Bilkent University students. Also, this web application can only be used by the Bilkent students.
 
-What motivates us to create such a project is that this web application will solve some of the biggest problems for Bilkent students: not having secure media for exchanging personal belongings and sharing complaints. Secondhand item sales, borrowing, donations, reporting lost items, or posting school-related complaints on unofficial accounts on social media platforms like Instagram, Facebook, and Twitter are done by many students. Doing these kind of transactions through unofficial accounts raises security and reliability concerns for students. BilBoard website promises students the ability to carry out these tasks in a peaceful, secure, and convenient manner. For instance, in a secondhand sale that is done through Instagram, there may be concerns about deception between two students. However, with the implementation of BilBoard, we will act as a responsible intermediary for facilitating such transactions. While safeguarding users' personal information and all forms of data, we will also serve as a trustworthy mediator for sales, agreements and exchanges. 
+What motivates us to create such a project is that this web application will solve some of the biggest problems for Bilkent students: not having secure media for exchanging personal belongings and sharing complaints. Secondhand item sales, borrowing, donations, reporting lost items, or posting school-related complaints on unofficial accounts on social media platforms like Instagram, Facebook, and Twitter are done by many students. Doing these kinds of transactions through unofficial accounts raises security and reliability concerns for students. The BilBoard website promises students the ability to carry out these tasks in a peaceful, secure, and convenient manner. For instance, in a secondhand sale that is done through Instagram, there may be concerns about deception between two students. However, with the implementation of BilBoard, we will act as a responsible intermediary for facilitating such transactions. While safeguarding users' personal information and all forms of data, we will also serve as a trustworthy mediator for sales, agreements, and exchanges. 
 
-As it is mentioned above, one of the primary motivations behind BilBoard is to provide a secure and reliable platform for Bilkent students. We aim to delve deeper into why our platform stands out in terms of security. Our web application employs robust security measures, ensuring that all transactions and interactions on the platform are protected. We prioritize user privacy, data integrity, and trustworthiness. With strict user verification processes and stringent data encryption protocols, BilBoard safeguards the personal information and transactions of our users. Thats why BilBoard is outstanding and different from its competitors.
+As mentioned above, one of the primary motivations behind BilBoard is to provide a secure and reliable platform for Bilkent students. We aim to delve deeper into why our platform stands out in terms of security. Our web application employs robust security measures, ensuring that all transactions and interactions on the platform are protected. We prioritize user privacy, data integrity, and trustworthiness. With strict user verification processes and stringent data encryption protocols, BilBoard safeguards the personal information and transactions of our users. That's why BilBoard is outstanding and different from its competitors.
 
 ## Features of BilBoard 
 ### Secondhand Sales 
