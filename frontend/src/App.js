@@ -8,7 +8,7 @@ import ProductDetailPage from "./components/ProductDetailPage";
 function App() {
   return (
     <div className="App">
-      <ProductDetailPage/>
+      <LandingPage/>
     </div>
   );
 }
