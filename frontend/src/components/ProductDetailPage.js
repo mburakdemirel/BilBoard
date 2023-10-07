@@ -1,7 +1,9 @@
 import React from 'react';
-import Logo from './assets/img/logo_bugbunny-removebg-preview.png'
+import Logo from './assets/img/burak.png'
 import Footer from "./Footer";
 import NavigationBarLanding from "./NavigationBarLanding";
+import './assets/bootstrap/css/bootstrap.min.css'; // Import Bootstrap CSS
+import "bootstrap-icons/font/bootstrap-icons.css";
 
 const containerStyle = {
     width: '600px',
@@ -47,9 +49,7 @@ const imageStyle = {
     margin: '0px',
     marginTop: '17px',
     width: '20%',
-    maxWidth: '80px',
-    minHeight: '60px',
-    minWidth: '7vw',
+    minWidth: '100px',
 };
 
 const sliderContainerStyle = {
@@ -133,17 +133,17 @@ function ProductDetailPage() {
                             <div className="d-flex flex-row justify-content-between align-items-center align-content-around" style={{ height: '10%', width: '100%', minHeight: '40px', maxHeight: '50px' }}>
                                 <a className="btn btn-primary d-flex d-xxl-flex justify-content-center align-items-center justify-content-xxl-center align-items-xxl-center" role="button" style={{ width: '30%', height: '90%', fontWeight: 'bold', background: '#2d3648', borderStyle: 'none', borderColor: '#2d3648', minWidth: '150px' }} href="messages.html">
                                     <span style={{ paddingRight: '10px', fontSize: '12px', fontFamily: 'Inter, sans-serif', fontWeight: 'bold' }}>Send Message</span>
-                                    <i className="fas fa-paper-plane" style={{ fontSize: '16px' }}></i>
+                                    <i className="bi bi-send-fill" style={{ fontSize: '16px', color:'white' }}  ></i>
                                 </a>
                                 <div className="d-flex flex-row justify-content-around align-items-center" style={{ height: '100%', minWidth: '140px' }}>
                                     <button className="btn btn-primary d-flex d-xxl-flex justify-content-center align-items-center justify-content-xxl-center align-items-xxl-center" type="button" style={{ width: '40px', fontWeight: 'bold', background: '#2d3648', borderStyle: 'none', borderColor: '#2d3648', height: '90%', minWidth: '40px' }}>
-                                        <i className="far fa-bell"></i>
+                                        <i className="bi bi-bell-fill"></i>
                                     </button>
                                     <button className="btn btn-primary d-flex d-xxl-flex justify-content-center align-items-center justify-content-xxl-center align-items-xxl-center" type="button" style={{ width: '40px', fontWeight: 'bold', background: '#2d3648', borderStyle: 'none', borderColor: '#2d3648', height: '90%' }}>
-                                        <i className="far fa-heart"></i>
+                                        <i className="bi bi-heart-fill"></i>
                                     </button>
                                     <button className="btn btn-primary d-flex d-xxl-flex justify-content-center align-items-center justify-content-xxl-center align-items-xxl-center" type="button" style={{ width: '40px', fontWeight: 'bold', background: '#2d3648', borderStyle: 'none', borderColor: '#2d3648', height: '90%' }}>
-                                        <i className="fas fa-share-alt"></i>
+                                        <i className="bi bi-share-fill" ></i>
                                     </button>
                                 </div>
                             </div>
