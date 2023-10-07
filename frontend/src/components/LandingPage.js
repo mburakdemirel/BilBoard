@@ -5,11 +5,11 @@ import Dilara from './assets/img/dilara.png'
 import Yusuf from './assets/img/yusuf.png'
 import Burak from './assets/img/burak.png'
 import Eren from './assets/img/eren.png'
+import { NavLink } from 'react-router-dom';
 
 //import './assets/css/aos.min.css'
 //import './assets/css/animate.min.css'
 
-import NavigationBarLanding from "./NavigationBarLanding";
 import Footer from "./Footer";
 
 const WelcomeSection = () => (
@@ -25,8 +25,9 @@ const WelcomeSection = () => (
                             A place where Bilkent students can buy or sell secondhand goods, borrow or donate stuff,
                             post about the lost items they found, and write their complaints.
                         </p>
-                        <a className="btn btn-primary fs-6 fw-semibold me-2 py-2 px-4" role="button" style={{ background: '#2d3648', borderWidth: '2px', borderColor: '#2d3648' }} href="product_page.html">Login</a>
-                        <a className="btn btn-outline-primary fs-6 fw-semibold py-2 px-4" role="button" style={{ borderWidth: '2px', borderColor: '#2d3648', color: '#2d3648', background: '#ffffff' }} href="product_add_2.html">Register</a>
+                        {/** should we remove these?? */}
+                        <NavLink to={'/login'} className="btn btn-primary fs-6 fw-semibold me-2 py-2 px-4" role="button" style={{ background: '#2d3648', borderWidth: '2px', borderColor: '#2d3648' }} href="product_page.html">Login</NavLink>
+                        <NavLink to={"/register"} className="btn btn-outline-primary fs-6 fw-semibold py-2 px-4" role="button" style={{ borderWidth: '2px', borderColor: '#2d3648', color: '#2d3648', background: '#ffffff' }} href="product_add_2.html">Register</NavLink>
                     </div>
                 </div>
             </div>
@@ -166,7 +167,7 @@ const TeamSection = () => {
                         <div key={member.name} className="col" style={{ maxWidth: '200px' }}>
                             <div className="card border-0 shadow-none">
                                 <div className="card-body text-center d-flex flex-column align-items-center p-0" style={{ background: '#2d3648' }}>
-                                    <a href={member.linkedin}>
+                                    <a href={member.linkedin} target='_blank'>
                                         <img className="rounded-circle mb-3 fit-cover" data-bss-hover-animate="pulse" width="130" height="130" src={member.image} alt={`Team Member ${member.name}`} style={{ width: '160px', height: '160px' }} />
                                     </a>
                                     <h5 className="fs-5 fw-light text-white card-title mb-0" style={{ fontFamily: 'Inter' }}>{member.name}</h5>
@@ -185,29 +186,15 @@ const TeamSection = () => {
 
 function LandingPage() {
     return (
-        <html data-bs-theme="light" lang="en">
-        <head>
-            <meta charSet="utf-8" />
-            <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
-            <title>BugBunny Ins (Backup 1695941318144)</title>
-            <script src="assets/js/aos.min.js"></script>
-            <script src="assets/js/bs-init.js"></script>
 
-        </head>
-
-        <body>
-
-        <NavigationBarLanding/>
+        <div>
 
         <WelcomeSection/>
         <ServicesSection/>
         <WhyUseSection/>
         <TeamSection/>
 
-        <Footer/>
-
-        </body>
-        </html>
+        </div>
     );
 };
 

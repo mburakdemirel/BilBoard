@@ -6,17 +6,6 @@ import Footer from "./Footer"; // Import Bootstrap CSS
 
 function LoginPage(){
     return(
-        <html data-bs-theme="light" lang="en">
-
-        <head>
-            <meta charset="utf-8"/>
-            <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no"/>
-            <title>BugBunny Ins (Backup 1695941318144)</title>
-        </head>
-
-        <body>
-
-            <NavigationBarLanding/>
 
             <section className="d-flex flex-column justify-content-start align-items-center py-4 py-xl-5 position-relative" style={{ background: '#edf0f7', height: '90.5vh' }}>
                 <img data-aos="fade-down" data-aos-duration="600" src={Logo} alt="Logo" style={{ marginBottom: '22px', marginTop: '-3%', width: '163px' }} />
@@ -54,11 +43,6 @@ function LoginPage(){
                     </div>
                 </div>
             </section>
-
-            <Footer/>
-        </body>
-
-        </html>
     );
 
 };

@@ -6,17 +6,6 @@ import Footer from "./Footer"; // Import Bootstrap CSS
 
 function RegisterPage(){
     return(
-        <html data-bs-theme="light" lang="en">
-        <head>
-            <meta charset="utf-8"/>
-            <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no"/>
-            <title>BugBunny Ins (Backup 1695941318144)</title>
-        </head>
-
-        <body>
-
-        <NavigationBarLanding/>
-
         <section className="d-flex flex-column justify-content-start align-items-center position-relative py-4 py-xl-5" style={{ background: '#edf0f7', height: '90.5vh', minHeight: '700px'}}>
             <img data-aos="fade-down" data-aos-duration="600" src={Logo} alt="Logo" style={{ marginBottom: '25px', width: '100px', marginTop: '-30px' }} />
             <div className="container" data-aos="fade-up" data-aos-duration="600">
@@ -41,10 +30,6 @@ function RegisterPage(){
             </div>
         </section>
 
-        <Footer/>
-
-        </body>
-        </html>
     );
 };
 

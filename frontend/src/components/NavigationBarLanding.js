@@ -1,5 +1,6 @@
 import React from 'react';
 import Logo from './assets/img/logo_bugbunny-removebg-preview.png'
+import { NavLink } from 'react-router-dom';
 
 function NavigationBarLanding(){
     return (
@@ -30,7 +31,7 @@ function NavigationBarLanding(){
                             <li className="nav-item"></li>
                             <li className="nav-item"></li>
                         </ul>
-                        <a
+                        <NavLink
                             className="btn btn-primary fw-semibold center "
                             role="button"
                             style={{
@@ -40,9 +41,35 @@ function NavigationBarLanding(){
                                 fontSize: '14px',
                                 height: '35px',
                                 fontFamily: 'Inter, sans-serif',
-                            }}>About
-                        </a>
-
+                                margin: '5px',
+                            }} to={'/'}>About
+                        </NavLink>
+                        <NavLink
+                            className="btn btn-primary fw-semibold center "
+                            role="button"
+                            style={{
+                                width: '83.5781px',
+                                background: '#2d3648',
+                                borderStyle: 'none',
+                                fontSize: '14px',
+                                height: '35px',
+                                fontFamily: 'Inter, sans-serif',
+                                margin: '5px',
+                            }} to={'/login'}>Login
+                        </NavLink>
+                        <NavLink
+                            className="btn btn-primary fw-semibold center "
+                            role="button"
+                            style={{
+                                width: '83.5781px',
+                                background: '#2d3648',
+                                borderStyle: 'none',
+                                fontSize: '14px',
+                                height: '35px',
+                                fontFamily: 'Inter, sans-serif',
+                                margin: '5px',
+                            }} to={'/register'}>Register
+                        </NavLink>
                     </div>
                 </div>
 

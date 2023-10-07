@@ -1,5 +1,6 @@
 #IDE related files
 .vscode/
+.idea/
 
 #Virtual environment
 #I named mine venv if you named it smt. else please add it here.

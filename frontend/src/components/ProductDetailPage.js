@@ -73,15 +73,6 @@ const slideStyle = {
 
 function ProductDetailPage() {
     return (
-        <html data-bs-theme="light" lang="en">
-
-        <head>
-            <meta charSet="utf-8"/>
-            <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no"/>
-            <title>BugBunny Ins (Backup 1695941318144)</title>
-        </head>
-        <body>
-        <NavigationBarLanding/>
 
         <section
             className="d-flex d-xxl-flex flex-grow-1 justify-content-center align-items-start align-items-xl-start justify-content-xxl-center align-items-xxl-start py-4 py-xl-5"
@@ -158,24 +149,11 @@ function ProductDetailPage() {
                             </div>
                         </div>
                     </div>
-
-
-
-
-
-
                 </div>
 
 
             </div>
         </section>
-
-
-        <Footer/>
-        </body>
-
-
-        </html>
     );
 
 
