@@ -7,11 +7,11 @@ import Footer from "./Footer"; // Import Bootstrap CSS
 function LoginPage(){
     return(
 
-            <section className="d-flex flex-column justify-content-start align-items-center py-4 py-xl-5 position-relative" style={{ background: '#edf0f7', height: '90.5vh' }}>
-                <img data-aos="fade-down" data-aos-duration="600" src={Logo} alt="Logo" style={{ marginBottom: '22px', marginTop: '-3%', width: '163px' }} />
+            <section className="d-flex flex-column justify-content-center align-items-center py-4 py-xl-5 position-relative" style={{ background: '#edf0f7', height: '90.5vh' }}>
+
                 <div className="container" data-aos="fade-up" data-aos-duration="600">
                     <div className="row d-flex justify-content-center">
-                        <div className="col-md-6 col-xl-4 d-flex justify-content-center align-items-center">
+                        <div className="col-md-6 col-xl-4 d-flex justify-content-center align-items-center" style={{width: '500px'}}>
                             <div className="card mb-5" style={{ borderStyle: 'none', borderRadius: '10px', paddingTop: '20px', width: '450px' }}>
                                 <div className="d-flex flex-column align-items-center">
                                     <h2 style={{ fontFamily: 'Inter, sans-serif', color: 'rgb(0,0,0)', marginTop: '5px' }}>Login</h2>

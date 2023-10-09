@@ -6,7 +6,7 @@ function NavigationBarLanding(){
     return (
 
             <nav className="navbar navbar-expand-sm sticky-top d-lg-flex align-items-start py-3 navbar-light"
-                style={{background: '#ffffff'}}>
+                style={{background: '#ffffff',height: '75px' }}>
 
                 <div className="container">
                     <a className="navbar-brand d-flex align-items-center" href="#">

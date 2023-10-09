@@ -5,6 +5,7 @@ import { NavLink } from 'react-router-dom';
 
 const navbarStyle = {
     borderBottom: '2px solid #2d3647',
+    height: '75px'
 };
 
 const brandIconStyle = {
@@ -35,17 +36,13 @@ function NavigationBarDefault(){
                     <span className="visually-hidden">Toggle navigation</span>
                     <span className="navbar-toggler-icon"></span>
                 </button>
-                <div id="navcol-3" className="collapse navbar-collapse" style={{ fontFamily: 'Inter, sans-serif' }}>
+                <div id="navcol-3" className="collapse navbar-collapse" style={{ fontFamily: 'Inter, sans-serif', fontSize:'14px'}}>
                     <ul className="navbar-nav mx-auto" style={{ fontWeight: 'bold' }}>
                         <li className="nav-item"><a className="nav-link active" href="#" style={{ textDecoration: 'underline' }}>Second-Hand</a></li>
                         <li className="nav-item"><a className="nav-link" href="#">Lost & Found</a></li>
                         <li className="nav-item"><a className="nav-link" href="#">Borrow</a></li>
                         <li className="nav-item"><a className="nav-link" href="#">Donation</a></li>
-                        <li className="nav-item">
-                            <a className="nav-link" href="#">
-                                <span style={{ color: 'var(--bs-nav-link-hover-color)' }}>Compliant</span>
-                            </a>
-                        </li>
+                        <li className="nav-item"><a className="nav-link" href="#">Compliant</a></li>
                     </ul>
                     <div className="me-4" style={{ maxWidth: '200px', height: '40px' }}>
                         <input className="d-flex justify-content-xxl-center" type="search" style={{ width: '100%', height: '100%', borderRadius: '6px', border: '2px solid var(--bs-navbar-active-color)', paddingLeft: '5px', paddingRight: '5px', fontFamily: 'Inter, sans-serif', textAlign: 'center' }} placeholder="Search" />

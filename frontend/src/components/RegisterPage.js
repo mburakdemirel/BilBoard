@@ -4,10 +4,23 @@ import Logo from './assets/img/logo_bugbunny-removebg-preview.png'
 import NavigationBarLanding from "./NavigationBarLanding";
 import Footer from "./Footer"; // Import Bootstrap CSS
 
+const inputStyles = {
+    background: '#a0abc0',
+    height: '45px',
+    border: 'none',
+    width: '300px',
+    fontFamily: 'Inter, sans-serif'
+};
+
+const textStyles = {
+    textAlign: 'center',
+    fontFamily: 'Inter, sans-serif'
+};
+
+
 function RegisterPage(){
     return(
-        <section className="d-flex flex-column justify-content-start align-items-center position-relative py-4 py-xl-5" style={{ background: '#edf0f7', height: '90.5vh', minHeight: '700px'}}>
-            <img data-aos="fade-down" data-aos-duration="600" src={Logo} alt="Logo" style={{ marginBottom: '25px', width: '100px', marginTop: '-30px' }} />
+        <section className="d-flex flex-column justify-content-center align-items-center position-relative py-4 py-xl-5" style={{ background: '#edf0f7', height: '90.5vh', minHeight: '700px'}}>
             <div className="container" data-aos="fade-up" data-aos-duration="600">
                 <div className="row d-flex justify-content-center" style={{ height: '485px' }}>
                     <div className="col-md-6 col-xl-4 d-flex justify-content-center align-items-start" style={{ paddingRight: '15px', paddingLeft: '15px', width: '516px', height: '485px' }}>
@@ -31,19 +44,6 @@ function RegisterPage(){
         </section>
 
     );
-};
-
-const inputStyles = {
-    background: '#a0abc0',
-    height: '45px',
-    border: 'none',
-    width: '300px',
-    fontFamily: 'Inter, sans-serif'
-};
-
-const textStyles = {
-    textAlign: 'center',
-    fontFamily: 'Inter, sans-serif'
 };
 
 export default RegisterPage;
