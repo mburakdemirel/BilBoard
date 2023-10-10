@@ -1,5 +1,9 @@
 #IDE related files
 .vscode/
+.idea/
+
+#pycache
+__pycache__/
 
 #Virtual environment
 #I named mine venv if you named it smt. else please add it here.
@@ -29,6 +33,6 @@ frontend/.env.development.local
 backend/*.log
 backend/*.pot
 backend/*.pyc
-backend/__pychache__/
+backend/__pycache__/
 backend/db.sqlite3
 backend/media
