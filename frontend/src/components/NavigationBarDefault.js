@@ -1,7 +1,6 @@
 import React from 'react';
 import Logo from './assets/img/logo_bugbunny-removebg-preview.png'
 import Burak from './assets/img/burak.png'
-import { NavLink } from 'react-router-dom';
 
 const navbarStyle = {
     borderBottom: '2px solid #2d3647',

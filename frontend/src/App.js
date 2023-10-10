@@ -14,7 +14,7 @@ function App() {
   return (
     <div className="App">
       <Routes>
-        <Route path='/login' element={<><NavigationBarDefault/><LoginPage/></>}></Route>
+        <Route path='/login' element={<><NavigationBarLanding/><LoginPage/></>}></Route>
         <Route path='/register' element={<><NavigationBarLanding/><RegisterPage/></>}></Route>
         {/** We will probably add a new component called <ProtectedRoute> or something for pages that should be seen after authentication */}
         <Route path='/' element={<><NavigationBarLanding/><LandingPage/></>}></Route>
