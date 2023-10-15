@@ -5,6 +5,9 @@
 #pycache
 __pycache__/
 
+#Reports
+reports/
+
 #Virtual environment
 #I named mine venv if you named it smt. else please add it here.
 backend/venv/
