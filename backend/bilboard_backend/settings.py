@@ -37,7 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'mainapp'
+    'mainapp',
 ]
 
 MIDDLEWARE = [
@@ -74,10 +74,15 @@ WSGI_APPLICATION = 'bilboard_backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+#AWS Postgresql server 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'bilboard',
+        'USER': 'bilboard_admin',
+        'PASSWORD': 'bilboardadmin',
+        'HOST': 'bilboard.csnhaul0yhdo.eu-north-1.rds.amazonaws.com', #AWS RDS endpoint
+        'PORT': '5432',
     }
 }
 
