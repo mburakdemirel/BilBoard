@@ -19,11 +19,11 @@ class CustomUserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, email, name, surname, username, password, **extra_fields):
+    def create_superuser(self, email, name, surname, password, **extra_fields):
 
         email = self.normalize_email(email)
-        user = self.model(email=email, username=username, name=name, surname=surname, password=password **extra_fields)
-
+        username = email.split('@')[0]
+        user = self.model(email=email, name=name, surname=surname, username=username, password=password, **extra_fields)
         user.is_admin = True
         user.is_staff = True
         user.is_superuser = True
@@ -40,9 +40,8 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     surname = models.CharField(max_length=40)
 
     username = models.CharField(max_length=80, unique=True)
-
     rate_ratio = models.FloatField(verbose_name="user rate", default=0.0)
-    profile_photo = models.ImageField(upload_to='profile_photos/', blank=True, null=True)
+    #profile_photo = models.ImageField(upload_to='profile_photos/', blank=True, null=True)
     description = models.TextField(verbose_name="information about user", blank=True, null=True)
     phone_number = models.CharField(max_length=15, blank=True, null=True)
 
@@ -53,6 +52,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     is_admin = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
+    is_superuser = models.BooleanField(default=False)
 
 
     objects = CustomUserManager()
@@ -60,6 +60,5 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['name', 'surname']
 
-    def __str__(self) -> str:
-        return self.username
-    
+    def str(self) -> str:
+        return self.email
