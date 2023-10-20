@@ -13,7 +13,7 @@ class UserAdmin(BaseUserAdmin):
     #Specify the fields in our model that we want to be shown in the admin page
     fieldsets = (
         #None is title section
-        (None , {'fields': ('email', 'name', 'surname', 'password')}),
+        (None , {'fields': ('email', 'name', 'profile_photo', 'surname', 'password')}),
         (
             _('Permissions'),
             {'fields': ('is_active', 'is_staff', 'is_superuser',)}
@@ -26,7 +26,7 @@ class UserAdmin(BaseUserAdmin):
     add_fieldsets = (
         None, {
             'classes': ('wide',),
-            'fields': ('email', 'name', 'surname', 'password1', 'password2', 'is_active', 'is_staff', 'is_superuser',)
+            'fields': ('email', 'name', 'surname', 'profile_photo', 'password1', 'password2', 'is_active', 'is_staff', 'is_superuser',)
         }
     ),
 
