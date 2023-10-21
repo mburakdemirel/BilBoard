@@ -31,11 +31,10 @@ function LoginPage(){
                                         <div className="mb-3">
                                             <button className="btn btn-primary d-block w-100" type="submit" style={{ background: '#2d3648', borderStyle: 'none', fontFamily: 'Inter, sans-serif', height: '40px' }}>Login</button>
                                         </div>
-                                        <p className="text-muted" style={{ marginTop: '-7px', textDecoration: 'underline', fontFamily: 'Inter, sans-serif' }}>Forgot your password?</p>
+                                        <a href="#" className="text-muted" style={{ marginTop: '-7px', textDecoration: 'underline', fontFamily: 'Inter, sans-serif' }}>Forgot your password?</a>
                                     </form>
                                     <div className="d-flex justify-content-center align-items-center" style={{ width: '300px' }}>
-                                        <a style={{ textAlign: 'center', fontFamily: 'Inter, sans-serif', marginRight: '5px' }}>Don't have an account yet?</a>
-                                        <a href="register.html" style={{ fontFamily: 'Inter, sans-serif', color: 'rgb(0,0,0)', fontWeight: 'bold' }}>Register</a>
+                                        <p style={{ textAlign: 'center', fontFamily: 'Inter, sans-serif', marginRight: '5px' }}>Don't have an account yet? <a href="/register" style={{ fontFamily: 'Inter, sans-serif', color: 'rgb(0,0,0)', fontWeight: 'bold' }}>Register</a></p>
                                     </div>
                                 </div>
                             </div>

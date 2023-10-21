@@ -34,7 +34,7 @@ function RegisterPage(){
                                     <input className="form-control mb-3" type="password" placeholder="Password" style={inputStyles} />
                                     <input className="form-control mb-3" type="password" placeholder="Confirm Password" style={inputStyles} />
                                     <button className="btn btn-primary d-block w-100 mb-3" type="submit" style={{ background: '#2d3648', border: 'none', fontFamily: 'Inter, sans-serif', height: '40px' }}>Register</button>
-                                    <p style={textStyles}>Already have an account? <a href="login_2.html" style={{ fontFamily: 'Inter, sans-serif', color: 'rgb(0,0,0)', fontWeight: 'bold' }}>Sign In</a></p>
+                                    <p style={textStyles}>Already have an account? <a href="/login" style={{ fontFamily: 'Inter, sans-serif', color: 'rgb(0,0,0)', fontWeight: 'bold' }}>Sign In</a></p>
                                 </form>
                             </div>
                         </div>
