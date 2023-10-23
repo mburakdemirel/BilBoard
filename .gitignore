@@ -1,6 +1,7 @@
 #IDE related files
 .vscode/
 .idea/
+.DS_Store
 
 #Virtual environment
 #I named mine venv if you named it smt. else please add it here.
