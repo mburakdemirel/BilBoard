@@ -20,15 +20,16 @@ from drf_spectacular.views import (
 )
 
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path("api/schema/", SpectacularAPIView.as_view(), name="api-schema"),
+    path('api/schema/', SpectacularAPIView.as_view(), name='api-schema'),
     #What schema to use when loading swagger => url_name='schema'
-    path('api/docs/', SpectacularSwaggerView.as_view(url_name='api-schema'), name='docs'),
+    path('api/docs/', SpectacularSwaggerView.as_view(url_name='api-schema'), name='api-docs'),
+    path('api/user/', include('userapp.urls')),
 ]
 
 if settings.DEBUG:

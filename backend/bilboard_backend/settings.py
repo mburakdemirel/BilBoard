@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -39,6 +40,8 @@ INSTALLED_APPS = [
     'mainapp',
     'rest_framework',
     'drf_spectacular',
+    'userapp',
+    'rest_framework_simplejwt',
 ]
 
 MIDDLEWARE = [
@@ -126,9 +129,12 @@ STATIC_URL = 'static/'
 
 AUTH_USER_MODEL = "mainapp.CustomUser"
 
-#Configures django rest framework to use drf_spectacular
+#Configures django rest framework to use JWT tokens, drf_spectacular, ...
 REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    )
 }
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
@@ -139,3 +145,40 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 MEDIA_URL = 'media/'
 
 MEDIA_ROOT = BASE_DIR/'pphotos'
+
+SIMPLE_JWT = {
+    #It contains all the information the server needs to know if the user / device can access the resource you are 
+    #requesting or not. 
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
+    #If the access token has an expiration date, once it expires, the user would have to authenticate again to obtain 
+    #an access token.
+    'REFRESH_TOKEN_LIFETIME': timedelta(hours=3),
+    'ROTATE_REFRESH_TOKENS': True,
+    #If it is set to True, any previous refresh tokens will be invalidated when a new one is issued.
+    'BLACKLIST_AFTER_ROTATION': True,
+    'UPDATE_LAST_LOGIN': False,
+
+    'ALGORITHM': 'HS256',
+
+    'VERIFYING_KEY': None,
+    'AUDIENCE': None,
+    'ISSUER': None,
+    'JWK_URL': None,
+    'LEEWAY': 0,
+
+    'AUTH_HEADER_TYPES': ('Bearer',),
+    'AUTH_HEADER_NAME': 'HTTP_AUTHORIZATION',
+    'USER_ID_FIELD': 'id',
+    'USER_ID_CLAIM': 'user_id',
+    'USER_AUTHENTICATION_RULE': 'rest_framework_simplejwt.authentication.default_user_authentication_rule',
+
+    'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
+    'TOKEN_TYPE_CLAIM': 'token_type',
+    'TOKEN_USER_CLASS': 'rest_framework_simplejwt.models.TokenUser',
+
+    'JTI_CLAIM': 'jti',
+
+    'SLIDING_TOKEN_REFRESH_EXP_CLAIM': 'refresh_exp',
+    'SLIDING_TOKEN_LIFETIME': timedelta(minutes=5),
+    'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
+}
