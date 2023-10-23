@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
+from decouple import config
 from pathlib import Path
 from datetime import timedelta
 
@@ -78,7 +79,7 @@ WSGI_APPLICATION = 'bilboard_backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-#AWS Postgresql server 
+#AWS Postgresql server
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
@@ -141,16 +142,15 @@ REST_FRAMEWORK = {
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-
 MEDIA_URL = 'media/'
 
 MEDIA_ROOT = BASE_DIR/'pphotos'
 
 SIMPLE_JWT = {
-    #It contains all the information the server needs to know if the user / device can access the resource you are 
-    #requesting or not. 
+    #It contains all the information the server needs to know if the user / device can access the resource you are
+    #requesting or not.
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
-    #If the access token has an expiration date, once it expires, the user would have to authenticate again to obtain 
+    #If the access token has an expiration date, once it expires, the user would have to authenticate again to obtain
     #an access token.
     'REFRESH_TOKEN_LIFETIME': timedelta(hours=3),
     'ROTATE_REFRESH_TOKENS': True,
@@ -182,3 +182,10 @@ SIMPLE_JWT = {
     'SLIDING_TOKEN_LIFETIME': timedelta(minutes=5),
     'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
 }
+
+# EMAIL SETTINGS
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = config('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
