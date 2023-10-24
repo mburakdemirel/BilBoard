@@ -1,10 +1,30 @@
-import React from "react";
+import React, {useState} from "react";
 import './assets/bootstrap/css/bootstrap.min.css';
 import Logo from './assets/img/logo_bugbunny-removebg-preview.png'
 import NavigationBarLanding from "./NavigationBarLanding";
 import Footer from "./Footer"; // Import Bootstrap CSS
 
 function LoginPage(){
+
+    // User variables
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+
+    // Submit method
+    const submit = async (e) => {
+        e.preventDefault();
+
+        const user = {
+            email: email,
+            password: password
+        };
+
+        // Create the POST request
+        const {data} = await axios.post('http://localhost:8000/token/', user);
+
+
+    }
+
     return(
 
             <section className="d-flex flex-column justify-content-center align-items-center py-4 py-xl-5 position-relative" style={{ background: '#edf0f7', height: '90.5vh' }}>
@@ -19,10 +39,16 @@ function LoginPage(){
                                 <div className="card-body d-flex flex-column align-items-center">
                                     <form className="text-center" method="post" style={{ width: '300px' }}>
                                         <div className="mb-3">
-                                            <input className="form-control" type="email" name="email" placeholder="Email" style={inputStyle} required />
+                                            <input className="form-control" type="email" name="email" placeholder="Email" style={inputStyle}
+                                                   value={email}
+                                                   onChange={e=>setEmail(e.target.value)}
+                                                   required />
                                         </div>
                                         <div className="mb-3">
-                                            <input className="form-control" type="password" name="password" placeholder="Password" style={inputStyle} required />
+                                            <input className="form-control" type="password" name="password" placeholder="Password" style={inputStyle}
+                                                   value={password}
+                                                   onChange={e=> setPassword(e.target.value)}
+                                                   required />
                                         </div>
                                         <div className="d-flex flex-row justify-content-center align-items-center mb-3">
                                             <input type="checkbox" style={{ width: '18px', height: '18px', borderStyle: 'solid', borderColor: 'rgb(0,0,0)' }} />
