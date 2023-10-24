@@ -13,7 +13,7 @@ import { NavLink } from 'react-router-dom';
 import Footer from "./Footer";
 
 const WelcomeSection = () => (
-    <section className="py-4 py-xl-5" style={{ background: '#edf0f7', height: '40vh' }}>
+    <section className="py-4 py-xl-5" style={{ background: '#edf0f7'}}>
         <div className="container h-100">
             <div className="row h-100">
                 <div className="col-md-10 col-xl-8 text-center d-flex align-items-center mx-auto">
