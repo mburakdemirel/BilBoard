@@ -21,27 +21,27 @@ const brandLogoStyle = {
     borderRadius: '10px',
 };
 
-function NavigationBarDefault(){
+function NavigationBarDefault() {
     return (
         <nav className="navbar navbar-expand-md sticky-top bg-body py-3" style={navbarStyle}>
             <div className="container">
                 <a className="navbar-brand d-flex align-items-center" href="#">
-          <span className="bs-icon-sm bs-icon-rounded bs-icon-primary d-flex justify-content-center align-items-center me-2 bs-icon" style={brandIconStyle}>
-            <img style={brandLogoStyle} src={Logo} alt="Logo" />
-          </span>
+                    <span className="bs-icon-sm bs-icon-rounded bs-icon-primary d-flex justify-content-center align-items-center me-2 bs-icon" style={brandIconStyle}>
+                        <img style={brandLogoStyle} src={Logo} alt="Logo" />
+                    </span>
                     <span style={{ fontWeight: 'bold', fontFamily: 'Inter, sans-serif' }}>BilBoard</span>
                 </a>
                 <button className="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navcol-3">
                     <span className="visually-hidden">Toggle navigation</span>
                     <span className="navbar-toggler-icon"></span>
                 </button>
-                <div id="navcol-3" className="collapse navbar-collapse" style={{ fontFamily: 'Inter, sans-serif', fontSize:'14px'}}>
+                <div id="navcol-3" className="collapse navbar-collapse" style={{ fontFamily: 'Inter, sans-serif', fontSize: '14px' }}>
                     <ul className="navbar-nav mx-auto" style={{ fontWeight: 'bold' }}>
                         <li className="nav-item"><a className="nav-link active" href="#" style={{ textDecoration: 'underline' }}>Second-Hand</a></li>
                         <li className="nav-item"><a className="nav-link" href="#">Lost & Found</a></li>
                         <li className="nav-item"><a className="nav-link" href="#">Borrow</a></li>
                         <li className="nav-item"><a className="nav-link" href="#">Donation</a></li>
-                        <li className="nav-item"><a className="nav-link" href="#">Compliant</a></li>
+                        <li className="nav-item"><a className="nav-link" href="#">Complaint</a></li>
                     </ul>
                     <div className="me-4" style={{ maxWidth: '200px', height: '40px' }}>
                         <input className="d-flex justify-content-xxl-center" type="search" style={{ width: '100%', height: '100%', borderRadius: '6px', border: '2px solid var(--bs-navbar-active-color)', paddingLeft: '5px', paddingRight: '5px', fontFamily: 'Inter, sans-serif', textAlign: 'center' }} placeholder="Search" />
