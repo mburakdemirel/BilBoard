@@ -6,27 +6,49 @@ import NavigationBarLanding from "./NavigationBarLanding";
 import Footer from "./Footer"; // Import Bootstrap CSS
 
 function LoginPage(){
-    console.log("sayfaya giriş");
     // User variables
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-
+    const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(false);
     // Submit method
     const submit = async (e) => {
         e.preventDefault();
-        console.log("start post");
+        setLoading(true);
         const user = {
-            email: "burak.demire@ug.bilkent.edu.tr",
+            email: "burak.demirl@ug.bilkent.edu.tr",
             password: "burakdemirel"
         };
 
-        // Create the POST request
-        const {data} = await axios.post('http://127.0.0.1:8000/api/user/token/', user);
+        try{
+            // Create the POST request
+            const {data} = await axios.post('http://127.0.0.1:8000/api/user/token/', user) ;
 
-        console.log(data);
+            localStorage.clear();
+            localStorage.setItem('access_token', data.access);
+            localStorage.setItem('refresh_token', data.refresh);
+            axios.defaults.headers.common['Authorization'] = `Bearer ${data['access']}`;
+            console.log(data);
 
+            window.location.href = "/register";
 
+        } catch (error) {
+            setLoading(false);
+            if (error.response) {
+                if(error.response.status===401){
+                    setError(`Your email or password is wrong`);
+                }
+                else{
+                    setError(`Server responded with status code ${error.response.status}`);
+                }
 
+            } else if (error.request) {
+                setError('No response received from the server.');
+            } else {
+                setError('An error occurred while setting up the request.');
+            }
+
+        }
     }
 
     return(
@@ -41,7 +63,7 @@ function LoginPage(){
                                     <h2 style={{ fontFamily: 'Inter, sans-serif', color: 'rgb(0,0,0)', marginTop: '5px' }}>Login</h2>
                                 </div>
                                 <div className="card-body d-flex flex-column align-items-center">
-                                    <form className="text-center" method="post" style={{ width: '300px' }}>
+                                    <form className="text-center" onSubmit={submit} style={{ width: '300px' }}>
                                         <div className="mb-3">
                                             <input className="form-control" type="email" name="email" placeholder="Email" style={inputStyle}
                                                    value={email}
@@ -51,21 +73,30 @@ function LoginPage(){
                                         <div className="mb-3">
                                             <input className="form-control" type="password" name="password" placeholder="Password" style={inputStyle}
                                                    value={password}
-                                                   onChange={e=> setPassword(e.target.value)}
+                                                   onChange={e => setPassword(e.target.value)}
                                                    required />
                                         </div>
                                         <div className="d-flex flex-row justify-content-center align-items-center mb-3">
                                             <input type="checkbox" style={{ width: '18px', height: '18px', borderStyle: 'solid', borderColor: 'rgb(0,0,0)' }} />
                                             <h2 style={{ fontFamily: 'Inter, sans-serif', fontSize: '16px', margin: '0px', color: 'rgb(0,0,0)', paddingLeft: '10px' }}>Remember me</h2>
                                         </div>
-                                        <div className="mb-3">
-                                            <button className="btn btn-primary d-block w-100" onClick={submit} style={{ background: '#2d3648', borderStyle: 'none', fontFamily: 'Inter, sans-serif', height: '40px' }}>Login</button>
+                                        <div className="mb-3"> {!loading
+                                                        ? <button className="btn btn-primary d-block w-100"  type="submit" style={{ marginBottom:'-13px', background: '#2d3648', borderStyle: 'none', fontFamily: 'Inter, sans-serif', height: '40px' }}>Login</button>
+                                                        : <button className="btn btn-primary d-block w-100" type="button" style={{ marginBottom:'-13px', background: '#2d3648', borderStyle: 'none', fontFamily: 'Inter, sans-serif', height: '40px' }} disabled>
+                                                            <span className="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                                                            <span role="status"> Loading...</span>
+                                                        </button>}
                                         </div>
-                                        <a href="#" className="text-muted" style={{ marginTop: '-7px', textDecoration: 'underline', fontFamily: 'Inter, sans-serif' }}>Forgot your password?</a>
+                                        <a href="#" className="text-muted" style={{ textDecoration: 'underline', fontFamily: 'Inter, sans-serif'}}>Forgot your password?</a>
                                     </form>
                                     <div className="d-flex justify-content-center align-items-center" style={{ width: '300px' }}>
                                         <p style={{ textAlign: 'center', fontFamily: 'Inter, sans-serif', marginRight: '5px' }}>Don't have an account yet? <a href="/register" style={{ fontFamily: 'Inter, sans-serif', color: 'rgb(0,0,0)', fontWeight: 'bold' }}>Register</a></p>
                                     </div>
+
+                                    <div>
+                                        {error && <div className="alert alert-danger" role="alert" style={{ fontSize:'12px', margin:'0px' , padding:'10px',  textAlign: 'center', fontFamily: 'Inter, sans-serif', marginRight: '5px'}}>{error}</div>}
+                                    </div>
+
                                 </div>
                             </div>
                         </div>
