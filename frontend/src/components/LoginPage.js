@@ -1,11 +1,12 @@
 import React, {useState} from "react";
+import axios from "axios";
 import './assets/bootstrap/css/bootstrap.min.css';
 import Logo from './assets/img/logo_bugbunny-removebg-preview.png'
 import NavigationBarLanding from "./NavigationBarLanding";
 import Footer from "./Footer"; // Import Bootstrap CSS
 
 function LoginPage(){
-
+    console.log("sayfaya giriş");
     // User variables
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -13,14 +14,17 @@ function LoginPage(){
     // Submit method
     const submit = async (e) => {
         e.preventDefault();
-
+        console.log("start post");
         const user = {
-            email: email,
-            password: password
+            email: "burak.demire@ug.bilkent.edu.tr",
+            password: "burakdemirel"
         };
 
         // Create the POST request
-        const {data} = await axios.post('http://localhost:8000/token/', user);
+        const {data} = await axios.post('http://127.0.0.1:8000/api/user/token/', user);
+
+        console.log(data);
+
 
 
     }
@@ -55,7 +59,7 @@ function LoginPage(){
                                             <h2 style={{ fontFamily: 'Inter, sans-serif', fontSize: '16px', margin: '0px', color: 'rgb(0,0,0)', paddingLeft: '10px' }}>Remember me</h2>
                                         </div>
                                         <div className="mb-3">
-                                            <button className="btn btn-primary d-block w-100" type="submit" style={{ background: '#2d3648', borderStyle: 'none', fontFamily: 'Inter, sans-serif', height: '40px' }}>Login</button>
+                                            <button className="btn btn-primary d-block w-100" onClick={submit} style={{ background: '#2d3648', borderStyle: 'none', fontFamily: 'Inter, sans-serif', height: '40px' }}>Login</button>
                                         </div>
                                         <a href="#" className="text-muted" style={{ marginTop: '-7px', textDecoration: 'underline', fontFamily: 'Inter, sans-serif' }}>Forgot your password?</a>
                                     </form>
