@@ -1,9 +1,6 @@
 import React, {useState} from "react";
 import axios from "axios";
 import './assets/bootstrap/css/bootstrap.min.css';
-import Logo from './assets/img/logo_bugbunny-removebg-preview.png'
-import NavigationBarLanding from "./NavigationBarLanding";
-import Footer from "./Footer"; // Import Bootstrap CSS
 
 function LoginPage(){
     // User variables
@@ -16,21 +13,25 @@ function LoginPage(){
         e.preventDefault();
         setLoading(true);
         const user = {
-            email: "burak.demirl@ug.bilkent.edu.tr",
-            password: "burakdemirel"
+            email: email,
+            password: password
         };
 
         try{
             // Create the POST request
             const {data} = await axios.post('http://127.0.0.1:8000/api/user/token/', user) ;
-
-            localStorage.clear();
-            localStorage.setItem('access_token', data.access);
-            localStorage.setItem('refresh_token', data.refresh);
-            axios.defaults.headers.common['Authorization'] = `Bearer ${data['access']}`;
             console.log(data);
-
-            window.location.href = "/register";
+            if(!data.is_verified){
+                setError('Email is not verified');
+                setLoading(false);
+            }
+            else{
+                localStorage.clear();
+                localStorage.setItem('access_token', data.access);
+                localStorage.setItem('refresh_token', data.refresh);
+                axios.defaults.headers.common['Authorization'] = `Bearer ${data['access']}`;
+                window.location.href = "/register";
+            }
 
         } catch (error) {
             setLoading(false);
@@ -52,9 +53,7 @@ function LoginPage(){
     }
 
     return(
-
             <section className="d-flex flex-column justify-content-center align-items-center py-4 py-xl-5 position-relative" style={{ background: '#edf0f7', height: '90.5vh' }}>
-
                 <div className="container" data-aos="fade-up" data-aos-duration="600">
                     <div className="row d-flex justify-content-center">
                         <div className="col-md-6 col-xl-4 d-flex justify-content-center align-items-center" style={{width: '500px'}}>
