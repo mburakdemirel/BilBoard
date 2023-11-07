@@ -19,7 +19,7 @@ class UserSerializer(serializers.ModelSerializer):
         }
 
     def validate_email(self, email):
-        """Validate that the email is from Bilkent domain.""" #yusuf.toraman@ug.bilkent.edu.tr
+        """Validate that the email is from Bilkent domain."""
         if not email.endswith("@bilkent.edu.tr") and not email.endswith("@ug.bilkent.edu.tr"):
             raise serializers.ValidationError("You must be a Bilkent member.")
         return email
@@ -31,6 +31,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         """Update a user if verified"""
+        self.Meta.extra_kwargs['email'] = {'read_only': True}
         validated_data.pop('email', None)  # Emails are unique, so we can't update them
         password = validated_data.pop('password', None)
         super().update(instance, validated_data)
@@ -50,6 +51,8 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
 
     def validate(self, attrs):
         data = super().validate(attrs)
+        if not self.user.is_verified:
+            raise serializers.ValidationError('Account should be verified first.')
         data.update({
             'user_id': self.user.id,
             'email': self.user.email,

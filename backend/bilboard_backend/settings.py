@@ -43,7 +43,7 @@ INSTALLED_APPS = [
     'drf_spectacular',
     'userapp',
     'rest_framework_simplejwt',
-    'corsheaders'
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -154,10 +154,10 @@ MEDIA_ROOT = BASE_DIR/'pphotos'
 SIMPLE_JWT = {
     #It contains all the information the server needs to know if the user / device can access the resource you are
     #requesting or not.
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
     #If the access token has an expiration date, once it expires, the user would have to authenticate again to obtain
     #an access token.
-    'REFRESH_TOKEN_LIFETIME': timedelta(hours=3),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=3),
     'ROTATE_REFRESH_TOKENS': True,
     #If it is set to True, any previous refresh tokens will be invalidated when a new one is issued.
     'BLACKLIST_AFTER_ROTATION': True,

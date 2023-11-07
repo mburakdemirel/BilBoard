@@ -34,7 +34,6 @@ class CustomUserManager(BaseUserManager):
 
 class CustomUser(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(verbose_name="email", max_length=100, unique=True)
-    #username = models.CharField(max_length=40, unique=True)
     name = models.CharField(max_length=40)
     surname = models.CharField(max_length=40)
     rate_ratio = models.FloatField(verbose_name="user rate", default=0.0)

@@ -31,11 +31,10 @@ class CreateUserView(generics.CreateAPIView):
         response = super().create(request, *args, **kwargs)
         if response.status_code == 201:
             user = CustomUser.objects.get(email=request.data['email'])
-            refresh = RefreshToken.for_user(user)
-
             # Send verification email
             # Change with a nice html template later on
-            absolute_url = 'http://' + get_current_site(request).domain + reverse("user:verify_email") + f'?token={refresh.access_token}'
+            email_verification_token = jwt.encode({'user_id': user.id, 'email': user.email}, settings.SECRET_KEY, algorithm='HS256')
+            absolute_url = 'http://' + get_current_site(request).domain + reverse("user:verify_email") + f'?token={email_verification_token}'
             subject = 'Welcome to Bilboard!'
             message =   f'Hi {user.name},\n\n' \
                         f'Please click on the link below to verify your email address:\n\n' \
@@ -50,18 +49,12 @@ class CreateUserView(generics.CreateAPIView):
                 recipient_list=[user.email],
                 fail_silently=False,
             )
-
-            res = {
-                "refresh": str(refresh),
-                "access": str(refresh.access_token),
-            }
-            return Response(res, status=status.HTTP_201_CREATED)
+            return Response(status=status.HTTP_201_CREATED)
         return response
 
 class VerifyEmailView(generics.GenericAPIView):
     """Email verification view"""
     serializer_class = EmailVerifySerializer
-
     def get(self, request):
         token = request.GET.get('token')
         try:
@@ -70,9 +63,15 @@ class VerifyEmailView(generics.GenericAPIView):
             if not user.is_verified:
                 user.is_verified = True
                 user.save()
+                refresh = RefreshToken.for_user(user)
+                res = {
+                    "refresh": str(refresh),
+                    "access": str(refresh.access_token),
+                }
             return Response(
+                #res,
                 {'email': 'Successfully activated'},
-                status=status.HTTP_200_OK
+                status=status.HTTP_200_OK,
             )
         except jwt.ExpiredSignatureError:
             return Response(
