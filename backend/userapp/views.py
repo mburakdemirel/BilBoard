@@ -31,7 +31,7 @@ class CreateUserView(generics.CreateAPIView):
         response = super().create(request, *args, **kwargs)
         if response.status_code == 201:
             user = CustomUser.objects.get(email=request.data['email'])
-            # Send verification email
+                # Send verification email
             # Change with a nice html template later on
             email_verification_token = jwt.encode({'user_id': user.id, 'email': user.email}, settings.SECRET_KEY, algorithm='HS256')
             absolute_url = 'http://' + get_current_site(request).domain + reverse("user:verify_email") + f'?token={email_verification_token}'
@@ -51,7 +51,7 @@ class CreateUserView(generics.CreateAPIView):
             )
             return Response(status=status.HTTP_201_CREATED)
         return response
-
+#Git test
 class VerifyEmailView(generics.GenericAPIView):
     """Email verification view"""
     serializer_class = EmailVerifySerializer

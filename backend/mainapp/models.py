@@ -13,7 +13,7 @@ class CustomUserManager(BaseUserManager):
             raise ValueError('Users must set the surname field')
 
         email = self.normalize_email(email)
-
+        
         #Applies NFKC Unicode normalization to usernames so that visually identical characters with different
         #Unicode code points are considered identical
         #username = self.model.normalize_username(username)
