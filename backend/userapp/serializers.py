@@ -31,7 +31,6 @@ class UserSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         """Update a user if verified"""
-        self.Meta.extra_kwargs['email'] = {'read_only': True}
         validated_data.pop('email', None)  # Emails are unique, so we can't update them
         password = validated_data.pop('password', None)
         super().update(instance, validated_data)
@@ -39,6 +38,7 @@ class UserSerializer(serializers.ModelSerializer):
             instance.set_password(password)
             instance.save()
         return instance
+    
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     """

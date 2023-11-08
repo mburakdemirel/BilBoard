@@ -51,7 +51,7 @@ class CreateUserView(generics.CreateAPIView):
             )
             return Response(status=status.HTTP_201_CREATED)
         return response
-#Git test
+
 class VerifyEmailView(generics.GenericAPIView):
     """Email verification view"""
     serializer_class = EmailVerifySerializer
@@ -84,14 +84,22 @@ class VerifyEmailView(generics.GenericAPIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
+
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
 
-class ManageUserView(generics.RetrieveUpdateAPIView):
-    """Updates user"""
+
+class ManageUserView(generics.RetrieveUpdateDestroyAPIView):
+    """Used for read-write-delete endpoints to represent a single model instance."""
     serializer_class = UserSerializer
     authentication_classes = [JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
     def get_object(self):
         return self.request.user
+    
+    #İleride user silindiğinde ürünlere yaptığı yorumları reviewları da sil eklemeyi unutma!! save tarzı bi şey ile
+    def delete(self, request):
+        user = self.get_object()
+        user.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)  # Return no content response with 204 status code
