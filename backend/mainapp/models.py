@@ -40,6 +40,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     profile_photo = models.ImageField(upload_to='pphotos/', blank=True, null=True)
     description = models.TextField(verbose_name="information about user", blank=True, null=True)
     phone_number = models.CharField(max_length=15, blank=True, null=True)
+    used_password_reset_token = models.CharField(max_length=300, blank=True, null=True)
 
     # 'products' will be added after product module created !
     # 'message id list' will be discussed later since there are multiple approaches to keep messages. -> ForeignKey

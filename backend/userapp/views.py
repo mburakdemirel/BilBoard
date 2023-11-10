@@ -119,13 +119,18 @@ def ChangePassword(request, token):
         except jwt.DecodeError:
             return Response({'error': 'Invalid token.'}, status=status.HTTP_400_BAD_REQUEST)
 
+        #JSON yollayınca bodyden alıyoruz
         data = json.loads(request.body)
         new_password = data.get('new_password')
         confirm_password = data.get('confirm_password')
 
         if new_password != confirm_password:
             return Response({'error': 'Passwords do not match.'}, status=status.HTTP_400_BAD_REQUEST)
-
+        
+        if user.used_password_reset_token == token:
+            return Response({'error': 'This token has already been used.'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        user.used_password_reset_token = token
         user.set_password(new_password)
         user.save()
         return Response({'message': 'Password successfully updated.'}, status=status.HTTP_200_OK)
