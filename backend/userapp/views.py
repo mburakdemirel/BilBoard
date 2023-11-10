@@ -1,7 +1,10 @@
+import datetime
+import json
 from django.conf import settings
 from django.contrib.sites.shortcuts import get_current_site
 from django.urls import reverse
-from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model, logout
+from .helpers import send_forget_password_mail
 
 from rest_framework import generics
 from userapp.serializers import (
@@ -16,10 +19,10 @@ from mainapp.models import CustomUser
 from rest_framework import status, authentication, permissions
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
-
 import jwt
-
 from django.core.mail import send_mail
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import AllowAny
 
 
 class CreateUserView(generics.CreateAPIView):
@@ -52,6 +55,7 @@ class CreateUserView(generics.CreateAPIView):
             return Response(status=status.HTTP_201_CREATED)
         return response
 
+
 class VerifyEmailView(generics.GenericAPIView):
     """Email verification view"""
     serializer_class = EmailVerifySerializer
@@ -69,7 +73,6 @@ class VerifyEmailView(generics.GenericAPIView):
                     "access": str(refresh.access_token),
                 }
             return Response(
-                #res,
                 {'email': 'Successfully activated'},
                 status=status.HTTP_200_OK,
             )
@@ -103,3 +106,51 @@ class ManageUserView(generics.RetrieveUpdateDestroyAPIView):
         user = self.get_object()
         user.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)  # Return no content response with 204 status code
+    
+@api_view(['POST'])
+def ChangePassword(request, token):
+    if request.method == 'POST':
+        try:
+            # Decode the token
+            payload = jwt.decode(token, settings.SECRET_KEY, algorithms=['HS256'])
+            user = CustomUser.objects.get(id=payload['user_id'])
+        except jwt.ExpiredSignatureError:
+            return Response({'error': 'Token has expired.'}, status=status.HTTP_400_BAD_REQUEST)
+        except jwt.DecodeError:
+            return Response({'error': 'Invalid token.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        data = json.loads(request.body)
+        new_password = data.get('new_password')
+        confirm_password = data.get('confirm_password')
+
+        if new_password != confirm_password:
+            return Response({'error': 'Passwords do not match.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        user.set_password(new_password)
+        user.save()
+        return Response({'message': 'Password successfully updated.'}, status=status.HTTP_200_OK)
+
+    return Response({'error': 'Invalid request method.'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def ForgetPassword(request):
+    if request.method == 'POST':
+        email = request.data.get('email')
+        user = CustomUser.objects.filter(email=email).first()
+        if not user:
+            return Response({'error': 'No user is associated with this email.'}, status=status.HTTP_404_NOT_FOUND)
+
+        # Generate a JWT token
+        expiration = datetime.datetime.now() + datetime.timedelta(hours=1)  # Token expires in 1 hour
+        token = jwt.encode({'user_id': user.id, 'exp': expiration}, settings.SECRET_KEY, algorithm='HS256')
+
+        # Send email
+        reset_url = f'http://127.0.0.1:8000/change-password/{token}/'
+        send_forget_password_mail(user, reset_url)
+
+        return Response({'message': 'Password reset email sent.'}, status=status.HTTP_200_OK)
+
+    return Response({'error': 'Invalid request method.'}, status=status.HTTP_400_BAD_REQUEST)
+    
