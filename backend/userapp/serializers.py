@@ -8,11 +8,10 @@ from rest_framework import serializers
 
 class UserSerializer(serializers.ModelSerializer):
     """Serializer for the user object"""
-
     #Tell djangorest, the model, fields and extra args that we want to pass to serializer
     class Meta:
         model = get_user_model()
-        fields = ('email', 'name', 'surname',  'password', 'is_verified',)
+        fields = ('email', 'name', 'surname', 'is_verified',)
         extra_kwargs = {
             'password': {'write_only': True, 'min_length': 8},
             'is_verified': {'read_only': True},
@@ -34,9 +33,6 @@ class UserSerializer(serializers.ModelSerializer):
         validated_data.pop('email', None)  # Emails are unique, so we can't update them
         password = validated_data.pop('password', None)
         super().update(instance, validated_data)
-        if password:
-            instance.set_password(password)
-            instance.save()
         return instance
     
 
@@ -66,4 +62,3 @@ class EmailVerifySerializer(serializers.Serializer):
     class Meta:
         model = get_user_model()
         fields = ["token"]
-

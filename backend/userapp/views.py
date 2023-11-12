@@ -23,6 +23,9 @@ import jwt
 from django.core.mail import send_mail
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
+
 
 
 class CreateUserView(generics.CreateAPIView):
@@ -34,7 +37,7 @@ class CreateUserView(generics.CreateAPIView):
         response = super().create(request, *args, **kwargs)
         if response.status_code == 201:
             user = CustomUser.objects.get(email=request.data['email'])
-                # Send verification email
+            # Send verification email
             # Change with a nice html template later on
             email_verification_token = jwt.encode({'user_id': user.id, 'email': user.email}, settings.SECRET_KEY, algorithm='HS256')
             absolute_url = 'http://' + get_current_site(request).domain + reverse("user:verify_email") + f'?token={email_verification_token}'
@@ -101,17 +104,46 @@ class ManageUserView(generics.RetrieveUpdateDestroyAPIView):
     def get_object(self):
         return self.request.user
     
+    def update(self, request, *args, **kwargs): 
+        super().update(request, *args, **kwargs)
+        user = self.request.user
+        data = request.data
+        old_password = data.get('old_password', None) if data.get('old_password', None) else None
+        new_password = data.get('new_password', None) if data.get('new_password', None) else None
+        
+        if old_password:
+            if user.check_password(old_password):
+                try:
+                    validate_password(new_password, user)
+                    user.set_password(new_password)
+                    user.save()
+                    return Response({'message': 'Password successfully updated.'}, status=status.HTTP_200_OK)
+                except ValidationError as e:
+                    return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                return Response({
+                'error': 'Wrong old password',
+                }, status=status.HTTP_400_BAD_REQUEST)
+        elif new_password:
+            return Response({
+                'error': 'Please provide old password'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response({
+                'message': 'Successfully updated',
+            }, status=status.HTTP_200_OK)
+
     #İleride user silindiğinde ürünlere yaptığı yorumları reviewları da sil eklemeyi unutma!! save tarzı bi şey ile
     def delete(self, request):
         user = self.get_object()
         user.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)  # Return no content response with 204 status code
+        return Response({"message": "User deleted"}, status=status.HTTP_204_NO_CONTENT)  # Return no content response with 204 status code
     
 @api_view(['POST'])
 def ChangePassword(request, token):
     if request.method == 'POST':
         try:
-            # Decode the token
+            # Token'ı çözme
             payload = jwt.decode(token, settings.SECRET_KEY, algorithms=['HS256'])
             user = CustomUser.objects.get(id=payload['user_id'])
         except jwt.ExpiredSignatureError:
@@ -119,19 +151,20 @@ def ChangePassword(request, token):
         except jwt.DecodeError:
             return Response({'error': 'Invalid token.'}, status=status.HTTP_400_BAD_REQUEST)
 
-        #JSON yollayınca bodyden alıyoruz
-        data = json.loads(request.body)
-        new_password = data.get('new_password')
-        confirm_password = data.get('confirm_password')
+        data = request.data
+        password = data.get('password')
 
-        if new_password != confirm_password:
-            return Response({'error': 'Passwords do not match.'}, status=status.HTTP_400_BAD_REQUEST)
+        # Şifre doğrulaması
+        try:
+            validate_password(password, user)
+        except ValidationError as e:
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
         
         if user.used_password_reset_token == token:
-            return Response({'error': 'This token has already been used.'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': 'This link has already been used.'}, status=status.HTTP_400_BAD_REQUEST)
         
         user.used_password_reset_token = token
-        user.set_password(new_password)
+        user.set_password(password)
         user.save()
         return Response({'message': 'Password successfully updated.'}, status=status.HTTP_200_OK)
 
