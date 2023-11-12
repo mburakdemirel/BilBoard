@@ -105,7 +105,7 @@ class ManageUserView(generics.RetrieveUpdateDestroyAPIView):
         return self.request.user
     
     def update(self, request, *args, **kwargs): 
-        super().update(request, *args, **kwargs)
+        response = super().update(request, *args, **kwargs)
         user = self.request.user
         data = request.data
         old_password = data.get('old_password', None) if data.get('old_password', None) else None
@@ -117,7 +117,7 @@ class ManageUserView(generics.RetrieveUpdateDestroyAPIView):
                     validate_password(new_password, user)
                     user.set_password(new_password)
                     user.save()
-                    return Response({'message': 'Password successfully updated.'}, status=status.HTTP_200_OK)
+                    return response
                 except ValidationError as e:
                     return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
             else:
@@ -129,9 +129,7 @@ class ManageUserView(generics.RetrieveUpdateDestroyAPIView):
                 'error': 'Please provide old password'
             }, status=status.HTTP_400_BAD_REQUEST)
         else:
-            return Response({
-                'message': 'Successfully updated',
-            }, status=status.HTTP_200_OK)
+            return response
 
     #İleride user silindiğinde ürünlere yaptığı yorumları reviewları da sil eklemeyi unutma!! save tarzı bi şey ile
     def delete(self, request):
@@ -140,8 +138,9 @@ class ManageUserView(generics.RetrieveUpdateDestroyAPIView):
         return Response({"message": "User deleted"}, status=status.HTTP_204_NO_CONTENT)  # Return no content response with 204 status code
     
 @api_view(['POST'])
-def ChangePassword(request, token):
+def ChangePassword(request):
     if request.method == 'POST':
+        token = request.GET.get('token')
         try:
             # Token'ı çözme
             payload = jwt.decode(token, settings.SECRET_KEY, algorithms=['HS256'])
@@ -185,10 +184,11 @@ def ForgetPassword(request):
         token = jwt.encode({'user_id': user.id, 'exp': expiration}, settings.SECRET_KEY, algorithm='HS256')
 
         # Send email
-        reset_url = f'http://127.0.0.1:8000/change-password/{token}/'
+        reset_url = 'http://' + "127.0.0.1:3000" + "/change_password/" + f'?token={token}'
+
         send_forget_password_mail(user, reset_url)
 
         return Response({'message': 'Password reset email sent.'}, status=status.HTTP_200_OK)
 
     return Response({'error': 'Invalid request method.'}, status=status.HTTP_400_BAD_REQUEST)
-    
+
