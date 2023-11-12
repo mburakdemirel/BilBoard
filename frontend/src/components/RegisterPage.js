@@ -4,7 +4,7 @@ import Logo from './assets/img/logo_bugbunny-removebg-preview.png'
 import NavigationBarLanding from "./NavigationBarLanding";
 import Footer from "./Footer";
 import {useState} from "react";
-import axios from "axios"; // Import Bootstrap CSS
+import axios from "axios";
 
 
 
@@ -75,8 +75,8 @@ function RegisterPage(){
                             <h2 style={{ fontFamily: 'Inter, sans-serif', color: 'rgb(0,0,0)', marginTop: '5px', textAlign: 'center' }}>Sign Up</h2>
                             <div className="card-body d-flex flex-column justify-content-center align-items-center">
                                 <form className="d-flex flex-column justify-content-center align-items-center" onSubmit={submit}>
-                                    <input className="form-control mb-3" value={name} onChange={e=>setName(e.target.value)} type="text" id="name-2" name="name" placeholder="Name" style={{ background: '#a0abc0', height: '45px', width: '300px', fontFamily: 'Inter, sans-serif', border: 'none' }} required />
-                                    <input className="form-control mb-3" value={surname} onChange={e=>setSurname(e.target.value)} type="text" name="suname" placeholder="Surname" style={inputStyles} required />
+                                    <input className="form-control mb-3" value={name} onChange={e=>setName(e.target.value)} type="text" id="name-2" name="name" placeholder="Name" style={inputStyles} required />
+                                    <input className="form-control mb-3" value={surname} onChange={e=>setSurname(e.target.value)} type="text" name="surname" placeholder="Surname" style={inputStyles} required />
                                     <input className="form-control mb-3" value={email} onChange={e=>setEmail(e.target.value)} type="email" id="email-2" name="email" placeholder="Email" style={inputStyles} required />
                                     <input className="form-control mb-3" value={password} onChange={e=>setPassword(e.target.value)} type="password" placeholder="Password" style={inputStyles} required />
                                     <input className="form-control mb-3" value={confirmPassword} onChange={e=>setConfirmPassword(e.target.value)} type="password" placeholder="Confirm Password" style={inputStyles} required />

@@ -1,8 +1,17 @@
 import React, {useState} from "react";
 import axios from "axios";
 import './assets/bootstrap/css/bootstrap.min.css';
+import { Link } from 'react-router-dom';
 
 function LoginPage(){
+
+    /*console.log(window.location.href)
+    console.log(window.location.search)
+    const urlSearchParams = new URLSearchParams(window.location.search);
+    console.log(urlSearchParams.get("token"));
+    const token = urlSearchParams.get("token");
+*/
+
     // User variables
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -20,6 +29,7 @@ function LoginPage(){
         try{
             // Create the POST request
             const {data} = await axios.post('http://127.0.0.1:8000/api/user/token/', user) ;
+            //const {data} = await axios.get('http://127.0.0.1:8000/api/user/verify/'+ "?token="+ token);
             console.log(data);
             if(!data.is_verified){
                 setError('Email is not verified');
@@ -29,8 +39,9 @@ function LoginPage(){
                 localStorage.clear();
                 localStorage.setItem('access_token', data.access);
                 localStorage.setItem('refresh_token', data.refresh);
+                localStorage.setItem('authorization', `Bearer ${data['access']}`)
                 axios.defaults.headers.common['Authorization'] = `Bearer ${data['access']}`;
-                window.location.href = "/register";
+                window.location.href = "/profile";
             }
 
         } catch (error) {
@@ -62,7 +73,8 @@ function LoginPage(){
                                     <h2 style={{ fontFamily: 'Inter, sans-serif', color: 'rgb(0,0,0)', marginTop: '5px' }}>Login</h2>
                                 </div>
                                 <div className="card-body d-flex flex-column align-items-center">
-                                    <form className="text-center" onSubmit={submit} style={{ width: '300px' }}>
+
+                                    <form className="text-center"  onSubmit={submit} style={{ width: '300px' }}>
                                         <div className="mb-3">
                                             <input className="form-control" type="email" name="email" placeholder="Email" style={inputStyle}
                                                    value={email}
@@ -79,6 +91,7 @@ function LoginPage(){
                                             <input type="checkbox" style={{ width: '18px', height: '18px', borderStyle: 'solid', borderColor: 'rgb(0,0,0)' }} />
                                             <h2 style={{ fontFamily: 'Inter, sans-serif', fontSize: '16px', margin: '0px', color: 'rgb(0,0,0)', paddingLeft: '10px' }}>Remember me</h2>
                                         </div>
+
                                         <div className="mb-3"> {!loading
                                                         ? <button className="btn btn-primary d-block w-100"  type="submit" style={{ marginBottom:'-13px', background: '#2d3648', borderStyle: 'none', fontFamily: 'Inter, sans-serif', height: '40px' }}>Login</button>
                                                         : <button className="btn btn-primary d-block w-100" type="button" style={{ marginBottom:'-13px', background: '#2d3648', borderStyle: 'none', fontFamily: 'Inter, sans-serif', height: '40px' }} disabled>
@@ -86,6 +99,8 @@ function LoginPage(){
                                                             <span role="status"> Loading...</span>
                                                         </button>}
                                         </div>
+
+
                                         <a href="#" className="text-muted" style={{ textDecoration: 'underline', fontFamily: 'Inter, sans-serif'}}>Forgot your password?</a>
                                     </form>
                                     <div className="d-flex justify-content-center align-items-center" style={{ width: '300px' }}>

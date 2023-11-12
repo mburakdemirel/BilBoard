@@ -6,7 +6,7 @@ function NavigationBarLanding(){
     return (
 
             <nav className="navbar navbar-expand-sm sticky-top d-lg-flex align-items-start py-3 navbar-light"
-                style={{background: '#ffffff',height: '75px' }}>
+                style={{background: '#ffffff',height: '75px', width:'100%' }}>
 
                 <div className="container">
                     <a className="navbar-brand d-flex align-items-center" href="#">
@@ -42,7 +42,7 @@ function NavigationBarLanding(){
                                 height: '35px',
                                 fontFamily: 'Inter, sans-serif',
                                 margin: '5px',
-                            }} to={'/'}>About
+                            }} to={'/profile'}>About
                         </NavLink>
                         <NavLink
                             className="btn btn-primary fw-semibold center "

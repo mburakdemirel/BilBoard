@@ -1,11 +1,67 @@
-import './assets/bootstrap/css/bootstrap.min.css';
+import 'bootstrap/dist/css/bootstrap.css';
 import PlaceHolder from './assets/img/WF Image Placeholder.png';
-import React from 'react';
+import React, {useEffect, useState} from 'react';
+import axios from "axios";
+import * as bootstrap from 'bootstrap';
+import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
+import Popover from 'react-bootstrap/Popover'
+import Button from 'react-bootstrap/Button';
+import alert from "bootstrap/js/src/alert";
+
 
 //There are two kinds of profiles and they are rendered according to the value of myProfile boolean.
 //Probably myProfile will take its value from a context. Or we might directly pass is as props.
 //TODO: put all style attributes in a css file
-function Products({myProfile}) {
+
+
+
+function Profile() {
+
+    const [myProfile, setMyProfile] = useState();
+    const pull_data = (data) => {
+        console.log("edit mode " + data); // LOGS DATA FROM CHILD (My name is Dean Winchester... &)
+    }
+
+
+    const onLoad = async () => {
+        try{
+            // Create the GET request
+            axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
+            const {data} = await axios.get('http://127.0.0.1:8000/api/user/me/') ;
+            console.log(data);
+            setMyProfile(data);
+
+        }
+        catch (error){
+
+        }
+    }
+
+
+    useEffect(()=>{
+        onLoad();
+    },[])
+
+    return (
+        <x  className="d-flex d-xxl-flex flex-grow-1 justify-content-center align-items-start align-items-xl-start justify-content-xxl-center align-items-xxl-start py-4 py-xl-5" style={{ background: '#edf0f7', minHeight: '91vh'}}>
+            {myProfile ?
+                <div className="container d-sm-flex d-md-flex d-lg-flex d-xl-flex d-xxl-flex justify-content-center align-items-center justify-content-sm-center align-items-sm-center justify-content-md-center align-items-md-center justify-content-lg-center align-items-lg-center justify-content-xl-center align-items-xl-center justify-content-xxl-center align-items-xxl-center h-100">
+                <div className="row gx-1 gy-3 d-xxl-flex justify-content-sm-center justify-content-md-center justify-content-lg-center align-items-xl-center h-100" ></div>
+                <Products myProfile={myProfile} func={pull_data}></Products>
+                <ProfileArea myProfile={myProfile} func={pull_data}></ProfileArea>
+                </div>
+                :
+                <div className="spinner-border m-10" style={{color: '#2d3648'}} role="status">
+                    <span className="visually-hidden">Loading...</span>
+                </div>
+            }
+        </x>
+    );
+
+}
+
+
+function Products({myProfile, func}) {
     return (
         <div
             className="col-xxl-6 d-flex d-sm-flex d-md-flex d-lg-flex d-xl-flex d-xxl-flex flex-grow-1 justify-content-center align-items-center justify-content-sm-center align-items-sm-center align-items-md-center align-items-lg-center"
@@ -15,6 +71,10 @@ function Products({myProfile}) {
                 height: '40vw',
                 width: '600px',
                 minHeight: '380px',
+                maxWidth:'93vw',
+
+                paddingTop:'10px'
+
             }}
         >
             <div
@@ -25,6 +85,7 @@ function Products({myProfile}) {
                     fontSize: '12px',
                     borderRadius: '10px',
                     width: '95%',
+                    minWidth:'90%',
                     padding: '5%',
                     height: '100%',
                 }}
@@ -142,7 +203,7 @@ function Products({myProfile}) {
                 />
                 <div
                     className="card-group d-flex d-xxl-flex flex-row flex-sm-nowrap flex-md-nowrap flex-lg-nowrap flex-xl-nowrap justify-content-xxl-center align-items-xxl-start flex-xxl-wrap"
-                    style={{ height: 'initial', overflow: 'auto' }}
+                    style={{ height: 'initial', overflow: 'auto', width:'100%' }}
                 >
                     {/** this is for testing purposes normally we should use result.map(product => (<div> ...) where result is the result of the http
                  * request and we should use product's data in ... part
@@ -153,14 +214,14 @@ function Products({myProfile}) {
                             key={index}
                             id="product"
                             style={{
-                                width: '175px',
-                                height: '175px',
+                                width: '170px',
+                                height: '170px',
                                 borderRadius: '10px',
                                 borderStyle: 'none',
                                 borderBottomStyle: 'none',
                                 padding: '5px',
-                                minWidth: '175px',
-                                maxWidth: '175px',
+                                minWidth: '170px',
+                                maxWidth: '170px',
                             }}
                         >
                             <div
@@ -168,13 +229,40 @@ function Products({myProfile}) {
                                 style={{ width: '100%', height: '100%', padding: '0' }}
                             >
                                 <img
-                                    style={{ width: '100%', height: '50%' }}
+                                    style={{ width: '100%', height: '100%' }}
                                     src={PlaceHolder}
                                     alt={`Product ${index}`}
                                 />
-                                <p >Title: </p>
-                                <p >Description: </p>
+                                <div
+                                    style={{height: '40px',
+                                            width: '100%',
+                                            marginTop: '-40px',
+                                            background: '#21252955',
+                                            position: 'relative',
+                                            borderBottomRightRadius: '10px',
+                                            borderBottomLeftRadius: '10px',
+                                            paddingTop: '3px',
+                                            paddingBottom: '3px',
+                                            paddingRight: '5px',
+                                            paddingLeft: '5px'}}
+                                >
+                                    <h1 className="text-center d-flex d-xxl-flex justify-content-start align-items-start justify-content-xxl-start"
+                                        style={{width: '100%',
+                                                fontSize: '16px',
+                                                fontFamily: 'Inter, sans-serif',
+                                                marginBottom: '0px'}}
+                                                >Title</h1>
+                                    <h1 className="text-center d-flex d-xxl-flex justify-content-start justify-content-xxl-start"
+                                        style={{width: '100%',
+                                            fontSize: '12px',
+                                            fontFamily: 'Inter, sans-serif',
+                                            marginBottom: '0px'}}>Price</h1>
+                                </div>
+
                             </div>
+
+
+
                         </div>
                     ))}
                 </div>
@@ -184,7 +272,111 @@ function Products({myProfile}) {
 }
 
 {/** according to the value of myProfile boolean either the user's own profile will be shown (true) or other person's profile will be shown (false) */ }
-function ProfileArea({ myProfile }) {
+function ProfileArea({myProfile,func} ) {
+    const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
+    const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
+
+
+    const [loading, setLoading] = useState(false);
+    const [nameSurname, setNameSurname] = useState(myProfile.name + " " + myProfile.surname);
+    const [email, setEmail] = useState(myProfile.email);
+    const [newName, setNewName] = useState(myProfile.name);
+    const [newSurname, setNewSurname] = useState(myProfile.surname);
+    const [newPassword, setNewPassword] = useState();
+    const [newPasswordConfirm, setNewPasswordConfirm] = useState();
+    const [oldPassword, setOldPassword] = useState();
+
+    const [editMode, setEditMode] = useState(false);
+    const updateUser = async (user) => {
+
+        setLoading(true);
+        try{
+            // do update operations
+            const {data} = await axios.patch('http://127.0.0.1:8000/api/user/me/', user);
+            myProfile = data;
+            setNameSurname(myProfile.name + " " + myProfile.surname)
+            setEmail(myProfile.email);
+            setEditMode(false);
+            setLoading(false);
+        }
+        catch (error){
+                setLoading(false);
+        }
+    }
+
+
+    const handleClick = () => {
+        if(editMode){
+            if(oldPassword) {
+                if (newPassword === newPasswordConfirm) {
+                    const user = {
+                        name: newName,
+                        surname: newSurname,
+                        password: newPassword
+                    };
+                    updateUser(user);
+                } else {
+                    window.alert("Passwords are not same!")
+                }
+            }
+            else if(newPassword || newPasswordConfirm ){
+                window.alert("You need to enter old password")
+            }
+            else{
+                const user = {
+                    name: newName,
+                    surname: newSurname,
+                };
+                updateUser(user);
+
+            }
+        }
+        else{
+            setEditMode(true);
+        }
+    };
+
+    const cancelUpdate =  () => {
+        if(editMode){
+            setEditMode(false);
+        }
+
+    };
+
+    const deleteUser = async () => {
+        let confirmed;
+        if (window.confirm("Do you confirm deleting the user?")) {
+            confirmed = true;
+        } else {
+            confirmed = false;
+        }
+
+        if(confirmed){
+            try{
+                // do update operations
+                await axios.delete('http://127.0.0.1:8000/api/user/me/');
+                logOut();
+
+            }
+            catch (error){
+                setLoading(false);
+            }
+        }
+
+
+    };
+
+
+
+    const logOut = () => {
+        localStorage.clear();
+        window.location.href = "/login";
+
+    };
+
+
+
+
     return (
         <div
             className="col-xl-6 col-xxl-5 offset-xxl-0 d-flex d-sm-flex d-md-flex d-lg-flex d-xl-flex d-xxl-flex flex-grow-1 justify-content-center align-items-center order-last justify-content-sm-center align-items-sm-center justify-content-md-center align-items-md-center justify-content-lg-center align-items-lg-center justify-content-xl-center align-items-xl-center justify-content-xxl-center align-items-xxl-center"
@@ -194,6 +386,9 @@ function ProfileArea({ myProfile }) {
                 width: '600px',
                 height: '40vw',
                 minHeight: '554px',
+                maxWidth:'93vw',
+                paddingTop:'10px',
+
             }}
         >
             <div
@@ -208,24 +403,69 @@ function ProfileArea({ myProfile }) {
                     paddingTop: '2%',
                 }}
             >
+
+                <div className="d-flex justify-content-end" style={{height: '45px', width: '100%', marginRight:'-35px'}}>
+                    <button
+                        className="btn btn-primary d-flex d-xxl-flex justify-content-center align-items-center justify-content-xxl-center align-items-xxl-center"
+                        type="button"
+                        onClick={logOut}
+                        style={{
+                            width: '40px',
+                            fontWeight: 'bold',
+                            background: '#2d3648',
+                            borderStyle: 'none',
+                            borderColor: '#2d3648',
+                            height: '90%',
+                            minWidth: '40px',
+                            padding: '0px'
+                        }}>
+
+                        <i className="bi bi-box-arrow-right"></i>
+                    </button>
+                </div>
+
                 <div className="d-flex d-xxl-flex flex-column justify-content-center align-items-center align-items-xxl-center" style={{ height: 'initial', width: '100%' }}>
                     <img className="rounded-circle" src={PlaceHolder} style={{ height: '150px', width: '150px', marginBottom: '15px' }} alt="User Profile" />
-                    <h1 className="text-center" style={{ width: '100%', fontSize: '258%', fontFamily: 'Inter, sans-serif', marginBottom: '0px', fontWeight: 'bold' }}>
-                        Name Surname
-                    </h1>
-                    <div className="text-end d-flex d-xxl-flex flex-row justify-content-center align-items-center justify-content-xxl-center align-items-xxl-center" style={{ paddingRight: '0px', fontSize: '16px', width: '100%' }}>
-                        <p style={{ marginBottom: '0px', fontWeight: 'bold', fontFamily: 'Inter, sans-serif', width: '35px' }}>4/5</p>
-                    </div>
+
+                    {editMode
+                        ?
+                        <div className="d-flex flex-row justify-content-center" style={{width:'100%', padding:'0px', height:'37px'}}>
+                            <input className="form-control mb-3" value={newName} onChange={e=>setNewName(e.target.value)} type="text" name="name" placeholder="Name" style={inputStyles} required />
+                            <input className="form-control mb-3" value={newSurname} onChange={e=>setNewSurname(e.target.value)} type="text" name="surname" placeholder="Surname" style={inputStyles} required />
+                        </div>
+                        :
+                        <h1 className="text-center" style={{ width: '100%', fontSize: '258%', fontFamily: 'Inter, sans-serif', marginBottom: '0px', fontWeight: 'bold' }}>
+                            {nameSurname}
+                        </h1>
+                    }
+
+                    {editMode
+                        ?
+                        <div className="d-flex flex-row justify-content-center" style={{width:'100%', paddingTop:'5px', height:'37px'}}>
+                            <input className="form-control mb-3" value={oldPassword} onChange={e=>setOldPassword(e.target.value)} type="password" name="old_password" placeholder="Old Password" style={inputStyles} required />
+                            <input className="form-control mb-3" value={newPassword} onChange={e=>setNewPassword(e.target.value)} type="password" name="new_password" placeholder="New Password" style={inputStyles} required />
+                            <input className="form-control mb-3" value={newPasswordConfirm} onChange={e=>setNewPasswordConfirm(e.target.value)} type="password" name="new_password" placeholder="Confirm New Password" style={inputStyles} required />
+                        </div>
+                        :
+                        <div className="text-end d-flex d-xxl-flex flex-row justify-content-center align-items-center justify-content-xxl-center align-items-center" style={{fontSize: '16px', width: '100%' }}>
+                            <i className="bi bi-star-fill" style={{marginBottom: '0px', borderStyle:'none' ,color: 'var(--bs-yellow)'}}></i>
+                            <i className="bi bi-star-fill" style={{borderStyle:'none' ,color: 'var(--bs-yellow)'}}></i>
+                            <i className="bi bi-star-fill" style={{borderStyle:'none' ,color: 'var(--bs-yellow)'}}></i>
+                            <i className="bi bi-star-half" style={{borderStyle:'none' ,color: 'var(--bs-yellow)'}}></i>
+                            <i className="bi bi-star" style={{borderStyle:'none' ,color: 'var(--bs-yellow)'}}></i>
+                            <p style={{ marginTop:'3px', marginLeft:'5px', marginBottom: '0px', fontWeight: 'bold', fontFamily: 'Inter, sans-serif', width: '35px' }}>3.5/5</p>
+                        </div>
+                    }
                 </div>
                 <hr className="d-xxl-flex justify-content-xxl-center align-items-xxl-center" style={{ width: '100%', margin: '0px', marginTop: '10px', marginBottom: '10px' }} />
                 <div className="d-flex flex-row justify-content-between align-items-center align-content-around" style={{ height: 'initial', width: '100%', padding: '2%' }}>
-                    <p style={{ marginBottom: '0px', fontFamily: 'Inter, sans-serif', fontSize: '22px' }}>Phone</p>
-                    <p style={{ marginBottom: '0px', fontFamily: 'Inter, sans-serif', fontSize: '22px' }}>E-Mail</p>
+                    <p style={{ marginBottom: '0px', fontFamily: 'Inter, sans-serif', fontSize: '18px' }}>Phone</p>
+                    <p style={{ marginBottom: '0px', fontFamily: 'Inter, sans-serif', fontSize: '18px' }}>{email}</p>
                 </div>
                 <hr className="d-xxl-flex justify-content-xxl-center align-items-xxl-center" style={{ width: '100%', margin: '0px', marginTop: '10px', marginBottom: '10px' }} />
                 <div className="d-flex flex-column justify-content-between align-items-center align-content-around align-items-xxl-start" style={{ height: '25%', width: '100%', minHeight: '100px', background: '#edf0f7', borderRadius: '10px', paddingRight: '5px', paddingLeft: '10px', paddingTop: '3px', maxHeight: '200px' }}>
                     <div className="d-flex flex-row justify-content-between align-items-center align-content-around" style={{ height: '30%', width: '100%', minHeight: '40px' }}>
-                        <h1 style={{ width: '60%', fontSize: '1.6em', fontFamily: 'Inter, sans-serif', marginBottom: '0px' }}>About Me</h1>
+                        <h1 style={{fontSize: '1.6em', fontFamily: 'Inter, sans-serif', marginLeft: '0px', justifyContent:'start' }}>About Me</h1>
                     </div>
                 </div>
                 <hr className="d-xxl-flex justify-content-xxl-center align-items-xxl-center" style={{ width: '100%', margin: '0px', marginTop: '10px', marginBottom: '10px' }} />
@@ -268,39 +508,63 @@ function ProfileArea({ myProfile }) {
                             className="btn btn-primary d-flex d-xxl-flex justify-content-center align-items-center justify-content-xxl-center align-items-xxl-center"
                             type="button"
                             style={{ width: '40px', fontWeight: 'bold', background: '#2d3648', borderStyle: 'none', borderColor: '#2d3648', height: '90%' }}
+                            onClick={deleteUser}
                         >
-                            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" className="bi bi-gear-wide-connected">
-                                <path fillRule='evenodd' d="M7.068.727c.243-.97 1.62-.97 1.864 0l.071.286a.96.96 0 0 0 1.622.434l.205-.211c.695-.719 1.888-.03 1.613.931l-.08.284a.96.96 0 0 0 1.187 1.187l.283-.081c.96-.275 1.65.918.931 1.613l-.211.205a.96.96 0 0 0 .434 1.622l.286.071c.97.243.97 1.62 0 1.864l-.286.071a.96.96 0 0 0-.434 1.622l.211.205c.719.695.03 1.888-.931 1.613l-.284-.08a.96.96 0 0 0-1.187 1.187l.081.283c.275.96-.918 1.65-1.613.931l-.205-.211a.96.96 0 0 0-1.622.434l-.071.286c-.243.97-1.62.97-1.864 0l-.071-.286a.96.96 0 0 0-1.622-.434l-.205.211c-.695.719-1.888.03-1.613-.931l.08-.284a.96.96 0 0 0-1.186-1.187l-.284.081c-.96.275-1.65-.918-.931-1.613l.211-.205a.96.96 0 0 0-.434-1.622l-.286-.071c-.97-.243-.97-1.62 0-1.864l.286-.071a.96.96 0 0 0 .434-1.622l-.211-.205c-.719-.695-.03-1.888.931-1.613l.284.08a.96.96 0 0 0 1.187-1.186l-.081-.284c-.275-.96.918-1.65 1.613-.931l.205.211a.96.96 0 0 0 1.622-.434l.071-.286zM12.973 8.5H8.25l-2.834 3.779A4.998 4.998 0 0 0 12.973 8.5zm0-1a4.998 4.998 0 0 0-7.557-3.779l2.834 3.78h4.723zM5.048 3.967c-.03.021-.058.043-.087.065l.087-.065zm-.431.355A4.984 4.984 0 0 0 3.002 8c0 1.455.622 2.765 1.615 3.678L7.375 8 4.617 4.322zm.344 7.646.087.065-.087-.065z"></path>
-                            </svg>
+
+                            <i className="bi bi-trash"></i>
                         </button>
                         <button
                             className="btn btn-primary d-flex d-xxl-flex justify-content-center align-items-center justify-content-xxl-center align-items-xxl-center"
                             type="button"
                             style={{ width: '40px', fontWeight: 'bold', background: '#2d3648', borderStyle: 'none', borderColor: '#2d3648', height: '90%' }}
+                            onClick={cancelUpdate}
                         >
-                            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" className="bi bi-pencil-square">
-                                <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"></path>
-                                <path fillRule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"></path>
-                            </svg>
+                            {editMode ?  loading ? <span className="spinner-border spinner-border-sm" aria-hidden="true"></span> : <i className="bi bi-x-lg"></i>: <i className="bi bi-gear"></i>}
+
                         </button>
+
+                        <button
+                            className="btn btn-primary d-flex d-xxl-flex justify-content-center align-items-center justify-content-xxl-center align-items-xxl-center"
+                            type="button"
+                            style={{ width: '40px', fontWeight: 'bold', background: '#2d3648', borderStyle: 'none', borderColor: '#2d3648', height: '90%' }}
+                            onClick={handleClick}
+                        >
+                            {editMode ? loading ? <span className="spinner-border spinner-border-sm" aria-hidden="true"></span> : < i className = "bi bi-check-lg" > < /i> : <i className="bi bi-pencil-square"></i> }
+                        </button>
+
+                        {/*<OverlayTrigger
+                            placement="bottom"
+                            trigger="click"
+                            overlay={(
+                                <Popover id="popover-positioned-top" title="Popover top">
+                                    <strong>Holy guacamole!</strong> Check this info.
+                                </Popover>
+                            )}>
+                            <Button variant="success">
+                                Open Popover
+                            </Button>
+                        </OverlayTrigger>*/}
+
+
                     </div>) : (<></>)}
                 </div>
             </div>
         </div>
     );
-}
 
-function Profile({ myProfile }) {
-    return (
-        <section className="d-flex d-xxl-flex flex-grow-1 justify-content-center align-items-start align-items-xl-start justify-content-xxl-center align-items-xxl-start py-4 py-xl-5" style={{ background: '#edf0f7', minHeight: '91vh' }}>
-            <div className="container d-sm-flex d-md-flex d-lg-flex d-xl-flex d-xxl-flex justify-content-center align-items-center justify-content-sm-center align-items-sm-center justify-content-md-center align-items-md-center justify-content-lg-center align-items-lg-center justify-content-xl-center align-items-xl-center justify-content-xxl-center align-items-xxl-center h-100">
-                <div className="row gx-1 gy-3 d-xxl-flex justify-content-sm-center justify-content-md-center justify-content-lg-center align-items-xl-center h-100" style={{ margin: '0px', width: '100%', marginTop: '-21px' }}></div>
-                <Products myProfile={myProfile}></Products>
-                <ProfileArea myProfile={myProfile}></ProfileArea>
-            </div>
-        </section>
-    );
 
 }
+
+const inputStyles = {
+    background: '#a0abc0',
+    height: '100%',
+    border: 'none',
+    width: '150px',
+    marginRight: '10px',
+    marginLeft: '10px',
+    paddingBottom: '5px',
+    fontFamily: 'Inter, sans-serif'
+};
+
 
 export default Profile;
