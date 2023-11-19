@@ -35,19 +35,19 @@ class ProductAdmin(admin.ModelAdmin):
     
     list_display = ('title', 'category', 'user')
     ordering = ['id']
-    search_fields = ('title', 'category', 'user__name', 'user__email')
+    search_fields = ('title', 'category',)
 
     # Specify the list of fields to be used as filters in the admin list view
     list_filter = ('category', 'user')
-
     fieldsets = (
-        (None, {'fields': ('title', 'description', 'product_photo', 'category', 'price', 'user')}),
+        (None, {'fields': ('title', 'description', 'product_photo', 'category', 'price', 'user',)}),
         ('Advanced options', {
             'classes': ('collapse',),
-            'fields': ('time_minutes', 'return_date'),
+            'fields': ('return_date',),
         }),
+        (_('Dates'), {'fields': ('upload_date',)}),
     )
-
+    readonly_fields = ['upload_date']
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
