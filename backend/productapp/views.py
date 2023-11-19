@@ -7,10 +7,10 @@ from rest_framework.permissions import IsAuthenticated
 from mainapp.models import Product 
 from productapp import serializers
 
-class ProductViewSet (viewsets.ModelViewSet):
+class ProductViewSet(viewsets.ModelViewSet):
     """View for manage recipe APIs."""
 
-    serializer_class = serializers.ProductSerializer
+    serializer_class = serializers.ProductDetailSerializer
     queryset = Product.objects.all()
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
@@ -18,3 +18,9 @@ class ProductViewSet (viewsets.ModelViewSet):
     def get_queryset (self):
         """Retrieve recipes for authenticated user."""
         return self.queryset.filter(user=self.request.user).order_by('-id')
+    
+    def get_serializer_class(self) :
+        """Return the serializer class for request."""
+        if self.action == 'list':
+            return serializers.ProductSerializer
+        return self.serializer_class

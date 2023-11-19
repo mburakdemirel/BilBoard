@@ -30,7 +30,7 @@ urlpatterns = [
     #What schema to use when loading swagger => url_name='schema'
     path('api/docs/', SpectacularSwaggerView.as_view(url_name='api-schema'), name='api-docs'),
     path('api/user/', include('userapp.urls')),
-    path('api/product/', include('productapp.urls')),
+    path('api/', include('productapp.urls')),
 ]
 
 if settings.DEBUG:

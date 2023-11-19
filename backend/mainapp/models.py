@@ -73,7 +73,8 @@ class Product(models.Model):
     )
     title = models.CharField(max_length=100)
     description = models.TextField(blank=True)
-    time_minutes = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
+    upload_time = models.CharField(blank=True, null=True) #bu ilerde içi silinecek ve daytime ile yüklendiği an
+    # create product view de set edilecek. 
     product_photo = models.ImageField(upload_to='pphotos/', blank=True, null=True)
     category = models.CharField(max_length=10, choices=CATEGORY_CHOICES)
     return_date = models.DateField(null=True, blank=True) # Optional field for borrow category
