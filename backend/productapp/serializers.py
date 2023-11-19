@@ -5,7 +5,7 @@ class ProductSerializer (serializers.ModelSerializer):
     """Serializer for products."""
     class Meta:
         model = Product
-        fields = ['id', 'title', 'price', 'return_date', 'product_photo', 'category']
+        fields = ['id', 'title', 'price', 'return_date', 'product_photo', 'category', 'description', 'upload_date', 'user']
         read_only_fields = ['id']
 
     def validate(self, data):
@@ -19,14 +19,7 @@ class ProductSerializer (serializers.ModelSerializer):
             raise serializers.ValidationError("Price is required for secondhand products.")
 
         if category == 'borrow' and return_date is None:
-            print("heeyyy", data)
             raise serializers.ValidationError("Return date is required for borrow products.")
 
         return data
-
-
-class ProductDetailSerializer(ProductSerializer):
-    """Serializer for product detail view."""
-    class Meta (ProductSerializer.Meta):
-        fields = ProductSerializer.Meta.fields + ['description', 'upload_date']
     
