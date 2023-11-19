@@ -288,11 +288,11 @@ function ProfileArea({myProfile,func} ) {
 
     const [editMode, setEditMode] = useState(false);
     const updateUser = async (user) => {
-
         setLoading(true);
         try{
             // do update operations
             const {data} = await axios.patch('http://127.0.0.1:8000/api/user/me/', user);
+            console.log(data);
             myProfile = data;
             setNameSurname(myProfile.name + " " + myProfile.surname)
             setEmail(myProfile.email);
@@ -300,24 +300,37 @@ function ProfileArea({myProfile,func} ) {
             setLoading(false);
         }
         catch (error){
-                setLoading(false);
+            console.log(error.response.data.error);
+            window.alert(error.response.data.error)
+            setLoading(false);
         }
     }
 
 
     const handleClick = () => {
+        setNewPasswordConfirm("");
+        setNewPassword("");
+        setOldPassword("");
+
         if(editMode){
             if(oldPassword) {
-                if (newPassword === newPasswordConfirm) {
-                    const user = {
-                        name: newName,
-                        surname: newSurname,
-                        password: newPassword
-                    };
-                    updateUser(user);
-                } else {
-                    window.alert("Passwords are not same!")
+                if(newPassword && newPasswordConfirm){
+                    if (newPassword === newPasswordConfirm) {
+                        const user = {
+                            name: newName,
+                            surname: newSurname,
+                            old_password: oldPassword,
+                            new_password: newPassword,
+                        };
+                        updateUser(user);
+                    } else {
+                        window.alert("Passwords are not same!")
+                    }
                 }
+                else{
+                    window.alert("You need to enter new passwords!")
+                }
+
             }
             else if(newPassword || newPasswordConfirm ){
                 window.alert("You need to enter old password")
