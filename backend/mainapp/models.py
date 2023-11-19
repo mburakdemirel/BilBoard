@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 
 
@@ -58,3 +59,27 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self) -> str:
         return self.email
+    
+class Product(models.Model):
+    CATEGORY_CHOICES = [
+        ('secondhand', 'Secondhand'),
+        ('borrow', 'Borrow'),
+        ('donation', 'Donation'),
+    ]
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+    )
+    title = models.CharField(max_length=100)
+    description = models.TextField(blank=True)
+    time_minutes = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
+    product_photo = models.ImageField(upload_to='pphotos/', blank=True, null=True)
+    category = models.CharField(max_length=10, choices=CATEGORY_CHOICES)
+    return_date = models.DateField(null=True, blank=True) # Optional field for borrow category
+    # Common fields for all products
+    price = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True)
+    # Other common fields...
+
+    def _str_(self):
+        return self.title

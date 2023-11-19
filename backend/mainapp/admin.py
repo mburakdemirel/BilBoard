@@ -30,5 +30,32 @@ class UserAdmin(BaseUserAdmin):
         }
     ),
 
+class ProductAdmin(admin.ModelAdmin):
+    """Define the admin pages for products."""
+    
+    list_display = ('title', 'category', 'user')
+    ordering = ['id']
+    search_fields = ('title', 'category', 'user__name', 'user__email')
+
+    # Specify the list of fields to be used as filters in the admin list view
+    list_filter = ('category', 'user')
+
+    fieldsets = (
+        (None, {'fields': ('title', 'description', 'product_photo', 'category', 'price', 'user')}),
+        ('Advanced options', {
+            'classes': ('collapse',),
+            'fields': ('time_minutes', 'return_date'),
+        }),
+    )
+
+    add_fieldsets = (
+        (None, {
+            'classes': ('wide',),
+            'fields': ('title', 'description', 'category', 'price', 'user'),
+        }),
+    )
+
+
 admin.site.register(models.CustomUser, UserAdmin)
+admin.site.register(models.Product, ProductAdmin)
 
