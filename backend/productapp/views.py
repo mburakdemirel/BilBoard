@@ -8,7 +8,7 @@ from mainapp.models import Product
 from productapp import serializers
 
 class UserProductViewSet(viewsets.ModelViewSet):
-    """View for manage recipe APIs."""
+    """View for manage Product APIs."""
 
     # Detailed veya non detailed şeyini düşün. Hepsi tek seferde dönebilir.
     serializer_class = serializers.ProductSerializer
@@ -17,16 +17,16 @@ class UserProductViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        """Retrieve recipes for authenticated user."""
+        """Retrieve Products for authenticated user."""
         return self.queryset.filter(user=self.request.user).order_by('-id')
 
     def perform_create(self, serializer):
-        """Create a new recipe."""
+        """Create a new product."""
         serializer.save(user=self.request.user)
 
 
 class SecondhandProductViewSet(viewsets.ReadOnlyModelViewSet):
-    """View for managing all products in the system."""
+    """View for managing all secondhand products in the system."""
     serializer_class = serializers.ProductSerializer
     queryset = Product.objects.all()
     authentication_classes = [JWTAuthentication]
