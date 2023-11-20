@@ -141,7 +141,7 @@ function Products({allMessages}) {
                                         <h3 style={{width:'fit-content', paddingTop: '0px', margin: '0px', marginTop: '1px' }}>{allMessages[index].product_price + "₺"}</h3>
                                     </div>
                                     <div className="d-flex justify-content-end align-items-center" style={{ width: '50%', height: '100%' }}>
-                                        <button className="btn btn-primary d-flex d-xxl-flex justify-content-center align-items-center justify-content-xxl-center align-items-xxl-center" style={{ width: '40px', fontWeight: 'bold', background: '#2d3648', borderStyle: 'none', borderColor: '#2d3648', height: '35px' }}>
+                                        <button className="rounded-circle btn btn-primary d-flex justify-content-center align-items-center" style={{ width: '24px', fontWeight: 'bold', background: '#2d3648', borderStyle: 'none', borderColor: '#2d3648', height: '24px' }}>
                                             <i className="fas fa-share-alt"></i>
                                         </button>
                                         <span style={{ width: '12px' }}></span>
