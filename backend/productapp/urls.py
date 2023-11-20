@@ -12,13 +12,21 @@ from productapp import views
 
 router = DefaultRouter()
 # /user/product/ diyip giderse daha güzel olur çünkü user özelinde göstercek ürünleri
-router.register('product', views.ProductViewSet)
-
+router.register('user/product', views.UserProductViewSet)
+router.register('product/secondhand', views.SecondhandProductViewSet)
+router.register('product/borrow', views.BorrowProductViewSet)
+router.register('product/donation', views.DonationProductViewSet)
 app_name = 'productapp'
 
 urlpatterns = [
-    #api/user/product/<product_id>/ => retrieve
-    #api/user/product/ => list
-    path('user/', include(router.urls)),
+    #api/user/product/<product_id>/ => retrieve => get
+    #api/user/product/ => list => get
+    #api/user/product/ => create => post
+    #api/product/secondhand/<product_id>/ => retrieve => get
+    #api/user/product/secondhand/ => list => get
+    #api/product/borrow/<product_id>/ => retrieve => get
+    #api/product/borrow/ => list => get
+    #api/product/donation/<product_id>/ => retrieve => get
+    #api/product/donation/ => list => get
     path('', include(router.urls)),
 ]

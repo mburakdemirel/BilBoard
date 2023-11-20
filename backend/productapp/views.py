@@ -7,7 +7,7 @@ from rest_framework.permissions import IsAuthenticated
 from mainapp.models import Product 
 from productapp import serializers
 
-class ProductViewSet(viewsets.ModelViewSet):
+class UserProductViewSet(viewsets.ModelViewSet):
     """View for manage recipe APIs."""
 
     # Detailed veya non detailed şeyini düşün. Hepsi tek seferde dönebilir.
@@ -23,3 +23,39 @@ class ProductViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         """Create a new recipe."""
         serializer.save(user=self.request.user)
+
+
+class SecondhandProductViewSet(viewsets.ReadOnlyModelViewSet):
+    """View for managing all products in the system."""
+    serializer_class = serializers.ProductSerializer
+    queryset = Product.objects.all()
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        """Retrieve all secondhand products."""
+        return Product.objects.filter(category='secondhand').order_by('-id')
+    
+
+class BorrowProductViewSet(viewsets.ReadOnlyModelViewSet):
+    """View for managing all borrow products in the system."""
+    serializer_class = serializers.ProductSerializer
+    queryset = Product.objects.all()
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        """Retrieve all borrow products."""
+        return Product.objects.filter(category='borrow').order_by('-id')
+    
+
+class DonationProductViewSet(viewsets.ReadOnlyModelViewSet):
+    """View for managing all donation products in the system."""
+    serializer_class = serializers.ProductSerializer
+    queryset = Product.objects.all()
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        """Retrieve all donation products."""
+        return Product.objects.filter(category='donation').order_by('-id')
