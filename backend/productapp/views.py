@@ -6,6 +6,8 @@ from rest_framework.permissions import IsAuthenticated
 from .permissions import IsOwnerOrReadOnly
 from mainapp.models import Product 
 from productapp import serializers
+from rest_framework.response import Response
+from rest_framework.decorators import api_view, permission_classes
 
 class UserProductViewSet(viewsets.ModelViewSet):
     """View for manage Product APIs."""
@@ -65,3 +67,16 @@ class DonationProductViewSet(viewsets.ReadOnlyModelViewSet):
     def get_queryset(self):
         """Retrieve all donation products."""
         return Product.objects.filter(category='donation').order_by('-id')
+
+    
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def get_products_by_user_id(request):
+    user_id = request.data.get('user_id')
+    try:
+        products = Product.objects.filter(user_id=user_id)
+        serializer = serializers.ProductSerializer(products, many=True)
+        return Response(serializer.data)
+    except Product.DoesNotExist:
+        return Response({'error': 'No products found for the given user ID'}, status=404)

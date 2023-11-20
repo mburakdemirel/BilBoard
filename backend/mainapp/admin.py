@@ -9,7 +9,7 @@ from mainapp import models
 class UserAdmin(BaseUserAdmin):
     """Define the admin pages for users."""
     ordering = ['id']
-    list_display = ['email', 'name', 'surname']
+    list_display = ['email', 'name', 'surname', 'id']
     #Specify the fields in our model that we want to be shown in the admin page
     fieldsets = (
         #None is title section

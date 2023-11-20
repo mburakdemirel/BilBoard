@@ -79,6 +79,7 @@ class Product(models.Model):
     product_photo = models.ImageField(upload_to='pphotos/', blank=True, null=True)
     category = models.CharField(max_length=10, choices=CATEGORY_CHOICES)
     return_date = models.DateField(null=True, blank=True)
+    product_type = models.CharField(max_length=30, blank=True, null=True)
     # Common fields for all products
     price = models.DecimalField(max_digits=7, decimal_places=2, null=True, blank=True) 
 

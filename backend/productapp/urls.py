@@ -9,6 +9,7 @@ from django.urls import (
 
 from rest_framework.routers import DefaultRouter
 from productapp import views
+from productapp.views import get_products_by_user_id
 
 router = DefaultRouter()
 # /user/product/ diyip giderse daha güzel olur çünkü user özelinde göstercek ürünleri
@@ -29,4 +30,5 @@ urlpatterns = [
     #api/product/donation/<product_id>/ => retrieve => get
     #api/product/donation/ => list => get
     path('', include(router.urls)),
+    path('products/by-id/', get_products_by_user_id, name='get-products-by-user-id'),
 ]

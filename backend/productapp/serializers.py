@@ -1,11 +1,17 @@
 from rest_framework import serializers
-from mainapp.models import Product
+from mainapp.models import Product, CustomUser
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = ['id', 'email', 'name', 'surname', 'profile_photo', 'rate_ratio', 'description', 'phone_number']
 
 class ProductCreateSerializer (serializers.ModelSerializer):
     """Serializer for products."""
+    user = UserSerializer(read_only=True)
     class Meta:
         model = Product
-        fields = ['id', 'title', 'price', 'return_date', 'product_photo', 'category', 'description', 'upload_date', 'user']
+        fields = ['id', 'title', 'price', 'return_date', 'product_photo', 'category', 'description', 'upload_date', 'product_type', 'user']
         read_only_fields = ['id', 'user', 'upload_date']
 
     def validate(self, data):
@@ -15,22 +21,44 @@ class ProductCreateSerializer (serializers.ModelSerializer):
         return_date = data.get('return_date')
 
         #Frontend engellemeli çünkü return_date'i de girebilir adam o field gözükmemeli
-        if category == 'secondhand' and price is None:
-            raise serializers.ValidationError("Price is required for secondhand products.")
-
-        if category == 'borrow' and return_date is None:
-            raise serializers.ValidationError("Return date is required for borrow products.")
-
+        if category == 'secondhand':
+            if price is None:
+                raise serializers.ValidationError("Price is required for secondhand products.")
+            if 'return_date' in data:
+                raise serializers.ValidationError("Return date should not be included for secondhand products.")
+            
+        if category == 'borrow':
+            if return_date is None:
+                raise serializers.ValidationError("Return date is required for borrow products.")
+            if 'price' in data:
+                raise serializers.ValidationError("Price should not be included for borrow products.")
+            
         return data
     
 
 class ProductUpdateSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True)
     class Meta:
         model = Product
-        fields = ['id', 'title', 'price', 'return_date', 'product_photo', 'category', 'description', 'upload_date', 'user']
+        fields = ['id', 'title', 'price', 'return_date', 'product_photo', 'category', 'description', 'upload_date', 'product_type','user']
         read_only_fields = ['id', 'user', 'category', 'upload_date']
 
+    def validate(self, data):
+        """Check category and set price, return_date fields."""
+        if self.instance:
+            category = self.instance.category
+        #Frontend engellemeli çünkü return_date'i de girebilir adam o field gözükmemeli
+        if category == 'secondhand':
+            if 'return_date' in data:
+                raise serializers.ValidationError("Return date should not be included for secondhand products.")
+        if category == 'borrow':
+            if 'price' in data:
+                raise serializers.ValidationError("Price should not be included for borrow products.")
+            
+        return data
+
 class ProductSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True)
     class Meta:
         model = Product
-        fields = ['id', 'title', 'price', 'return_date', 'product_photo', 'category', 'description', 'upload_date', 'user']
+        fields = ['id', 'title', 'price', 'return_date', 'product_photo', 'category', 'description', 'upload_date', 'product_type', 'user']
