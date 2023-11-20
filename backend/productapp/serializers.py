@@ -1,12 +1,12 @@
 from rest_framework import serializers
 from mainapp.models import Product
 
-class ProductSerializer (serializers.ModelSerializer):
+class ProductCreateSerializer (serializers.ModelSerializer):
     """Serializer for products."""
     class Meta:
         model = Product
         fields = ['id', 'title', 'price', 'return_date', 'product_photo', 'category', 'description', 'upload_date', 'user']
-        read_only_fields = ['id']
+        read_only_fields = ['id', 'user', 'upload_date']
 
     def validate(self, data):
         """Check category and set price, return_date fields."""
@@ -23,3 +23,14 @@ class ProductSerializer (serializers.ModelSerializer):
 
         return data
     
+
+class ProductUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Product
+        fields = ['id', 'title', 'price', 'return_date', 'product_photo', 'category', 'description', 'upload_date', 'user']
+        read_only_fields = ['id', 'user', 'category', 'upload_date']
+
+class ProductSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Product
+        fields = ['id', 'title', 'price', 'return_date', 'product_photo', 'category', 'description', 'upload_date', 'user']

@@ -3,7 +3,7 @@
 from rest_framework import viewsets 
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.permissions import IsAuthenticated
-
+from .permissions import IsOwnerOrReadOnly
 from mainapp.models import Product 
 from productapp import serializers
 
@@ -11,10 +11,16 @@ class UserProductViewSet(viewsets.ModelViewSet):
     """View for manage Product APIs."""
 
     # Detailed veya non detailed şeyini düşün. Hepsi tek seferde dönebilir.
-    serializer_class = serializers.ProductSerializer
     queryset = Product.objects.all()
     authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
+
+    def get_serializer_class(self):
+        if self.action in ['create']:
+            return serializers.ProductCreateSerializer
+        elif self.action in ['update', 'partial_update']:
+            return serializers.ProductUpdateSerializer
+        return serializers.ProductSerializer
 
     def get_queryset(self):
         """Retrieve Products for authenticated user."""
