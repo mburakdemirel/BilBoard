@@ -148,9 +148,9 @@ REST_FRAMEWORK = {
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-MEDIA_URL = 'media/'
+MEDIA_URL = '/media/'
 
-MEDIA_ROOT = BASE_DIR/'pphotos'
+MEDIA_ROOT = BASE_DIR/'pphotos/'
 
 SIMPLE_JWT = {
     #It contains all the information the server needs to know if the user / device can access the resource you are
