@@ -2,7 +2,7 @@ from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.contrib.auth import get_user_model
-from django.core.exceptions import ValidationError
+
 # Create your models here.
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, name, surname, password=None, **extra_fields):
@@ -89,7 +89,7 @@ class Product(models.Model):
         return self.title
 
 class Message(models.Model):
-    author = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name="author")
+    author = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
     content = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
 
@@ -97,8 +97,8 @@ class Message(models.Model):
         return self.author.id +  " - " + self.timestamp.strftime("%d/%m/%Y, %H:%M:%S")
 
 class Chat(models.Model):
-    participiants = models.ManyToManyField(get_user_model(), related_name="participiants")
-    messages = models.ManyToManyField(Message, related_name="messages", blank=True)
+    participiants = models.ManyToManyField(get_user_model(), related_name="chats")
+    messages = models.ManyToManyField(Message, blank=True)
 
     def __str__(self):
         return '{}'.format(self.id)
@@ -106,7 +106,5 @@ class Chat(models.Model):
     def get_messages(self):
         return self.messages.all()
 
-    # def clean(self, *args, **kwargs):
-    #     if self.participiants.count() > 2:
-    #         raise ValidationError("Chat can only have two participiants")
-    #     super(Chat, self).clean(*args, **kwargs)
+    def get_participiants(self):
+        return "\n".join([str(p) for p in self.participiants.all()])

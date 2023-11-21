@@ -55,8 +55,12 @@ class ProductAdmin(admin.ModelAdmin):
         }),
     )
 
+
+class ChatAdmin(admin.ModelAdmin):
+    list_display = ('id', 'get_participiants')
+
 admin.site.register(models.CustomUser, UserAdmin)
 admin.site.register(models.Product, ProductAdmin)
 
 # Test
-admin.site.register(models.Chat)
+admin.site.register(models.Chat, ChatAdmin)
