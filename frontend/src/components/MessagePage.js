@@ -2,10 +2,14 @@ import PlaceHolder from './assets/img/WF Image Placeholder.png';
 import axios from "axios";
 import React, {useEffect, useState} from "react";
 import { w3cwebsocket as W3CWebSocket } from "websocket";
+import {useContext} from "react";
+import ContextApi from "../context/ContextApi";
 // TODO: put all style attributes into a css file and think about the layout of this page
 // Should there be products next to the messages??
 function MessagePage() {
     const [allMessages, setAllMessages] = useState("");
+    const {newMessage} = useContext(ContextApi);
+    console.log(newMessage)
 
     useEffect(()=>{
         // User messages will be uploaded when page first open
@@ -16,8 +20,13 @@ function MessagePage() {
             { product_name: 'Deneme2', product_price: "12" },
             { product_name: 'Deneme3', product_price: "222"  }
         ];
-        console.log(messages)
-        setAllMessages(messages)
+
+        if(newMessage){
+            setAllMessages([...messages, newMessage])
+        }
+        else{
+            setAllMessages(messages)
+        }
 
     },[])
 
@@ -26,11 +35,8 @@ function MessagePage() {
     const uploadAllMessages = async () => {
         try{
             axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
-            const {data} = await axios.get('http://127.0.0.1:8000/api/user/me/') ;
-            console.log(data);
-
-
-
+            //const {data} = await axios.get('http://127.0.0.1:8000/api/user/me/') ;
+            //console.log(data);
         }
         catch (error){
             if (error.response) {

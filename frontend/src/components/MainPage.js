@@ -2,6 +2,7 @@ import React from 'react';
 import './assets/bootstrap/css/bootstrap.min.css';
 import PlaceHolder from './assets/img/WF Image Placeholder.png';
 import {useEffect, useState} from "react";
+import InfiniteScroll from 'react-infinite-scroll-component';
 
 import axios from "axios";
 import {useContext} from "react";
@@ -10,7 +11,7 @@ import {useNavigate} from "react-router-dom";
 
 function MainPage() {
     const navigate = useNavigate();
-
+    const imageUrl = "http://127.0.0.1:8000/media/pphotos/Activity_Diagram1.jpg";
 
     const {pageType,changePageType} = useContext(ContextApi);
     console.log(pageType);
@@ -60,7 +61,7 @@ function MainPage() {
     }
 
     return (
-        <div className="flex-column">
+        <div className="d-flex flex-column">
             <section className="d-flex  justify-content-center" style={{ backgroundColor:'', width: '100%' }}>
                 <div className="d-xl-flex justify-content-between " style={{ height: '100%', width: '1265px', marginTop: '5px', marginBottom: '5px' }}>
                     <div className="d-flex justify-content-center" style={{ maxWidth: '100%', marginTop: '5px', marginBottom: '5px' }}>
@@ -79,9 +80,10 @@ function MainPage() {
             </section>
 
 
-                <section className="d-flex py-4 align-items-center justify-content-center" style={{ background: '#edf0f7', minHeight: '91vh' }}>
+                <section className="d-flex py-4 align-items-start justify-content-center" style={{ background: '#edf0f7', minHeight: '91vh' }}>
                     {loading ? <span className="spinner-border spinner-border" aria-hidden="true" style={{height:'50px', width:'50px'}}></span>
                         :
+
                     <div className="container" style={{ paddingRight: '1%', paddingLeft: '1%' }}>
                         <div className="row d-flex justify-content-center" style={{ marginRight: '5%', marginLeft: '5%' }}>
                             {Array(products.length).fill().map((_, index) => {
@@ -91,7 +93,7 @@ function MainPage() {
                                      onClick={()=>sendProductDetailPage(products[index].id)}>
                                     <div className="card" style={{ borderRadius: '10px', borderStyle: 'none', borderBottomStyle: 'none', padding: '5px', background: 'transparent', margin: '2%' }}>
                                         <div className="card-body" style={{ width: '100%', height: '100%', padding: '0px' }}>
-                                            <img style={{ width: '100%', height: '100%' }} src={PlaceHolder} width="247" height="247" />
+                                            <img style={{ width: '100%', height: '100%', borderRadius:'10px'}} src={imageUrl} width="247" height="247" />
                                             <div className="div-special" style={{ height: '45px', width: '100%', marginTop: '-45px', background: '#21252955', position: 'relative', borderBottomRightRadius: '10px', borderBottomLeftRadius: '10px', paddingTop: '3px', paddingBottom: '3px', paddingRight: '5px', paddingLeft: '5px' }}>
                                                 <h1 className="text-center d-flex d-xxl-flex justify-content-start align-items-start justify-content-xxl-start"
                                                     style={{ width: '100%', fontSize: '16px', fontFamily: 'Inter, sans-serif', marginBottom: '0px', color:'#EDF0F7' }}>{products[index].title}</h1>
@@ -103,6 +105,9 @@ function MainPage() {
                                 </div>
                                 )}
                             })}
+
+
+
                         </div>
                     </div>
                     }

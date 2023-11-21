@@ -19,38 +19,28 @@ import {useState, useEffect} from "react";
 function App() {
 
     const [type, setType] = useState('');
+    const [message, setMessage] = useState('');
 
-    // Load the saved type from localStorage when the component mounts
-    useEffect(() => {
-        const savedType = localStorage.getItem('type');
-        console.log("in useEffect: " + savedType);
-        if (savedType) {
-            setType(savedType);
-        }
-    }, []);
+    const sendMessage = (nMessage) => {
+        setMessage(nMessage);
 
-    // Save the type to localStorage whenever it changes
-    useEffect(() => {
-        localStorage.setItem('type', type);
-    }, [type]);
-
-    const changeType = (pageType) => {
-        setType(pageType);
+    }
+    const changeType = (newType) => {
+        setType(newType);
     }
 
     return (
-      <ContextApi.Provider value={{pageType: type, changePageType:changeType}}>
+      <ContextApi.Provider value={{pageType: type, changePageType:changeType, newMessage: message, sendNewMessage: sendMessage, }}>
           <div className="App">
               <Routes>
+                  <Route path='/' element={<><NavigationBarLanding/><LandingPage/></>}></Route>
                   <Route path='/login' element={<><NavigationBarLanding/><LoginPage/></>}></Route>
                   <Route path='/register' element={<><NavigationBarLanding/><RegisterPage/></>}></Route>
-                  {/** We will probably add a new component called <ProtectedRoute> or something for pages that should be seen after authentication */}
-                  <Route path='/' element={<><NavigationBarLanding/><LandingPage/></>}></Route>
-                  <Route path='/profile' element={<><NavigationBarLanding/><Profile/></>}></Route>
                   <Route path='/change_password' element={<><NavigationBarLanding/><ForgotPasswordPage/></>}></Route>
-
-                  <Route path='/messages' element={<><NavigationBarLanding/><MessagePage/></>}></Route>
-                  <Route path='/messages_deneme' element={<><NavigationBarLanding/><MessagesDeneme/></>}></Route>
+                  {/** We will probably add a new component called <ProtectedRoute> or something for pages that should be seen after authentication */}
+                  <Route path='/profile' element={<><NavigationBarDefault/><Profile/></>}></Route>
+                  <Route path='/messages' element={<><NavigationBarDefault/><MessagePage/></>}></Route>
+                  <Route path='/messages_deneme' element={<><NavigationBarDefault/><MessagesDeneme/></>}></Route>
                   <Route path='/product_detail/:id' element={<><NavigationBarDefault/><ProductDetailPage/></>}></Route>
                   <Route path='/main_page' element={<><NavigationBarDefault/><MainPage/></>}> </Route>
               </Routes>

@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import axios from "axios";
 import './assets/bootstrap/css/bootstrap.min.css';
-import { Link,NavLink } from 'react-router-dom';
+import {Link, NavLink, useNavigate} from 'react-router-dom';
 
 function LoginPage(){
 
@@ -11,7 +11,7 @@ function LoginPage(){
     console.log(urlSearchParams.get("token"));
     const token = urlSearchParams.get("token");
 */
-
+    const navigate = useNavigate();
 
     // User variables
     const [email, setEmail] = useState('');
@@ -43,7 +43,8 @@ function LoginPage(){
                 localStorage.setItem('refresh_token', data.refresh);
                 localStorage.setItem('authorization', `Bearer ${data['access']}`)
                 axios.defaults.headers.common['Authorization'] = `Bearer ${data['access']}`;
-                window.location.href = "/profile";
+                navigate("/main_page");
+
             }
 
         } catch (error) {

@@ -6,17 +6,24 @@ import './assets/bootstrap/css/bootstrap.min.css'; // Import Bootstrap CSS
 import "bootstrap-icons/font/bootstrap-icons.css";
 import PlaceHolder from './assets/img/WF Image Placeholder.png';
 import {useEffect, useState} from 'react';
-import { useParams } from 'react-router-dom';
+import {useNavigate, useParams} from 'react-router-dom';
 import axios from "axios";
 import {isDisabled} from "@testing-library/user-event/dist/utils";
 import {useContext} from "react";
 import ContextApi from "../context/ContextApi";
 
 function ProductDetailPage() {
-    const pageType = localStorage.getItem('type');
+    const navigate = useNavigate();
+    const {pageType, sendNewMessage} = useContext(ContextApi);
+
+
     const {id} = useParams();
     const [loading, setLoading] = useState(true);
     const [product, setProduct] = useState('');
+    const imageUrl = "http://127.0.0.1:8000/media/pphotos/102050644.png.webp";
+
+
+
 
     useEffect(()=>{
         console.log("Page Type in detail page" + pageType);
@@ -48,8 +55,9 @@ function ProductDetailPage() {
     }
 
     const sendMessage = () => {
-
-        window.location.href = "/messages";
+        const newMessage = { product_name: product.title, product_price: product.price};
+        sendNewMessage(newMessage);
+        navigate("/messages");
     }
 
     return (
@@ -83,8 +91,15 @@ function ProductDetailPage() {
                             </h1>
                             <hr style={hrStyle} />
                             <div className="d-flex justify-content-between align-items-center placeholder-glow" style={{ height: '10%', width: '100%', marginTop: '10px', marginBottom: '10px' }}>
-                                {loading ? <span className="placeholder col-5 h-50"></span> : <h1 style={sellerNameStyle}>{product.user.name + " " + product.user.surname}</h1>}
-                                <img className="rounded-circle mb-3 fit-cover" data-bss-hover-animate="pulse" src={loading? PlaceHolder :Logo} style={imageStyle} />
+                                <div className="d-flex flex-column justify-content-evenly" style={{ height: '100%', width: '100%'}}>
+                                    {loading ? <span className="placeholder col-5 h-50"></span> : <h1 style={sellerNameStyle}>{product.user.name + " " + product.user.surname}</h1>}
+                                    {loading ? <span className="placeholder col-5 h-25"></span> : <h1 style={sellerPhoneStyle}>123123213</h1>}
+                                </div>
+
+
+
+
+                                <img className="rounded-circle mb-3 fit-cover" data-bss-hover-animate="pulse" src={loading? PlaceHolder :imageUrl} style={imageStyle} />
                             </div>
                             <hr style={hrStyle} />
                             <div className="d-flex flex-row justify-content-between align-items-center" style={{ height: '10%', width: '100%', minHeight: '40px', maxHeight: '50px' }}>
@@ -171,6 +186,14 @@ const sellerNameStyle = {
     marginBottom: '0px',
     textAlign: 'left'
 };
+const sellerPhoneStyle = {
+    width: '60%',
+    fontSize: '1.5em',
+    fontFamily: 'Inter, sans-serif',
+    marginBottom: '0px',
+    textAlign: 'left'
+};
+
 
 const imageStyle = {
     height: '60px',

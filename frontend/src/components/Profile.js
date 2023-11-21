@@ -7,6 +7,7 @@ import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover'
 import Button from 'react-bootstrap/Button';
 import alert from "bootstrap/js/src/alert";
+import {useNavigate} from "react-router-dom";
 
 
 //There are two kinds of profiles and they are rendered according to the value of myProfile boolean.
@@ -17,15 +18,10 @@ import alert from "bootstrap/js/src/alert";
 
 function Profile() {
 
+
     const [myProfile, setMyProfile] = useState();
     const pull_data = (data) => {
         console.log("edit mode " + data); // LOGS DATA FROM CHILD (My name is Dean Winchester... &)
-    }
-
-    const [profilePhoto, setProfilePhoto] = useState();
-    const fetchImage = async () => {
-        //const data = fetch('http://127.0.0.1:8000/media/102050644.png');
-
     }
 
     const onLoad = async () => {
@@ -49,7 +45,7 @@ function Profile() {
     },[])
 
     return (
-        <section  className="d-flex d-xxl-flex flex-grow-1 justify-content-center align-items-start align-items-xl-start justify-content-xxl-center align-items-xxl-start  py-4 py-xl-5" style={{ background: '#edf0f7', minHeight: '91vh'}}>
+        <section  className="d-flex d-xxl-flex flex-grow-1 justify-content-center align-items-start align-items-xl-start justify-content-xxl-center align-items-xxl-start  py-4 py-x-5" style={{ background: '#edf0f7', minHeight: '91vh'}}>
             {myProfile ?
                 <div className="container d-sm-flex d-md-flex d-lg-flex d-xl-flex d-xxl-flex">
                 <div className="row gx-1 gy-3 justify-content-center" ></div>
@@ -71,10 +67,9 @@ function Products({myProfile, func}) {
 
     const [filteredProductsType, setFilteredProductsType] = useState('secondhand');
     const [products, setProducts] = useState('');
-
     useEffect(()=>{
         uploadMyProducts();
-        // Messages in the selected index will be opened on the right side
+
     },[])
 
     const uploadMyProducts = async () => {
@@ -83,7 +78,6 @@ function Products({myProfile, func}) {
             const {data} = await axios.get('http://127.0.0.1:8000/api/user/product/');
             console.log(data);
             setProducts(data);
-
         }
         catch (error){
             if (error.response) {
@@ -231,6 +225,9 @@ function ProfileArea({myProfile,func} ) {
     const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
     const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
 
+    const imageUrl = "http://127.0.0.1:8000/media/pphotos/IMG_2252.png";
+
+    const navigate = useNavigate();
 
     const [loading, setLoading] = useState(false);
     const [nameSurname, setNameSurname] = useState(myProfile.name + " " + myProfile.surname);
@@ -341,7 +338,7 @@ function ProfileArea({myProfile,func} ) {
 
     const logOut = () => {
         localStorage.clear();
-        window.location.href = "/login";
+        navigate("/login");
 
     };
 
@@ -351,30 +348,10 @@ function ProfileArea({myProfile,func} ) {
     return (
         <div
             className="col-xl-6 col-xxl-5 offset-xxl-0 d-flex d-sm-flex d-md-flex d-lg-flex d-xl-flex d-xxl-flex flex-grow-1 justify-content-center align-items-center order-last justify-content-sm-center align-items-sm-center justify-content-md-center align-items-md-center justify-content-lg-center align-items-lg-center justify-content-xl-center align-items-xl-center justify-content-xxl-center align-items-xxl-center"
-            data-aos="fade-left"
-            data-aos-duration="600"
-            style={{
-                width: '600px',
-                height: '40vw',
-                minHeight: '554px',
-                maxWidth:'93vw',
-                paddingTop:'10px',
-
-            }}
-        >
+            data-aos="fade-left" data-aos-duration="600" style={{width: '600px', height: '40vw', minHeight: '554px', maxWidth:'93vw', paddingTop:'10px',}}>
             <div
                 className="d-flex d-xxl-flex flex-column justify-content-xxl-center align-items-xxl-center"
-                style={{
-                    background: '#ffffff',
-                    fontSize: '12px',
-                    borderRadius: '10px',
-                    height: '100%',
-                    width: '95%',
-                    padding: '5%',
-                    paddingTop: '2%',
-                }}
-            >
-
+                style={{background: '#ffffff', fontSize: '12px', borderRadius: '10px', height: '100%', width: '95%', padding: '5%', paddingTop: '2%',}}>
                 <div className="d-flex justify-content-end" style={{height: '45px', width: '100%', marginRight:'-35px'}}>
                     <button
                         className="btn btn-primary d-flex d-xxl-flex justify-content-center align-items-center justify-content-xxl-center align-items-xxl-center"
@@ -396,7 +373,7 @@ function ProfileArea({myProfile,func} ) {
                 </div>
 
                 <div className="d-flex d-xxl-flex flex-column justify-content-center align-items-center align-items-xxl-center" style={{ height: 'initial', width: '100%' }}>
-                    <img className="rounded-circle" src={PlaceHolder} style={{ height: '150px', width: '150px', marginBottom: '15px' }} alt="User Profile" />
+                    <img className="rounded-circle" src={imageUrl} style={{ height: '150px', width: '150px', marginBottom: '15px' }} alt="User Profile" />
 
                     {editMode
                         ?
