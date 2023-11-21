@@ -15,11 +15,13 @@ import MessagesDeneme from "./components/MessagesDeneme";
 import MainPage from "./components/MainPage";
 import ContextApi from "./context/ContextApi";
 import {useState, useEffect} from "react";
+import { ProductAddForm } from './components/ProductAddForm';
+import { EntryForm } from './components/EntryForm';
+
 // we don't need to add NavigationBar and Footer to each page because they are added here only the Routes part of the app will differ.
 function App() {
 
     const [type, setType] = useState('');
-    const [message, setMessage] = useState('');
 
     const sendMessage = (nMessage) => {
         setMessage(nMessage);
@@ -32,6 +34,7 @@ function App() {
     return (
       <ContextApi.Provider value={{pageType: type, changePageType:changeType, newMessage: message, sendNewMessage: sendMessage, }}>
           <div className="App">
+              <NavigationBarLanding></NavigationBarLanding>
               <Routes>
                   <Route path='/' element={<><NavigationBarLanding/><LandingPage/></>}></Route>
                   <Route path='/login' element={<><NavigationBarLanding/><LoginPage/></>}></Route>
