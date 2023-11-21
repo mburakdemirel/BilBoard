@@ -25,10 +25,13 @@ urlpatterns = [
     #api/user/product/ => create => post
     #api/product/secondhand/<product_id>/ => retrieve => get
     #api/user/product/secondhand/ => list => get
+    #api/user/product/secondhand?search=<keyword> => list => get
     #api/product/borrow/<product_id>/ => retrieve => get
     #api/product/borrow/ => list => get
+    #api/user/product/borrow?search=<keyword> => list => get
     #api/product/donation/<product_id>/ => retrieve => get
     #api/product/donation/ => list => get
+    #api/user/product/donation?search=<keyword> => list => get
     path('', include(router.urls)),
     path('products/by-id/', get_products_by_user_id, name='get-products-by-user-id'),
 ]
