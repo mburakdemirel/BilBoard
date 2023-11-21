@@ -22,7 +22,7 @@ class UserAdmin(BaseUserAdmin):
 
     )
     readonly_fields = ['last_login']
-    
+
     add_fieldsets = (
         None, {
             'classes': ('wide',),
@@ -32,7 +32,7 @@ class UserAdmin(BaseUserAdmin):
 
 class ProductAdmin(admin.ModelAdmin):
     """Define the admin pages for products."""
-    
+
     list_display = ('title', 'category', 'user')
     ordering = ['id']
     search_fields = ('title', 'category',)
@@ -55,7 +55,8 @@ class ProductAdmin(admin.ModelAdmin):
         }),
     )
 
-
 admin.site.register(models.CustomUser, UserAdmin)
 admin.site.register(models.Product, ProductAdmin)
 
+# Test
+admin.site.register(models.Chat)

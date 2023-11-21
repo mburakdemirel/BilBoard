@@ -1,8 +1,8 @@
 from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
-
-
+from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
 # Create your models here.
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, name, surname, password=None, **extra_fields):
@@ -14,7 +14,7 @@ class CustomUserManager(BaseUserManager):
             raise ValueError('Users must set the surname field')
 
         email = self.normalize_email(email)
-        
+
         #Applies NFKC Unicode normalization to usernames so that visually identical characters with different
         #Unicode code points are considered identical
         #username = self.model.normalize_username(username)
@@ -59,7 +59,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self) -> str:
         return self.email
-    
+
 class Product(models.Model):
     CATEGORY_CHOICES = [
         ('secondhand', 'Secondhand'),
@@ -75,15 +75,38 @@ class Product(models.Model):
     title = models.CharField(max_length=100)
     description = models.TextField(blank=True)
     upload_date = models.DateField(auto_now=True) #bu ilerde içi silinecek ve daytime ile yüklendiği an
-    # create product view de set edilecek. 
+    # create product view de set edilecek.
     product_photo = models.ImageField(upload_to='pphotos/', blank=True, null=True)
     category = models.CharField(max_length=10, choices=CATEGORY_CHOICES)
     return_date = models.DateField(null=True, blank=True)
     product_type = models.CharField(max_length=30, blank=True, null=True)
     # Common fields for all products
-    price = models.DecimalField(max_digits=7, decimal_places=2, null=True, blank=True) 
+    price = models.DecimalField(max_digits=7, decimal_places=2, null=True, blank=True)
 
     REQUIRED_FIELDS = ['title', 'category']
 
     def _str_(self):
         return self.title
+
+class Message(models.Model):
+    author = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name="author")
+    content = models.TextField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.author.id +  " - " + self.timestamp.strftime("%d/%m/%Y, %H:%M:%S")
+
+class Chat(models.Model):
+    participiants = models.ManyToManyField(get_user_model(), related_name="participiants")
+    messages = models.ManyToManyField(Message, related_name="messages", blank=True)
+
+    def __str__(self):
+        return '{}'.format(self.id)
+
+    def get_messages(self):
+        return self.messages.all()
+
+    # def clean(self, *args, **kwargs):
+    #     if self.participiants.count() > 2:
+    #         raise ValidationError("Chat can only have two participiants")
+    #     super(Chat, self).clean(*args, **kwargs)
