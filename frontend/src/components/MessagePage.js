@@ -48,9 +48,9 @@ function MessagePage() {
 
 
     return (
-        <section className="d-flex py-4 py-xl-5" style={{ background: '#edf0f7', minHeight: '91vh' }}>
-            <div className="container d-flex">
-                <div className="row gx-1 gy-3 justify-content-center" style={{ margin: '0px', width: '100%', marginTop: '-21px' }}>
+        <section className="d-flex justify-content-center align-items-center py-4" style={{ background: '#edf0f7', minHeight: '91vh' }}>
+            <div className="container">
+                <div className="row gx-1 gy-3 justify-content-center" style={{ width: '100%', marginTop: '-21px' }}>
                     {/* I think this should not be here this page should be more like a pop-up page */}
                     <Products allMessages={allMessages}></Products>
                     <Messages></Messages>

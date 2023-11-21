@@ -37,7 +37,7 @@ function NavigationBarDefault() {
                 </button>
                 <div id="navcol-3" className="collapse navbar-collapse" style={{ fontFamily: 'Inter, sans-serif', fontSize: '14px' }}>
                     <ul className="navbar-nav mx-auto" style={{ fontWeight: 'bold' }}>
-                        <li className="nav-item"><a className="nav-link active" href="#" style={{ textDecoration: 'underline' }}>Second-Hand</a></li>
+                        <li className="nav-item"><a className="nav-link active" style={{ textDecoration: 'underline' }}>Second-Hand</a></li>
                         <li className="nav-item"><a className="nav-link" href="#">Lost & Found</a></li>
                         <li className="nav-item"><a className="nav-link" href="#">Borrow</a></li>
                         <li className="nav-item"><a className="nav-link" href="#">Donation</a></li>

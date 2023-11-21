@@ -1,5 +1,4 @@
 import React, {useState} from "react";
-import {useNavigate} from "react-router-dom";
 import axios from "axios";
 import './assets/bootstrap/css/bootstrap.min.css';
 import { Link,NavLink } from 'react-router-dom';
@@ -12,7 +11,7 @@ function LoginPage(){
     console.log(urlSearchParams.get("token"));
     const token = urlSearchParams.get("token");
 */
-    const navigate = useNavigate();
+
 
     // User variables
     const [email, setEmail] = useState('');

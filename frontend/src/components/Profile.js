@@ -22,6 +22,11 @@ function Profile() {
         console.log("edit mode " + data); // LOGS DATA FROM CHILD (My name is Dean Winchester... &)
     }
 
+    const [profilePhoto, setProfilePhoto] = useState();
+    const fetchImage = async () => {
+        //const data = fetch('http://127.0.0.1:8000/media/102050644.png');
+
+    }
 
     const onLoad = async () => {
         try{
@@ -30,6 +35,7 @@ function Profile() {
             const {data} = await axios.get('http://127.0.0.1:8000/api/user/me/') ;
             console.log(data);
             setMyProfile(data);
+
 
         }
         catch (error){
@@ -43,10 +49,10 @@ function Profile() {
     },[])
 
     return (
-        <x  className="d-flex d-xxl-flex flex-grow-1 justify-content-center align-items-start align-items-xl-start justify-content-xxl-center align-items-xxl-start py-4 py-xl-5" style={{ background: '#edf0f7', minHeight: '91vh'}}>
+        <section  className="d-flex d-xxl-flex flex-grow-1 justify-content-center align-items-start align-items-xl-start justify-content-xxl-center align-items-xxl-start  py-4 py-xl-5" style={{ background: '#edf0f7', minHeight: '91vh'}}>
             {myProfile ?
-                <div className="container d-sm-flex d-md-flex d-lg-flex d-xl-flex d-xxl-flex justify-content-center align-items-center justify-content-sm-center align-items-sm-center justify-content-md-center align-items-md-center justify-content-lg-center align-items-lg-center justify-content-xl-center align-items-xl-center justify-content-xxl-center align-items-xxl-center h-100">
-                <div className="row gx-1 gy-3 d-xxl-flex justify-content-sm-center justify-content-md-center justify-content-lg-center align-items-xl-center h-100" ></div>
+                <div className="container d-sm-flex d-md-flex d-lg-flex d-xl-flex d-xxl-flex">
+                <div className="row gx-1 gy-3 justify-content-center" ></div>
                 <Products myProfile={myProfile} func={pull_data}></Products>
                 <ProfileArea myProfile={myProfile} func={pull_data}></ProfileArea>
                 </div>
@@ -55,13 +61,42 @@ function Profile() {
                     <span className="visually-hidden">Loading...</span>
                 </div>
             }
-        </x>
+        </section>
     );
 
 }
 
 
 function Products({myProfile, func}) {
+
+    const [filteredProductsType, setFilteredProductsType] = useState('secondhand');
+    const [products, setProducts] = useState('');
+
+    useEffect(()=>{
+        uploadMyProducts();
+        // Messages in the selected index will be opened on the right side
+    },[])
+
+    const uploadMyProducts = async () => {
+        try{
+            axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
+            const {data} = await axios.get('http://127.0.0.1:8000/api/user/product/');
+            console.log(data);
+            setProducts(data);
+
+        }
+        catch (error){
+            if (error.response) {
+                console.log(error.response.data);
+            } else if (error.request) {
+                console.log('No response received from the server.');
+            } else {
+                console.log('An error occurred while setting up the request.');
+            }
+        }
+    }
+
+
     return (
         <div
             className="col-xxl-6 d-flex d-sm-flex d-md-flex d-lg-flex d-xl-flex d-xxl-flex flex-grow-1 justify-content-center align-items-center justify-content-sm-center align-items-sm-center align-items-md-center align-items-lg-center"
@@ -78,7 +113,7 @@ function Products({myProfile, func}) {
             }}
         >
             <div
-                className="d-flex d-xxl-flex flex-column justify-content-evenly justify-content-xxl-center align-items-xxl-center"
+                className="d-flex d-xxl-flex flex-column align-items-center  "
                 style={{
                     //   background: 'var(--bs-white)',
                     background: '#ffffff',
@@ -115,6 +150,8 @@ function Products({myProfile, func}) {
                 >
                     Posts
                 </h1>)}
+
+
                 <div
                     className="input-group text-center d-flex d-xl-flex flex-row justify-content-lg-center justify-content-xl-center mt-3"
                     style={{
@@ -125,69 +162,28 @@ function Products({myProfile, func}) {
                         marginBottom: '10px',
                     }}
                 >
-                    {/* add onClick attribute to all of these buttons also when clicked their appearance should change*/}
                     <button
                         className="d-flex d-xl-flex d-xxl-flex justify-content-center justify-content-xl-center justify-content-xxl-center input-group-text"
-                        id="secondhand"
-                        style={{
-                            background: '#2d3648',
-                            color: '#ffffff',
-                            width: '20%',
-                            fontFamily: 'Inter, sans-serif',
-                            fontSize: 'inherit',
-                            fontWeight: 'bold',
-                        }}
-                    >
-                        Second Hand
+                        onClick={(event) => setFilteredProductsType("secondhand")}
+                        id="secondhand" style={{background: filteredProductsType==="secondhand"? '#2d3648' : '#717d96' , color: '#ffffff', width: '20%', fontFamily: 'Inter, sans-serif', fontSize: 'inherit', fontWeight: filteredProductsType==="secondhand"? 'bold':''}}>Second Hand
                     </button>
                     <button
                         className="d-flex d-xl-flex d-xxl-flex justify-content-center justify-content-xl-center justify-content-xxl-center input-group-text"
-                        id="l&f"
-                        style={{
-                            background: '#717d96',
-                            width: '20%',
-                            color: '#ffffff',
-                            fontSize: 'inherit',
-                        }}
-                    >
-                        Lost & Found
+                        onClick={(event) => setFilteredProductsType("lostandfound")}
+                        id="l&f" style={{background: filteredProductsType==="lostandfound"? '#2d3648' : '#717d96' , width: '20%', color: '#ffffff', fontSize: 'inherit',fontWeight: filteredProductsType==="lostandfound"? 'bold':''}}>Lost & Found
                     </button>
                     <button
-                        className="d-flex d-xl-flex d-xxl-flex justify-content-center justify-content-xl-center justify-content-xxl-center input-group-text"
-                        id="borrow"
-                        style={{
-                            background: '#717d96',
-                            width: '20%',
-                            color: '#ffffff',
-                            fontSize: 'inherit',
-                        }}
-                    >
-                        Borrow
+                        className="d-flex d-xl-flex d-xxl-flex justify-content-center justify-content-xl-center justify-content-xxl-center input-group-text" id="borrow"
+                        onClick={(event) => setFilteredProductsType("borrow")}
+                        style={{background: filteredProductsType==="borrow"? '#2d3648' : '#717d96' , color: '#ffffff', fontSize: 'inherit',fontWeight: filteredProductsType==="borrow"? 'bold':''}}>Borrow
                     </button>
-                    <button
-                        className="d-flex d-xl-flex d-xxl-flex justify-content-center justify-content-xl-center justify-content-xxl-center input-group-text"
-                        id="borrow"
-                        style={{
-                            background: '#717d96',
-                            width: '20%',
-                            color: '#ffffff',
-                            fontSize: 'inherit',
-                        }}
-                    >
-                        Complaints
+                    <button className="d-flex d-xl-flex d-xxl-flex justify-content-center justify-content-xl-center justify-content-xxl-center input-group-text"
+                            onClick={(event) => setFilteredProductsType("complaints")}
+                            id="complaint" style={{background: filteredProductsType==="complaints"? '#2d3648' : '#717d96' , width: '20%', color: '#ffffff', fontSize: 'inherit',fontWeight: filteredProductsType==="complaints"? 'bold':''}}>Complaints
                     </button>
-
-                    <button
-                        className="d-flex d-xl-flex d-xxl-flex justify-content-center justify-content-xl-center justify-content-xxl-center input-group-text"
-                        id="donation"
-                        style={{
-                            background: '#717d96',
-                            width: '20%',
-                            color: '#ffffff',
-                            fontSize: 'inherit',
-                        }}
-                    >
-                        Donation
+                    <button className="d-flex d-xl-flex d-xxl-flex justify-content-center justify-content-xl-center justify-content-xxl-center input-group-text"
+                            onClick={(event) => setFilteredProductsType("donation")}
+                            id="donation" style={{background: filteredProductsType==="donation"? '#2d3648' : '#717d96' , width: '20%', color: '#ffffff', fontSize: 'inherit',fontWeight: filteredProductsType==="donation"? 'bold':''}}>Donation
                     </button>
 
 
@@ -202,69 +198,28 @@ function Products({myProfile, func}) {
                     }}
                 />
                 <div
-                    className="card-group d-flex d-xxl-flex flex-row flex-sm-nowrap flex-md-nowrap flex-lg-nowrap flex-xl-nowrap justify-content-xxl-center align-items-xxl-start flex-xxl-wrap"
-                    style={{ height: 'initial', overflow: 'auto', width:'100%' }}
-                >
+                    className="card-group d-flex d-xxl-flex flex-row justify-content-start flex-sm-nowrap flex-md-nowrap flex-lg-nowrap flex-xl-nowrap align-items-xxl-start flex-xxl-wrap"
+                    style={{ height: 'initial', overflow: 'auto', width:'93%' }}>
+
                     {/** this is for testing purposes normally we should use result.map(product => (<div> ...) where result is the result of the http
                  * request and we should use product's data in ... part
                 */}
-                    {Array(9).fill().map((_, index) => (
-                        <div
-                            className="card"
-                            key={index}
-                            id="product"
-                            style={{
-                                width: '170px',
-                                height: '170px',
-                                borderRadius: '10px',
-                                borderStyle: 'none',
-                                borderBottomStyle: 'none',
-                                padding: '5px',
-                                minWidth: '170px',
-                                maxWidth: '170px',
-                            }}
-                        >
-                            <div
-                                className="card-body"
-                                style={{ width: '100%', height: '100%', padding: '0' }}
-                            >
-                                <img
-                                    style={{ width: '100%', height: '100%' }}
-                                    src={PlaceHolder}
-                                    alt={`Product ${index}`}
-                                />
-                                <div
-                                    style={{height: '40px',
-                                            width: '100%',
-                                            marginTop: '-40px',
-                                            background: '#21252955',
-                                            position: 'relative',
-                                            borderBottomRightRadius: '10px',
-                                            borderBottomLeftRadius: '10px',
-                                            paddingTop: '3px',
-                                            paddingBottom: '3px',
-                                            paddingRight: '5px',
-                                            paddingLeft: '5px'}}
-                                >
-                                    <h1 className="text-center d-flex d-xxl-flex justify-content-start align-items-start justify-content-xxl-start"
-                                        style={{width: '100%',
-                                                fontSize: '16px',
-                                                fontFamily: 'Inter, sans-serif',
-                                                marginBottom: '0px'}}
-                                                >Title</h1>
-                                    <h1 className="text-center d-flex d-xxl-flex justify-content-start justify-content-xxl-start"
-                                        style={{width: '100%',
-                                            fontSize: '12px',
-                                            fontFamily: 'Inter, sans-serif',
-                                            marginBottom: '0px'}}>Price</h1>
+                    {Array(products.length).fill().map((_, index) => {
+                        if (products[index].category === filteredProductsType) {
+                            return(<div className="card" key={index} id="product" style={{width: '170px', height: '170px', borderRadius: '10px', borderStyle: 'none', borderBottomStyle: 'none', padding: '5px', minWidth: '170px', maxWidth: '170px',}}>
+                                <div className="card-body" style={{ width: '100%', height: '100%', padding: '0' }}>
+                                    <img style={{ width: '100%', height: '100%' }} src={PlaceHolder} alt={`Product ${index}`}/>
+                                    <div style={{height: '40px', width: '100%', marginTop: '-40px', background: '#21252955', position: 'relative', borderBottomRightRadius: '10px', borderBottomLeftRadius: '10px', paddingTop: '3px', paddingBottom: '3px', paddingRight: '5px', paddingLeft: '5px'}}>
+                                        <h1 className="text-center d-flex d-xxl-flex justify-content-start align-items-start justify-content-xxl-start"
+                                            style={{width: '100%', fontSize: '16px', fontFamily: 'Inter, sans-serif', marginBottom: '0px'}}>{products[index].title}</h1>
+                                        <h1 className="text-center d-flex d-xxl-flex justify-content-start justify-content-xxl-start"
+                                            style={{width: '100%', fontSize: '12px', fontFamily: 'Inter, sans-serif', marginBottom: '0px'}}>{products[index].price}</h1>
+                                    </div>
+
                                 </div>
-
-                            </div>
-
-
-
-                        </div>
-                    ))}
+                            </div>)
+                        }
+                    })}
                 </div>
             </div>
         </div>
@@ -286,10 +241,13 @@ function ProfileArea({myProfile,func} ) {
     const [newPasswordConfirm, setNewPasswordConfirm] = useState();
     const [oldPassword, setOldPassword] = useState();
 
+
+
     const [editMode, setEditMode] = useState(false);
     const updateUser = async (user) => {
         setLoading(true);
         try{
+
             // do update operations
             const {data} = await axios.patch('http://127.0.0.1:8000/api/user/me/', user);
             console.log(data);
