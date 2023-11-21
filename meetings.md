@@ -21,3 +21,30 @@
 - Everybody checked each others work and made some comments, changed accordingly.
 - All of us explained each use case togehter and discussed about next steps while we are creating the use case diagram.
 - Together we submitted our work.
+
+## Meeting 6
+- D1 report finalized with group members.
+- Distrbution of diagrams among members are done for the D2 report.
+
+## Meeting 7 
+- D2 report finalized with group members.
+
+## Mid-terms
+
+## Meeting 8 
+- D1 & D2 revision
+- CRUD operations details discussed and distrubted to the members
+  
+## Meeting 9
+- Combining backend and frontend parts for CRUD video.
+- Fixing bugs and problems.
+- Recording the video for "early prototype"
+
+## Mid-terms (cont.)
+
+## Meeting 10 
+- D4 report: distribution of work.
+
+## Meeting 11
+- Finalizing D4 report.
+- Discuss about product model and distribute work.
