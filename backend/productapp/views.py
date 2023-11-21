@@ -19,11 +19,14 @@ class UserProductViewSet(viewsets.ModelViewSet):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
 
+    # Retrive ise => user objesi dönsün, diğer her şeyde id dönsün
     def get_serializer_class(self):
         if self.action in ['create']:
             return serializers.ProductCreateSerializer
         elif self.action in ['update', 'partial_update']:
             return serializers.ProductUpdateSerializer
+        elif self.action in ['retrieve']:
+            return serializers.ProductUserSerializer
         return serializers.ProductSerializer
 
     def get_queryset(self):
@@ -41,6 +44,11 @@ class SecondhandProductViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Product.objects.all()
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
+
+    def get_serializer_class(self):
+        if self.action in ['retrieve']:
+            return serializers.ProductUserSerializer
+        return serializers.ProductSerializer
 
     def get_queryset(self):
         """Retrieve all secondhand products or filter based on title using trigram similarity for fuzzy search."""
@@ -63,6 +71,11 @@ class BorrowProductViewSet(viewsets.ReadOnlyModelViewSet):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
+    def get_serializer_class(self):
+        if self.action in ['retrieve']:
+            return serializers.ProductUserSerializer
+        return serializers.ProductSerializer
+
     def get_queryset(self):
         """Retrieve all borrowable products or filter based on title using trigram similarity for fuzzy search."""
         queryset = Product.objects.filter(category='borrow')  # Adjusted category
@@ -83,6 +96,11 @@ class DonationProductViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Product.objects.all()
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
+
+    def get_serializer_class(self):
+        if self.action in ['retrieve']:
+            return serializers.ProductUserSerializer
+        return serializers.ProductSerializer
 
     def get_queryset(self):
         """Retrieve all donations or filter based on title using trigram similarity for fuzzy search."""

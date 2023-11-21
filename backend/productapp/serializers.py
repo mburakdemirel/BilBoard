@@ -8,7 +8,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 class ProductCreateSerializer (serializers.ModelSerializer):
     """Serializer for products."""
-    user = UserSerializer(read_only=True)
+    #user = UserSerializer(read_only=True)
     class Meta:
         model = Product
         fields = ['id', 'title', 'price', 'return_date', 'product_photo', 'category', 'description', 'upload_date', 'product_type', 'user']
@@ -36,11 +36,18 @@ class ProductCreateSerializer (serializers.ModelSerializer):
         return data
     
 
-class ProductUpdateSerializer(serializers.ModelSerializer):
+class ProductUserSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
     class Meta:
         model = Product
-        fields = ['id', 'title', 'price', 'return_date', 'product_photo', 'category', 'description', 'upload_date', 'product_type','user']
+        fields = ['id', 'title', 'price', 'return_date', 'product_photo', 'category', 'description', 'upload_date', 'product_type', 'user']
+        read_only_fields = ['id', 'user', 'upload_date']
+
+
+class ProductUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Product
+        fields = ['id', 'title', 'price', 'return_date', 'product_photo', 'category', 'description', 'upload_date', 'product_type', 'user']
         read_only_fields = ['id', 'user', 'category', 'upload_date']
 
     def validate(self, data):
@@ -56,9 +63,8 @@ class ProductUpdateSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError("Price should not be included for borrow products.")
             
         return data
-
-class ProductSerializer(serializers.ModelSerializer):
-    user = UserSerializer(read_only=True)
+ç
+class DefaultProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
-        fields = ['id', 'title', 'price', 'return_date', 'product_photo', 'category', 'description', 'upload_date', 'product_type', 'user']
+        fields = ['id', 'title', 'price', 'return_date', 'product_photo']
