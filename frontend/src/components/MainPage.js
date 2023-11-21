@@ -4,25 +4,40 @@ import PlaceHolder from './assets/img/WF Image Placeholder.png';
 import {useEffect, useState} from "react";
 
 import axios from "axios";
+import {useContext} from "react";
+import ContextApi from "../context/ContextApi";
+import {useNavigate} from "react-router-dom";
 
 function MainPage() {
+    const navigate = useNavigate();
+
+
+    const {pageType,changePageType} = useContext(ContextApi);
+    console.log(pageType);
     const [loading, setLoading] = useState(true);
     const [productCategory, setProductCategory] = useState();
-    const [productType, setProductType] = useState("secondhand");
+
     const [products, setProducts] = useState('');
 
     useEffect(()=>{
-        uploadProducts(productType);
+        if(pageType ===""){
+            changePageType("secondhand");
+        }
+        setLoading(true);
+        uploadProducts(pageType);
         // Messages in the selected index will be opened on the right side
-    },[])
+    },[pageType])
 
-    const uploadProducts = async (uploadProducts) => {
+    const uploadProducts = async (pageType) => {
         try{
+
             axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
-            const {data} = await axios.get('http://127.0.0.1:8000/api/product/' + productType);
-            console.log(data);
-            setProducts(data);
-            setLoading(false);
+            if(pageType){
+                const {data} = await axios.get('http://127.0.0.1:8000/api/product/' + pageType);
+                console.log(data);
+                setProducts(data);
+                setLoading(false);
+            }
 
         }
         catch (error){
@@ -38,7 +53,7 @@ function MainPage() {
 
 
     const sendProductDetailPage = (index) => {
-        window.location.href ="/product_detail/" + index;
+        navigate('/product_detail/' + index);
     }
     const changeProductType = (category) => {
        setProductCategory(category);
@@ -68,7 +83,7 @@ function MainPage() {
                     {loading ? <span className="spinner-border spinner-border" aria-hidden="true" style={{height:'50px', width:'50px'}}></span>
                         :
                     <div className="container" style={{ paddingRight: '1%', paddingLeft: '1%' }}>
-                        <div className="row d-flex justify-content-evenly" style={{ marginRight: '5%', marginLeft: '5%' }}>
+                        <div className="row d-flex justify-content-center" style={{ marginRight: '5%', marginLeft: '5%' }}>
                             {Array(products.length).fill().map((_, index) => {
                                 if (true) {
 

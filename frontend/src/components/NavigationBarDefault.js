@@ -1,27 +1,14 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import Logo from './assets/img/logo_bugbunny-removebg-preview.png'
 import Burak from './assets/img/burak.png'
-
-const navbarStyle = {
-    borderBottom: '2px solid #2d3647',
-    height: '75px'
-};
-
-const brandIconStyle = {
-    margin: '0px',
-    borderRadius: '10px',
-    background: 'var(--bs-body-bg)',
-    width: '50px',
-    height: '50px',
-};
-
-const brandLogoStyle = {
-    width: '100%',
-    height: '100%',
-    borderRadius: '10px',
-};
+import ContextApi from "../context/ContextApi";
+import {useNavigate} from "react-router-dom";
 
 function NavigationBarDefault() {
+    const {pageType, changePageType} = useContext(ContextApi);
+    console.log(pageType);
+    const navigate = useNavigate();
+
     return (
         <nav className="navbar navbar-expand-md sticky-top bg-body py-3" style={navbarStyle}>
             <div className="container">
@@ -36,13 +23,13 @@ function NavigationBarDefault() {
                     <span className="navbar-toggler-icon"></span>
                 </button>
                 <div id="navcol-3" className="collapse navbar-collapse" style={{ fontFamily: 'Inter, sans-serif', fontSize: '14px' }}>
-                    <ul className="navbar-nav mx-auto" style={{ fontWeight: 'bold' }}>
-                        <li className="nav-item"><a className="nav-link active" style={{ textDecoration: 'underline' }}>Second-Hand</a></li>
-                        <li className="nav-item"><a className="nav-link" href="#">Lost & Found</a></li>
-                        <li className="nav-item"><a className="nav-link" href="#">Borrow</a></li>
-                        <li className="nav-item"><a className="nav-link" href="#">Donation</a></li>
-                        <li className="nav-item"><a className="nav-link" href="#">Complaint</a></li>
-                    </ul>
+                    <nav className="navbar-nav mx-auto" style={{ fontWeight: 'bold' }}>
+                        <li className="nav-item"><a onClick={() => {navigate('/main_page'); changePageType("secondhand");}} className="nav-link" style={{ textDecoration: pageType==="secondhand" ? 'underline': '', color: pageType==="secondhand" ? '#2d3647': '' }}>Second-Hand</a></li>
+                        <li className="nav-item"><a onClick={() => {navigate('/main_page'); changePageType("lost&found");}} className="nav-link" style={{ textDecoration: pageType==="lost&found" ? 'underline': '', color: pageType==="lost&found" ? '#2d3647': '' }}>Lost & Found</a></li>
+                        <li className="nav-item"><a onClick={() => {navigate('/main_page'); changePageType("borrow");}} className="nav-link"  style={{ textDecoration: pageType==="borrow" ? 'underline': '', color: pageType==="borrow" ? '#2d3647': '' }}>Borrow</a></li>
+                        <li className="nav-item"><a onClick={() => {navigate('/main_page'); changePageType("donation");}} className="nav-link" style={{ textDecoration: pageType==="donation" ? 'underline': '', color: pageType==="donation" ? '#2d3647': '' }}>Donation</a></li>
+                        <li className="nav-item"><a onClick={() => {navigate('/main_page'); changePageType("complaint");}} className="nav-link" style={{ textDecoration: pageType==="complaint" ? 'underline': '', color: pageType==="complaint" ? '#2d3647': '' }}>Complaint</a></li>
+                    </nav>
                     <div className="me-4" style={{ maxWidth: '200px', height: '40px' }}>
                         <input className="d-flex justify-content-xxl-center" type="search" style={{ width: '100%', height: '100%', borderRadius: '6px', border: '2px solid var(--bs-navbar-active-color)', paddingLeft: '5px', paddingRight: '5px', fontFamily: 'Inter, sans-serif', textAlign: 'center' }} placeholder="Search" />
                     </div>
@@ -69,5 +56,29 @@ function NavigationBarDefault() {
     );
 
 };
+
+const navbarStyle = {
+    borderBottom: '2px solid #2d3647',
+    height: '75px'
+};
+
+const brandIconStyle = {
+    margin: '0px',
+    borderRadius: '10px',
+    background: 'var(--bs-body-bg)',
+    width: '50px',
+    height: '50px',
+};
+
+const brandLogoStyle = {
+    width: '100%',
+    height: '100%',
+    borderRadius: '10px',
+};
+
+const selectedText = {
+
+}
+
 
 export default NavigationBarDefault;

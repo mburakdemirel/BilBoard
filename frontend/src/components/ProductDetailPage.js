@@ -9,21 +9,28 @@ import {useEffect, useState} from 'react';
 import { useParams } from 'react-router-dom';
 import axios from "axios";
 import {isDisabled} from "@testing-library/user-event/dist/utils";
+import {useContext} from "react";
+import ContextApi from "../context/ContextApi";
 
 function ProductDetailPage() {
+    const pageType = localStorage.getItem('type');
     const {id} = useParams();
     const [loading, setLoading] = useState(true);
     const [product, setProduct] = useState('');
 
     useEffect(()=>{
-        uploadSelectedProduct();
+        console.log("Page Type in detail page" + pageType);
+        if(pageType){
+            uploadSelectedProduct(pageType);
+        }
+
         // Messages in the selected index will be opened on the right side
     },[])
 
-    const uploadSelectedProduct = async () => {
+    const uploadSelectedProduct = async (pageType) => {
         try{
             axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
-            const {data} = await axios.get('http://127.0.0.1:8000/api/product/secondhand/'+ id);
+            const {data} = await axios.get('http://127.0.0.1:8000/api/product/' + pageType + '/'+ id);
             console.log(data);
             setProduct(data);
             setLoading(false);
@@ -76,8 +83,7 @@ function ProductDetailPage() {
                             </h1>
                             <hr style={hrStyle} />
                             <div className="d-flex justify-content-between align-items-center placeholder-glow" style={{ height: '10%', width: '100%', marginTop: '10px', marginBottom: '10px' }}>
-                                {loading && <span className="placeholder col-5 h-50"></span>}
-                                <h1 style={sellerNameStyle}>{product.sellerName}</h1>
+                                {loading ? <span className="placeholder col-5 h-50"></span> : <h1 style={sellerNameStyle}>{product.user.name + " " + product.user.surname}</h1>}
                                 <img className="rounded-circle mb-3 fit-cover" data-bss-hover-animate="pulse" src={loading? PlaceHolder :Logo} style={imageStyle} />
                             </div>
                             <hr style={hrStyle} />
