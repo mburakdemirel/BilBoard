@@ -500,7 +500,7 @@ function ProfileArea({myProfile,func} ) {
                             style={{ width: '40px', fontWeight: 'bold', background: '#2d3648', borderStyle: 'none', borderColor: '#2d3648', height: '90%' }}
                             onClick={handleClick}
                         >
-                            {editMode ? loading ? <span className="spinner-border spinner-border-sm" aria-hidden="true"></span> : < i className = "bi bi-check-lg" > < /i> : <i className="bi bi-pencil-square"></i> }
+                            {editMode ? loading ? <span className="spinner-border spinner-border-sm" aria-hidden="true"></span> : < i className = "bi bi-check-lg" > </i> : <i className="bi bi-pencil-square"></i> }
                         </button>
 
                         {/*<OverlayTrigger

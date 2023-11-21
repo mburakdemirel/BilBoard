@@ -15,6 +15,9 @@ import MessagesDeneme from "./components/MessagesDeneme";
 import MainPage from "./components/MainPage";
 import ContextApi from "./context/ContextApi";
 import {useState, useEffect} from "react";
+import { ProductAddForm } from './components/ProductAddForm';
+import { EntryForm } from './components/EntryForm';
+
 // we don't need to add NavigationBar and Footer to each page because they are added here only the Routes part of the app will differ.
 function App() {
 
@@ -41,18 +44,19 @@ function App() {
     return (
       <ContextApi.Provider value={{pageType: type, changePageType:changeType}}>
           <div className="App">
+              <NavigationBarLanding></NavigationBarLanding>
               <Routes>
-                  <Route path='/login' element={<><NavigationBarLanding/><LoginPage/></>}></Route>
-                  <Route path='/register' element={<><NavigationBarLanding/><RegisterPage/></>}></Route>
+                  <Route path='/login' element={<LoginPage/>}></Route>
+                  <Route path='/register' element={<RegisterPage/>}></Route>
                   {/** We will probably add a new component called <ProtectedRoute> or something for pages that should be seen after authentication */}
-                  <Route path='/' element={<><NavigationBarLanding/><LandingPage/></>}></Route>
-                  <Route path='/profile' element={<><NavigationBarLanding/><Profile/></>}></Route>
-                  <Route path='/change_password' element={<><NavigationBarLanding/><ForgotPasswordPage/></>}></Route>
-
-                  <Route path='/messages' element={<><NavigationBarLanding/><MessagePage/></>}></Route>
-                  <Route path='/messages_deneme' element={<><NavigationBarLanding/><MessagesDeneme/></>}></Route>
-                  <Route path='/product_detail/:id' element={<><NavigationBarDefault/><ProductDetailPage/></>}></Route>
-                  <Route path='/main_page' element={<><NavigationBarDefault/><MainPage/></>}> </Route>
+                  <Route path='/' element={<LandingPage/>}></Route>
+                  <Route path='/profile' element={<Profile/>}></Route>
+                  <Route path='/change_password' element={<ForgotPasswordPage/>}></Route>
+                  <Route path='/add_product' element={<ProductAddForm/>}></Route>
+                  <Route path='/messages' element={<MessagePage/>}></Route>
+                  <Route path='/messages_deneme' element={<MessagesDeneme/>}></Route>
+                  <Route path='/product_detail/:id' element={<ProductDetailPage/>}></Route>
+                  <Route path='/main_page' element={<MainPage/>}> </Route>
               </Routes>
 
               <Footer></Footer>

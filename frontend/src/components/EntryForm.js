@@ -1,5 +1,15 @@
-// TODO: formun tipini düzelt. Form ortalansın.
-export function ComplaintForm() {
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+export function EntryForm() {
+    const [title, setTitle] = useState("");
+    const [targetMail, setTargetMail] = useState("");
+    const [description, setDescription] = useState("");
+    const navigate = useNavigate();
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+    }
+
     return (
         <section className="d-flex justify-content-center align-items-center py-4 py-xl-5" style={{ background: '#edf0f7', minHeight: '100vh' }}>
             <div className="container-fluid px-1 py-5 mx-auto" style={{ overflow: 'scroll' }}>
@@ -23,13 +33,13 @@ export function ComplaintForm() {
                             }}
                         >
                             <h3 className="text-center" style={{ fontFamily: 'Inter,sans-serif' }}>Post a New Complaint</h3>
-                            <form method="post" className="form-card justify-content-center align-items-center" style={{ margin: 'auto', width: '60%' }}>
+                            <form onSubmit={handleSubmit} method="post" className="form-card justify-content-center align-items-center" style={{ margin: 'auto', width: '60%' }}>
 
 
                                 <div className="col-xl-6 flex-column d-flex " style={{ width: '100%' }}>
                                     <div className="form-group row justify-content-between text-center">
                                         <label className="form-control-label"><h5>Title</h5></label>
-                                        <input required type="text" placeholder="Title"
+                                        <input onChange={(e)=>setTitle(e.target.value)} required type="text" placeholder="Title"
                                             className="form-control"
                                             style={{
                                                 width: '100%',
@@ -46,7 +56,7 @@ export function ComplaintForm() {
                                     </div>
                                     <div className="form-group row justify-content-between text-center">
                                         <label className="form-control-label"><h5>Target Email</h5></label>
-                                        <input type="email" placeholder="Target Email"
+                                        <input onChange={(e)=>{setTargetMail(e.target.value)}} type="email" placeholder="Target Email"
                                             name="email"
                                             className="form-control"
                                             style={{
@@ -84,7 +94,7 @@ export function ComplaintForm() {
                                     </div>
                                     <div className="form-group row justify-content-between text-center">
                                         <label className="form-control-label" htmlFor="description" style={{ fontFamily: 'Inter, sans-serif' }}><h5>Enter your Description</h5></label>
-                                        <textarea
+                                        <textarea required onChange={(e)=>{setDescription(e.target.value)}}
                                             id="description"
                                             placeholder="Description"
                                             rows={2}
@@ -100,7 +110,7 @@ export function ComplaintForm() {
                                     </div>
                                     <div style={{paddingTop:'20px'}} className="row justify-content-between text-left">
                                     <div className="col-xl-6 flex-column d-flex">
-                                        <button className="btn btn-primary d-block w-100 mb-3" style={{ background: '#2d3648', border: 'none', fontFamily: 'Inter, sans-serif', height: '40px' }}>Cancel</button>
+                                        <button onClick={()=>{navigate('/product_detail')}} className="btn btn-primary d-block w-100 mb-3" style={{ background: '#2d3648', border: 'none', fontFamily: 'Inter, sans-serif', height: '40px' }}>Cancel</button>
                                     </div>
                                     <div className="col-xl-6 flex-column d-flex">
                                         <button className="btn btn-primary d-block w-100 mb-3" type="submit" style={{ background: '#2d3648', border: 'none', fontFamily: 'Inter, sans-serif', height: '40px' }}>Post</button>
