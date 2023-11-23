@@ -11,6 +11,9 @@ import axios from "axios";
 import {isDisabled} from "@testing-library/user-event/dist/utils";
 import {useContext} from "react";
 import ContextApi from "../context/ContextApi";
+import Carousel from 'react-bootstrap/Carousel';
+import Product from './assets/img/IMG_2252.png';
+import Product2 from './assets/img/products/3.jpg';
 
 function ProductDetailPage() {
     const navigate = useNavigate();
@@ -65,19 +68,31 @@ function ProductDetailPage() {
             <div className="container">
                 <div className="row gx-1 gy-3"  style={{ width: '100%', marginTop: '-21px'}}>
 
-                    <div className=" d-flex flex-grow-1 justify-content-center align-items-center" data-aos="fade-right" data-aos-duration="600"  style={containerStyle}>
+
+                    <div className=" d-flex flex-grow-1 justify-content-center align-items-center" data-aos="fade-right" data-aos-duration="600"  style={imageContainerStyle}>
                         <div className="d-flex justify-content-center align-items-center " style={sliderContainerStyle}>
-                            <div className="simple-slider" style={sliderStyle}>
-                                <div className="swiper-container" style={{ borderRadius: '10px', height: '100%' }}>
-                                    <div className="swiper-wrapper" style={{ height: '100%' }}>
-                                        <div className="swiper-slide" style={slideStyle}></div>
-                                    </div>
-                                    <div className="swiper-pagination"></div>
-                                    <div className="swiper-button-prev" style={{ color: '#2D3648' }}></div>
-                                    <div className="swiper-button-next" style={{ color: '#2D3648' }}></div>
-                                </div>
+                                    <Carousel style={{height:'40wv', width: '94%', borderRadius:'10px', backgroundColor:'#2B2B2B'}}>
+                                        <Carousel.Item >
+                                            <div className="d-flex justify-content-center " style={{height:'40vw'}}>
+                                                <img className="d-block h-100 "  src={Product} alt="First slide"/>
+                                            </div>
+                                        </Carousel.Item>
+                                        <Carousel.Item>
+                                            <div className="d-flex justify-content-center " style={{height:'40vw'}}>
+                                                <img className="d-block h-100 "  src={Product2} alt="First slide"/>
+                                            </div>
+                                        </Carousel.Item>
+                                        <Carousel.Item>
+                                            <div className="d-flex justify-content-center " style={{height:'40vw'}}>
+                                                <img className="d-block h-100 "  src={PlaceHolder} alt="First slide"/>
+                                            </div>
+                                        </Carousel.Item>
+
+
+                                    </Carousel>
+
                             </div>
-                        </div>
+
                     </div>
 
                     <div className="d-flex flex-grow-1 justify-content-center align-items-center" data-aos="fade-left" data-aos-duration="600" style={containerStyle}>
@@ -147,11 +162,16 @@ function ProductDetailPage() {
 
 
 };
+const imageContainerStyle = {
+    width: '600px',
+    height: '40vw',
+    borderRadius: '10px'
+};
 
 const containerStyle = {
     width: '600px',
     height: '40vw',
-    minHeight: '380px',
+    minHeight: '400px',
     borderRadius: '10px'
 };
 

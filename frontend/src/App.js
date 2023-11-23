@@ -22,7 +22,7 @@ import { EntryForm } from './components/EntryForm';
 function App() {
 
     const [type, setType] = useState('');
-
+    const [message, setMessage] = useState('');
     const sendMessage = (nMessage) => {
         setMessage(nMessage);
 
@@ -34,7 +34,7 @@ function App() {
     return (
       <ContextApi.Provider value={{pageType: type, changePageType:changeType, newMessage: message, sendNewMessage: sendMessage, }}>
           <div className="App">
-              <NavigationBarLanding></NavigationBarLanding>
+
               <Routes>
                   <Route path='/' element={<><NavigationBarLanding/><LandingPage/></>}></Route>
                   <Route path='/login' element={<><NavigationBarLanding/><LoginPage/></>}></Route>
