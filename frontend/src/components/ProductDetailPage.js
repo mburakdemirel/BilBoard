@@ -4,7 +4,7 @@ import Footer from "./Footer";
 import NavigationBarLanding from "./NavigationBarLanding";
 import './assets/bootstrap/css/bootstrap.min.css'; // Import Bootstrap CSS
 import "bootstrap-icons/font/bootstrap-icons.css";
-import PlaceHolder from './assets/img/WF Image Placeholder.png';
+import Burak2 from './assets/img/burak2.jpeg';
 import {useEffect, useState} from 'react';
 import {useNavigate, useParams} from 'react-router-dom';
 import axios from "axios";
@@ -84,7 +84,7 @@ function ProductDetailPage() {
                                         </Carousel.Item>
                                         <Carousel.Item>
                                             <div className="d-flex justify-content-center " style={{height:'40vw'}}>
-                                                <img className="d-block h-100 "  src={PlaceHolder} alt="First slide"/>
+                                                <img className="d-block h-100 "  src={Burak2} alt="First slide"/>
                                             </div>
                                         </Carousel.Item>
 
@@ -114,7 +114,7 @@ function ProductDetailPage() {
 
 
 
-                                <img className="rounded-circle mb-3 fit-cover" data-bss-hover-animate="pulse" src={loading? PlaceHolder :imageUrl} style={imageStyle} />
+                                <img className="rounded-circle mb-3 fit-cover" data-bss-hover-animate="pulse" src={loading? Burak2 :imageUrl} style={imageStyle} />
                             </div>
                             <hr style={hrStyle} />
                             <div className="d-flex flex-row justify-content-between align-items-center" style={{ height: '10%', width: '100%', minHeight: '40px', maxHeight: '50px' }}>
