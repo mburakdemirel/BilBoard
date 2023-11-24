@@ -18,6 +18,7 @@ import {useState, useEffect} from "react";
 import { ProductAddForm } from './components/ProductAddForm';
 import { EntryForm } from './components/EntryForm';
 import ComplaintsPage from "./components/ComplaintsPage";
+import Chat from "./components/Chat";
 
 // we don't need to add NavigationBar and Footer to each page because they are added here only the Routes part of the app will differ.
 function App() {
@@ -49,6 +50,7 @@ function App() {
                   <Route path='/main_page' element={<><NavigationBarDefault/><MainPage/></>}> </Route>
                   <Route path='/entry' element={<><NavigationBarDefault/><EntryForm/></>}> </Route>
                   <Route path='/complaints' element={<><NavigationBarDefault/><ComplaintsPage/></>}> </Route>
+                  <Route path='/chat' element={<><NavigationBarDefault/><Chat/></>}> </Route>
               </Routes>
 
               <Footer></Footer>
