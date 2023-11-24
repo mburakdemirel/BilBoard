@@ -23,6 +23,7 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from chat import routing
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -32,6 +33,8 @@ urlpatterns = [
     path('api/user/', include('userapp.urls')),
     path('api/', include('productapp.urls')),
     path('chat/', include("chatapp.urls")), #test chat app
+    path('api/', include('chat.urls')),
+    path('ws/', include(routing.websocket_urlpatterns)),
 ]
 
 if settings.DEBUG:
