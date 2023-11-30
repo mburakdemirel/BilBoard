@@ -56,11 +56,34 @@ class ProductAdmin(admin.ModelAdmin):
     )
 
 
+class LostAndFoundEntryAdmin(admin.ModelAdmin):
+    """Define the admin pages for LAF entries."""
+
+    list_display = ('topic', 'upload_date' , 'user', 'category')
+    ordering = ['id']
+    search_fields = ('topic', 'upload_date',)
+
+    # Specify the list of fields to be used as filters in the admin list view
+    list_filter = ('topic', 'user')
+    fieldsets = (
+        (None, {'fields': ('topic', 'description', 'user', 'category')}),
+        (_('Dates'), {'fields': ('upload_date',)}),
+    )
+    readonly_fields = ['upload_date']
+    add_fieldsets = (
+        (None, {
+            'classes': ('wide',),
+            'fields': ('topic', 'description', 'user', 'category'),
+        }),
+    )
+
+
 class ChatAdmin(admin.ModelAdmin):
     list_display = ('id', 'get_participiants')
 
 admin.site.register(models.CustomUser, UserAdmin)
 admin.site.register(models.Product, ProductAdmin)
+admin.site.register(models.LostAndFoundEntry, LostAndFoundEntryAdmin)
 
 # Test
 admin.site.register(models.Chat, ChatAdmin)

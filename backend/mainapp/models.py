@@ -87,6 +87,49 @@ class Product(models.Model):
 
     def _str_(self):
         return self.title
+    
+class EntryBase(models.Model):
+    """
+    This model is used for Lost and Found entry, also it is a base for Complaint entry.
+    """
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+    )
+
+    description = models.TextField(blank=False)
+    upload_date = models.DateField(auto_now=True)
+
+    REQUIRED_FIELDS = ['description']
+
+    def _str_(self):
+        return self.topic + " from " + self.user
+    
+
+class LostAndFoundEntry(EntryBase):
+    CATEGORY_CHOICES = [
+        ('lost', 'Lost'),
+        ('found', 'Found'),
+    ]
+    topic = models.CharField(max_length=100)
+    category = models.CharField(max_length=10, choices=CATEGORY_CHOICES, null=True)
+
+    REQUIRED_FIELDS = ['topic', 'category']
+
+    def _str_(self):
+        return super()._str_()
+
+
+class ComplaintEntry(EntryBase):
+    """
+    Complaint entry is different from base entry, because it has additional upvote and downvote rates.
+    """
+    upvote = models.DecimalField(max_digits=6, decimal_places=0,null=True, blank=True)
+    downvote = models.DecimalField(max_digits=6, decimal_places=0, null=True, blank=True)
+
+    def _str_(self):
+        return super()._str_()
+
 
 class Message(models.Model):
     author = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)

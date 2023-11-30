@@ -32,6 +32,7 @@ urlpatterns = [
     path('api/docs/', SpectacularSwaggerView.as_view(url_name='api-schema'), name='api-docs'),
     path('api/user/', include('userapp.urls')),
     path('api/', include('productapp.urls')),
+    path('api/', include('entryapp.urls')),
     path('chat/', include("chatapp.urls")), #test chat app
 
 ]
