@@ -63,6 +63,8 @@ class ProductUpdateSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError("Price should not be included for borrow products.")
             
         return data
+    
+    
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
