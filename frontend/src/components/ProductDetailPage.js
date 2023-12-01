@@ -21,6 +21,7 @@ function ProductDetailPage() {
 
 
     const {id} = useParams();
+
     const [loading, setLoading] = useState(true);
     const [product, setProduct] = useState('');
     const imageUrl = "http://127.0.0.1:8000/media/pphotos/102050644.png.webp";

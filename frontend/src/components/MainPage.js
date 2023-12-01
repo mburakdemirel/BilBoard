@@ -17,8 +17,9 @@ function MainPage() {
     console.log(pageType);
     const [loading, setLoading] = useState(true);
     const [productCategory, setProductCategory] = useState();
-
+    const [page, setPage] = useState(1);
     const [products, setProducts] = useState('');
+    const [hasMore, setHasMore] = useState(false);
 
     useEffect(()=>{
         if(pageType ===""){
@@ -34,9 +35,13 @@ function MainPage() {
 
             axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
             if(pageType){
-                const {data} = await axios.get('http://127.0.0.1:8000/api/product/' + pageType);
+                const {data} = await axios.get('http://127.0.0.1:8000/api/product/' + pageType + `?page=${page}`);
                 console.log(data);
-                setProducts(data);
+                console.log(data.results.length);
+                console.log(hasMore);
+                setProducts(prevProducts => [...prevProducts, ...data.results]);
+                setPage(prevPage => prevPage + 1);
+
                 setLoading(false);
             }
 
@@ -81,11 +86,20 @@ function MainPage() {
 
 
                 <section className="d-flex py-4 align-items-start justify-content-center" style={{ background: '#edf0f7', minHeight: '91vh' }}>
-                    {loading ? <span className="spinner-border spinner-border" aria-hidden="true" style={{height:'50px', width:'50px'}}></span>
-                        :
+
+
+                        <InfiniteScroll
+                            dataLength={products.length}
+                            next={uploadProducts}
+                            hasMore={true} // Replace with a condition based on your data source
+                            loader={loading && <span className="spinner-border spinner-border" aria-hidden="true" style={{height:'50px', width:'50px'}}></span>}
+                            endMessage={<p>No more data to load.</p>}
+                        >
 
                     <div className="container" style={{ paddingRight: '1%', paddingLeft: '1%' }}>
                         <div className="row d-flex justify-content-center" style={{ marginRight: '5%', marginLeft: '5%' }}>
+
+
                             {Array(products.length).fill().map((_, index) => {
                                 if (true) {
 
@@ -110,7 +124,9 @@ function MainPage() {
 
                         </div>
                     </div>
-                    }
+
+
+                        </InfiniteScroll>
                 </section>
 
 
