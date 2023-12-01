@@ -124,8 +124,7 @@ class ComplaintEntry(EntryBase):
     """
     Complaint entry is different from base entry, because it has additional upvote and downvote rates.
     """
-    upvote = models.DecimalField(max_digits=6, decimal_places=0,null=True, blank=True)
-    downvote = models.DecimalField(max_digits=6, decimal_places=0, null=True, blank=True)
+    vote = models.DecimalField(max_digits=6, decimal_places=0,null=True, blank=True, default=0)
 
     def _str_(self):
         return super()._str_()

@@ -77,6 +77,8 @@ class LostAndFoundEntryAdmin(admin.ModelAdmin):
         }),
     )
 
+    
+
 
 class ChatAdmin(admin.ModelAdmin):
     list_display = ('id', 'get_participiants')
@@ -84,6 +86,7 @@ class ChatAdmin(admin.ModelAdmin):
 admin.site.register(models.CustomUser, UserAdmin)
 admin.site.register(models.Product, ProductAdmin)
 admin.site.register(models.LostAndFoundEntry, LostAndFoundEntryAdmin)
+admin.site.register(models.ComplaintEntry)
 
 # Test
 admin.site.register(models.Chat, ChatAdmin)
