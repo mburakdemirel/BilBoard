@@ -7,7 +7,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 
-#Şu an lost ve found hepsini getiriyor user conflict
+#Şu an lost ve found hepsini getiriyor conflict
 class UserLostAndFoundEntryViewSet(viewsets.ModelViewSet):
     """View for manage Lost and Found Entry APIs."""
 
