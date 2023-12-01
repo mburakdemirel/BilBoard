@@ -30,17 +30,24 @@ class UserAdmin(BaseUserAdmin):
         }
     ),
 
+
+class ProductImageInline(admin.TabularInline):
+    model = models.ProductImage
+    extra = 1 
+
+
 class ProductAdmin(admin.ModelAdmin):
     """Define the admin pages for products."""
 
     list_display = ('title', 'category', 'user')
     ordering = ['id']
     search_fields = ('title', 'category',)
+    inlines = [ProductImageInline]
 
     # Specify the list of fields to be used as filters in the admin list view
     list_filter = ('category', 'user')
     fieldsets = (
-        (None, {'fields': ('title', 'description', 'product_photo', 'category', 'price', 'user',)}),
+        (None, {'fields': ('title', 'description', 'category', 'price', 'user',)}),
         ('Advanced options', {
             'classes': ('collapse',),
             'fields': ('return_date',),

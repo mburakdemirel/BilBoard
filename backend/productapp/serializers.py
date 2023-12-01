@@ -1,17 +1,25 @@
 from rest_framework import serializers
-from mainapp.models import Product, CustomUser
+from mainapp.models import Product, CustomUser, ProductImage
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
         fields = ['id', 'email', 'name', 'surname', 'profile_photo', 'rate_ratio', 'description', 'phone_number']
 
-class ProductCreateSerializer (serializers.ModelSerializer):
-    """Serializer for products."""
-    #user = UserSerializer(read_only=True)
+
+class ProductImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProductImage
+        fields = ['product_photos']
+
+
+class ProductCreateSerializer(serializers.ModelSerializer):
+    product_photos = ProductImageSerializer(many=True, read_only=True)
+    user = UserSerializer(read_only=True)
+
     class Meta:
         model = Product
-        fields = ['id', 'title', 'price', 'return_date', 'product_photo', 'category', 'description', 'upload_date', 'product_type', 'user']
+        fields = ['id', 'title', 'price', 'return_date', 'product_photos', 'category', 'description', 'upload_date', 'product_type', 'user']
         read_only_fields = ['id', 'user', 'upload_date']
 
     def validate(self, data):
@@ -37,17 +45,19 @@ class ProductCreateSerializer (serializers.ModelSerializer):
     
 
 class ProductUserSerializer(serializers.ModelSerializer):
+    product_photos = ProductImageSerializer(many=True, read_only=True) 
     user = UserSerializer(read_only=True)
     class Meta:
         model = Product
-        fields = ['id', 'title', 'price', 'return_date', 'product_photo', 'category', 'description', 'upload_date', 'product_type', 'user']
+        fields = ['id', 'title', 'price', 'return_date', 'product_photos', 'category', 'description', 'upload_date', 'product_type', 'user']
         read_only_fields = ['id', 'user', 'upload_date']
 
 
 class ProductUpdateSerializer(serializers.ModelSerializer):
+    product_photos = ProductImageSerializer(many=True, read_only=True)
     class Meta:
         model = Product
-        fields = ['id', 'title', 'price', 'return_date', 'product_photo', 'category', 'description', 'upload_date', 'product_type', 'user']
+        fields = ['id', 'title', 'price', 'return_date', 'product_photos', 'category', 'description', 'upload_date', 'product_type', 'user']
         read_only_fields = ['id', 'user', 'category', 'upload_date']
 
     def validate(self, data):
@@ -66,6 +76,7 @@ class ProductUpdateSerializer(serializers.ModelSerializer):
     
     
 class ProductSerializer(serializers.ModelSerializer):
+    product_photos = ProductImageSerializer(many=True, read_only=True)
     class Meta:
         model = Product
-        fields = ['id', 'title', 'price', 'return_date', 'product_photo', 'category']
+        fields = ['id', 'title', 'price', 'return_date', 'product_photos', 'category']

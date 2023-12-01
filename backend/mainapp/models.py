@@ -76,7 +76,7 @@ class Product(models.Model):
     description = models.TextField(blank=True)
     upload_date = models.DateField(auto_now=True) #bu ilerde içi silinecek ve daytime ile yüklendiği an
     # create product view de set edilecek.
-    product_photo = models.ImageField(upload_to='pphotos/', blank=True, null=True)
+    #product photo kaldırıldı.
     category = models.CharField(max_length=10, choices=CATEGORY_CHOICES)
     return_date = models.DateField(null=True, blank=True)
     product_type = models.CharField(max_length=30, blank=True, null=True)
@@ -87,6 +87,12 @@ class Product(models.Model):
 
     def _str_(self):
         return self.title
+    
+
+class ProductImage(models.Model):
+    product = models.ForeignKey(Product, related_name='product_photos', on_delete=models.CASCADE)
+    product_photos = models.ImageField(upload_to='product_photos/', blank=True, null=True)
+
     
 class EntryBase(models.Model):
     """
