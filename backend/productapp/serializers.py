@@ -15,8 +15,6 @@ class ProductImageSerializer(serializers.ModelSerializer):
 
 class ProductCreateSerializer(serializers.ModelSerializer):
     product_photos = ProductImageSerializer(many=True, read_only=True)
-    user = UserSerializer(read_only=True)
-
     class Meta:
         model = Product
         fields = ['id', 'title', 'price', 'return_date', 'product_photos', 'category', 'description', 'upload_date', 'product_type', 'user']
@@ -45,7 +43,7 @@ class ProductCreateSerializer(serializers.ModelSerializer):
     
 
 class ProductUserSerializer(serializers.ModelSerializer):
-    product_photos = ProductImageSerializer(many=True, read_only=True) 
+    product_photos = ProductImageSerializer(many=True, read_only=True)
     user = UserSerializer(read_only=True)
     class Meta:
         model = Product
