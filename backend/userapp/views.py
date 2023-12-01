@@ -13,7 +13,6 @@ from userapp.serializers import (
 )
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.views import TokenObtainPairView
-from rest_framework.permissions import AllowAny
 from mainapp.models import CustomUser
 from rest_framework import status, permissions
 from rest_framework.response import Response
@@ -21,10 +20,10 @@ from rest_framework_simplejwt.tokens import RefreshToken
 import jwt
 from django.core.mail import send_mail
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
-
+from productapp import serializers
 
 
 class CreateUserView(generics.CreateAPIView):
@@ -191,3 +190,14 @@ def ForgetPassword(request):
 
     return Response({'error': 'Invalid request method.'}, status=status.HTTP_400_BAD_REQUEST)
 
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def ListMyFavorites(request):
+    user = CustomUser.objects.get(email=request.user)
+    count = user.favorited_products.count()
+    serializer = serializers.ProductSerializer(user.favorited_products, many=True)
+    if count == 0:
+        return Response({"message": "There are no favorited products of user", })
+    else:
+        return Response({"message": serializer.data})  

@@ -42,11 +42,11 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     description = models.TextField(verbose_name="information about user", blank=True, null=True)
     phone_number = models.CharField(max_length=15, blank=True, null=True)
     used_password_reset_token = models.CharField(max_length=300, blank=True, null=True)
-
-    # 'products' will be added after product module created !
-    # 'message id list' will be discussed later since there are multiple approaches to keep messages. -> ForeignKey
-    # same for notifications.
-
+    favorited_products = models.ManyToManyField(
+        'Product', 
+        related_name='favorited_by', 
+        blank=True
+    )
     is_active = models.BooleanField(default=True)
     is_verified = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
@@ -99,8 +99,9 @@ class EntryBase(models.Model):
 
     description = models.TextField(blank=False)
     upload_date = models.DateField(auto_now=True)
+    topic = models.CharField(max_length=100)
 
-    REQUIRED_FIELDS = ['description']
+    REQUIRED_FIELDS = ['topic', 'description']
 
     def _str_(self):
         return self.topic + " from " + self.user
@@ -111,10 +112,9 @@ class LostAndFoundEntry(EntryBase):
         ('lost', 'Lost'),
         ('found', 'Found'),
     ]
-    topic = models.CharField(max_length=100)
-    category = models.CharField(max_length=10, choices=CATEGORY_CHOICES, null=True)
-
-    REQUIRED_FIELDS = ['topic', 'category']
+    #null = True?
+    category = models.CharField(max_length=10, choices=CATEGORY_CHOICES)
+    REQUIRED_FIELDS = ['category']
 
     def _str_(self):
         return super()._str_()

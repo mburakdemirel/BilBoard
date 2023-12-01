@@ -115,8 +115,6 @@ class DonationProductViewSet(viewsets.ReadOnlyModelViewSet):
 
         return queryset
 
-    
-
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def get_products_by_user_id(request):
@@ -127,3 +125,25 @@ def get_products_by_user_id(request):
         return Response(serializer.data)
     except Product.DoesNotExist:
         return Response({'error': 'No products found for the given user ID'}, status=404)
+    
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def add_favorites(request):
+    product_id = request.data.get('product_id')
+    if not product_id:
+        return Response({'error': 'Product ID should be sent'}, status=400)
+
+    try:
+        product = Product.objects.get(id=product_id)
+    except Product.DoesNotExist:
+        return Response({'error': 'Product with specified id not found'}, status=404)
+    
+    user = request.user
+
+    # Check if the product is already favorited
+    if product in user.favorited_products.all():
+        return Response({'status': 'Product is already in favorites'}, status=400)
+
+    user.favorited_products.add(product)
+    return Response({'status': 'Product added to favorites'})

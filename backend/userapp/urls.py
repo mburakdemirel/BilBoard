@@ -10,6 +10,7 @@ from userapp.views import (
     ManageUserView,
     ForgetPassword,
     ChangePassword,
+    ListMyFavorites
 )
 
 app_name = 'user'
@@ -23,4 +24,5 @@ urlpatterns = [
     path('me/', ManageUserView.as_view(), name='me'),
     path('forget-password/' ,ForgetPassword , name="forget_password"),
     path('change-password/' , ChangePassword , name="change_password"),
+    path('my-favorites/', ListMyFavorites, name='my_favorites'),
 ]
