@@ -1,5 +1,5 @@
 """Views for the product APIs."""
-
+from abc import ABC, abstractmethod
 from django.contrib.postgres.search import TrigramSimilarity
 from mainapp.models import Product 
 from .permissions import IsOwnerOrReadOnly
@@ -10,14 +10,26 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.response import Response
 
-
-class UserProductViewSet(viewsets.ModelViewSet):
-    """View for manage Product APIs."""
-
-    # Detailed veya non detailed şeyini düşün. Hepsi tek seferde dönebilir.
+class ProductViewSet(viewsets.ModelViewSet, ABC):
+    serializer_class = serializers.ProductSerializer
     queryset = Product.objects.all()
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
+
+    @abstractmethod
+    def get_serializer_class(self):
+        pass
+    
+    @abstractmethod
+    def get_queryset(self):
+        pass
+    
+    def perform_create(self, serializer):
+        return super().perform_create(serializer)
+
+
+class UserProductViewSet(ProductViewSet):
+    """View for manage Product APIs."""
 
     # Retrive ise => user objesi dönsün, diğer her şeyde id dönsün
     def get_serializer_class(self):
@@ -38,12 +50,8 @@ class UserProductViewSet(viewsets.ModelViewSet):
         serializer.save(user=self.request.user)
 
 
-class SecondhandProductViewSet(viewsets.ReadOnlyModelViewSet):
+class SecondhandProductViewSet(ProductViewSet):
     """View for managing all secondhand products in the system."""
-    serializer_class = serializers.ProductSerializer
-    queryset = Product.objects.all()
-    authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
 
     def get_serializer_class(self):
         if self.action in ['retrieve']:
@@ -64,12 +72,8 @@ class SecondhandProductViewSet(viewsets.ReadOnlyModelViewSet):
         return queryset
     
 
-class BorrowProductViewSet(viewsets.ReadOnlyModelViewSet):
+class BorrowProductViewSet(ProductViewSet):
     """View for managing all borrow products in the system."""
-    serializer_class = serializers.ProductSerializer
-    queryset = Product.objects.all()
-    authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
 
     def get_serializer_class(self):
         if self.action in ['retrieve']:
@@ -90,12 +94,8 @@ class BorrowProductViewSet(viewsets.ReadOnlyModelViewSet):
         return queryset
     
 
-class DonationProductViewSet(viewsets.ReadOnlyModelViewSet):
+class DonationProductViewSet(ProductViewSet):
     """View for managing all donation products in the system."""
-    serializer_class = serializers.ProductSerializer
-    queryset = Product.objects.all()
-    authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
 
     def get_serializer_class(self):
         if self.action in ['retrieve']:
