@@ -147,3 +147,26 @@ def add_favorites(request):
 
     user.favorited_products.add(product)
     return Response({'status': 'Product added to favorites'})
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def remove_favorites(request):
+    product_id = request.data.get('product_id')
+    if not product_id:
+        return Response({'error': 'Product ID should be sent'}, status=400)
+
+    try:
+        product = Product.objects.get(id=product_id)
+    except Product.DoesNotExist:
+        return Response({'error': 'Product with specified id not found'}, status=404)
+    
+    user = request.user
+
+    # Check if the product favorited the product
+    if product in user.favorited_products.all():
+        user.favorited_products.remove(product)
+        return Response({'status': 'Product is removed from favorites'}, status=200)
+
+    
+    return Response({'status': 'User didnt favorited this product. '})
