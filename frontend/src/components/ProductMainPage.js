@@ -8,10 +8,11 @@ import axios from "axios";
 import {useContext} from "react";
 import ContextApi from "../context/ContextApi";
 import {useNavigate, useParams} from "react-router-dom";
-
+import productDetailPage from "./ProductDetailPage";
+import Placeholder from "./assets/img/WF Image Placeholder2.png"
 function ProductMainPage() {
     const navigate = useNavigate();
-    const imageUrl = "http://127.0.0.1:8000/media/pphotos/Activity_Diagram1.jpg";
+
     const {pageType,searchText} = useParams();
     console.log("pageType in mainpage" + pageType);
     const [loading, setLoading] = useState(true);
@@ -32,11 +33,11 @@ function ProductMainPage() {
         console.log("page use effect" + page);
         if (page === 1) {
             setLoading(true);
+
             uploadProducts();
         }
 
     }, [page]);
-
 
     const uploadProducts = async () => {
         try{
@@ -44,6 +45,7 @@ function ProductMainPage() {
             if(pageType){
 
                 if(searchText){
+
                     const {data} = await axios.get('http://127.0.0.1:8000/api/product/' + pageType + `?search=${searchText}`);
                     console.log(data.results);
                     console.log(hasMore);
@@ -52,12 +54,15 @@ function ProductMainPage() {
                     setHasMore(data.results.length >= 16);
                 }
                 else{
+
                     const {data} = await axios.get('http://127.0.0.1:8000/api/product/' + pageType + `?page=${page}`);
                     console.log(data.results);
                     console.log(hasMore);
                     setProducts(prevProducts => [...prevProducts, ...data.results]);
                     setPage(prevPage => prevPage + 1);
                     setHasMore(data.results.length >= 16);
+
+
                 }
 
                 setLoading(false);
@@ -116,15 +121,15 @@ function ProductMainPage() {
                             endMessage={<p></p>}
                         >
 
-                            <div className="container" style={{  paddingRight: '1%', paddingLeft: '1%' }}>
+                            <div className="container" style={{minWidth:'100vw',  paddingRight: '1%', paddingLeft: '1%' }}>
                                 <div className="row d-flex justify-content-center" style={{ minHeight:'100%',  marginRight: '5%', marginLeft: '5%' }}>
                                     {Array(products.length).fill().map((_, index) => {
                                         if (true) {
-                                            return(<div className="col-md-3" style={{ minWidth:'18vw', maxWidth: '42vw', padding: '1%' }}
+                                            return(<div className="col-md-3" style={{ minWidth:'150px', maxWidth: '18vw', padding: '1%' }}
                                                         onClick={()=>sendProductDetailPage(products[index].id)}>
-                                                    <div className="card" style={{  borderRadius: '10px', borderStyle: 'none', padding: '5px', background: 'transparent', margin: '2%' }}>
+                                                    <div className="card" style={{ maxHeight:'35vw', height:'230px', borderRadius: '10px', borderStyle: 'none', padding: '5px', background: 'transparent', margin: '2%' }}>
                                                         <div className="card-body" style={{ width: '100%', height: '100%', padding: '0px' }}>
-                                                            <img style={{ width: '100%', height: '100%', borderRadius:'10px'}} src={imageUrl} width="247" height="247" />
+                                                            <img style={{ width: '100%', height: '100%', borderRadius:'10px'}} src={products[index].product_photos && products[index].product_photos.length > 0 ? products[index].product_photos[0].product_photos : Placeholder} width="247" height="247" />
                                                             <div className="div-special" style={{ height: '45px', width: '100%', marginTop: '-45px', background: '#21252955', position: 'relative', borderBottomRightRadius: '10px', borderBottomLeftRadius: '10px', paddingTop: '3px', paddingBottom: '3px', paddingRight: '5px', paddingLeft: '5px' }}>
                                                                 <h1 className="text-center d-flex d-xxl-flex justify-content-start align-items-start justify-content-xxl-start"
                                                                     style={{ width: '100%', fontSize: '16px', fontFamily: 'Inter, sans-serif', marginBottom: '0px', color:'#EDF0F7' }}>{products[index].title}</h1>

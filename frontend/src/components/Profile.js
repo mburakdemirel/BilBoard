@@ -8,7 +8,7 @@ import Popover from 'react-bootstrap/Popover'
 import Button from 'react-bootstrap/Button';
 import alert from "bootstrap/js/src/alert";
 import {useNavigate} from "react-router-dom";
-
+import Placeholder from "./assets/img/WF Image Placeholder2.png"
 
 //There are two kinds of profiles and they are rendered according to the value of myProfile boolean.
 //Probably myProfile will take its value from a context. Or we might directly pass is as props.
@@ -31,7 +31,8 @@ function Profile() {
             const {data} = await axios.get('http://127.0.0.1:8000/api/user/me/') ;
             console.log(data);
             setMyProfile(data);
-
+            const favourites = await axios.post('http://127.0.0.1:8000/api/product/add-favorites/1/') ;
+            console.log(favourites.data);
 
         }
         catch (error){
@@ -94,59 +95,12 @@ function Products({myProfile, func}) {
 
 
     return (
-        <div
-            className="col-xxl-6 d-flex d-sm-flex d-md-flex d-lg-flex d-xl-flex d-xxl-flex flex-grow-1 justify-content-center align-items-center justify-content-sm-center align-items-sm-center align-items-md-center align-items-lg-center"
-            data-aos="fade-right"
-            data-aos-duration="600"
-            style={{
-                height: '40vw',
-                width: '600px',
-                minHeight: '380px',
-                maxWidth:'93vw',
-
-                paddingTop:'10px'
-
-            }}
-        >
-            <div
-                className="d-flex d-xxl-flex flex-column align-items-center  "
-                style={{
-                    //   background: 'var(--bs-white)',
-                    background: '#ffffff',
-                    fontSize: '12px',
-                    borderRadius: '10px',
-                    width: '95%',
-                    minWidth:'90%',
-                    padding: '5%',
-                    height: '100%',
-                }}
-                data-bs-smooth-scroll="true"
-            >
-                {myProfile ? (<h1
-                    className="text-center"
-                    id="h1-products"
-                    style={{
-                        width: '100%',
-                        fontSize: '250%',
-                        fontFamily: 'Inter, sans-serif',
-                        marginBottom: '5px',
-                    }}
-                >
-                    My Posts
-                </h1>):
-                (<h1
-                    className="text-center"
-                    id="h1-products"
-                    style={{
-                        width: '100%',
-                        fontSize: '250%',
-                        fontFamily: 'Inter, sans-serif',
-                        marginBottom: '5px',
-                    }}
-                >
-                    Posts
-                </h1>)}
-
+        <div className="col-xxl-6 d-flex d-sm-flex d-md-flex d-lg-flex d-xl-flex d-xxl-flex flex-grow-1 justify-content-center align-items-center justify-content-sm-center align-items-sm-center align-items-md-center align-items-lg-center"
+            data-aos="fade-right" data-aos-duration="600" style={{height: '40vw', width: '600px', minHeight: '380px', maxWidth:'93vw', paddingTop:'10px'}}>
+            <div className="d-flex d-xxl-flex flex-column align-items-center  " style={{background: '#ffffff', fontSize: '12px', borderRadius: '10px', width: '95%', minWidth:'90%', padding: '5%', height: '100%',}} data-bs-smooth-scroll="true">
+                {myProfile ? (<h1 className="text-center" id="h1-products" style={{width: '100%', fontSize: '250%', fontFamily: 'Inter, sans-serif', marginBottom: '5px',}}>My Posts</h1>)
+                    :
+                    (<h1 className="text-center" id="h1-products" style={{width: '100%', fontSize: '250%', fontFamily: 'Inter, sans-serif', marginBottom: '5px',}}>Posts</h1>)}
 
                 <div
                     className="input-group text-center d-flex d-xl-flex flex-row justify-content-lg-center justify-content-xl-center mt-3"
@@ -249,6 +203,7 @@ function ProfileArea({myProfile,func} ) {
 
             // do update operations
             const {data} = await axios.patch('http://127.0.0.1:8000/api/user/me/', user);
+
             console.log(data);
             myProfile = data;
             setNameSurname(myProfile.name + " " + myProfile.surname)
@@ -375,7 +330,7 @@ function ProfileArea({myProfile,func} ) {
                 </div>
 
                 <div className="d-flex d-xxl-flex flex-column justify-content-center align-items-center align-items-xxl-center" style={{ height: 'initial', width: '100%' }}>
-                    <img className="rounded-circle" src={imageUrl} style={{ height: '150px', width: '150px', marginBottom: '15px' }} alt="User Profile" />
+                    <img className="rounded-circle" src={Placeholder} style={{ height: '150px', width: '150px', marginBottom: '15px' }} alt="User Profile" />
 
                     {editMode
                         ?

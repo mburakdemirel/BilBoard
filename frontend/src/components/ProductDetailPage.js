@@ -12,7 +12,7 @@ import {isDisabled} from "@testing-library/user-event/dist/utils";
 import {useContext} from "react";
 import ContextApi from "../context/ContextApi";
 import Carousel from 'react-bootstrap/Carousel';
-import Product from './assets/img/burak2.jpeg';
+import Product from './assets/img//IMG_2252.png';
 import Product2 from './assets/img/Shape.png';
 
 function ProductDetailPage() {
@@ -71,14 +71,12 @@ function ProductDetailPage() {
 
                     <div className=" d-flex flex-grow-1 justify-content-center align-items-center" data-aos="fade-right" data-aos-duration="600"  style={imageContainerStyle}>
                         <div className="d-flex justify-content-center align-items-center " style={sliderContainerStyle}>
-                            <Carousel style={{height:'40wv', width: '94%', borderRadius:'10px', backgroundColor:'#2B2B2B'}}>
-
+                            <Carousel  style={{height:'40wv', width: '94%', borderRadius:'10px', backgroundColor:'#2B2B2B'}}>
                                         {product.product_photos && product.product_photos.length>0 ?
                                             product.product_photos.map((photo, index) => (
-
                                             <Carousel.Item  key={index}>
-                                                <div className="d-flex justify-content-center " style={{height:'40vw', borderRadius:'10px', overflow:'hidden'}}>
-                                                        <img className="d-block h-100"  src={photo.product_photos} alt="First slide"/> {/*src={photo.product_photos}*/}
+                                                <div className="d-flex justify-content-center align-items-center " style={{height:'40vw', borderRadius:'10px', overflow:'hidden'}}>
+                                                        <img className="d-block w-100"  src={photo.product_photos} alt="First slide"/> {/*src={photo.product_photos}*/}
                                                 </div>
                                             </Carousel.Item>
                                             ))
@@ -243,6 +241,10 @@ const imageStyle = {
 };
 
 const sliderContainerStyle = {
+    display: 'flex',
+    justifContent: 'center',
+    alignItems: 'center',
+    margin:'auto',
     width: '100%',
     height: '100%',
     borderRadius: '10px'
