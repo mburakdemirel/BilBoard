@@ -66,7 +66,7 @@ function Profile() {
 function Products({myProfile, func}) {
 
     const [filteredProductsType, setFilteredProductsType] = useState('secondhand');
-    const [products, setProducts] = useState('');
+    const [products, setProducts] = useState([]);
     useEffect(()=>{
         uploadMyProducts();
 
@@ -78,6 +78,8 @@ function Products({myProfile, func}) {
             const {data} = await axios.get('http://127.0.0.1:8000/api/user/product/');
             console.log(data);
             setProducts(data);
+
+
         }
         catch (error){
             if (error.response) {
@@ -164,20 +166,20 @@ function Products({myProfile, func}) {
                     <button
                         className="d-flex d-xl-flex d-xxl-flex justify-content-center justify-content-xl-center justify-content-xxl-center input-group-text"
                         onClick={(event) => setFilteredProductsType("lostandfound")}
-                        id="l&f" style={{background: filteredProductsType==="lostandfound"? '#2d3648' : '#717d96' , width: '20%', color: '#ffffff', fontSize: 'inherit',fontWeight: filteredProductsType==="lostandfound"? 'bold':''}}>Lost & Found
+                        id="l&f" style={{background: filteredProductsType==="lostandfound"? '#2d3648' : '#717d96' , width: '20%', color: '#ffffff', fontFamily: 'Inter, sans-serif', fontSize: 'inherit',fontWeight: filteredProductsType==="lostandfound"? 'bold':''}}>Lost & Found
                     </button>
                     <button
                         className="d-flex d-xl-flex d-xxl-flex justify-content-center justify-content-xl-center justify-content-xxl-center input-group-text" id="borrow"
                         onClick={(event) => setFilteredProductsType("borrow")}
-                        style={{background: filteredProductsType==="borrow"? '#2d3648' : '#717d96' , color: '#ffffff', fontSize: 'inherit',fontWeight: filteredProductsType==="borrow"? 'bold':''}}>Borrow
+                        style={{background: filteredProductsType==="borrow"? '#2d3648' : '#717d96' , color: '#ffffff', fontSize: 'inherit', fontFamily: 'Inter, sans-serif', fontWeight: filteredProductsType==="borrow"? 'bold':''}}>Borrow
                     </button>
                     <button className="d-flex d-xl-flex d-xxl-flex justify-content-center justify-content-xl-center justify-content-xxl-center input-group-text"
                             onClick={(event) => setFilteredProductsType("complaints")}
-                            id="complaint" style={{background: filteredProductsType==="complaints"? '#2d3648' : '#717d96' , width: '20%', color: '#ffffff', fontSize: 'inherit',fontWeight: filteredProductsType==="complaints"? 'bold':''}}>Complaints
+                            id="complaint" style={{background: filteredProductsType==="complaints"? '#2d3648' : '#717d96' , width: '20%', color: '#ffffff', fontFamily: 'Inter, sans-serif', fontSize: 'inherit',fontWeight: filteredProductsType==="complaints"? 'bold':''}}>Complaints
                     </button>
                     <button className="d-flex d-xl-flex d-xxl-flex justify-content-center justify-content-xl-center justify-content-xxl-center input-group-text"
                             onClick={(event) => setFilteredProductsType("donation")}
-                            id="donation" style={{background: filteredProductsType==="donation"? '#2d3648' : '#717d96' , width: '20%', color: '#ffffff', fontSize: 'inherit',fontWeight: filteredProductsType==="donation"? 'bold':''}}>Donation
+                            id="donation" style={{background: filteredProductsType==="donation"? '#2d3648' : '#717d96' , width: '20%', color: '#ffffff', fontFamily: 'Inter, sans-serif', fontSize: 'inherit',fontWeight: filteredProductsType==="donation"? 'bold':''}}>Donation
                     </button>
 
 
@@ -199,7 +201,7 @@ function Products({myProfile, func}) {
                  * request and we should use product's data in ... part
                 */}
                     {Array(products.length).fill().map((_, index) => {
-                        if (products[index].category === filteredProductsType) {
+                        if (products[index] && products[index].category === filteredProductsType) {
                             return(<div className="card" key={index} id="product" style={{width: '170px', height: '170px', borderRadius: '10px', borderStyle: 'none', borderBottomStyle: 'none', padding: '5px', minWidth: '170px', maxWidth: '170px',}}>
                                 <div className="card-body" style={{ width: '100%', height: '100%', padding: '0' }}>
                                     <img style={{ width: '100%', height: '100%' }} src={PlaceHolder} alt={`Product ${index}`}/>
@@ -382,27 +384,18 @@ function ProfileArea({myProfile,func} ) {
                             <input className="form-control mb-3" value={newSurname} onChange={e=>setNewSurname(e.target.value)} type="text" name="surname" placeholder="Surname" style={inputStyles} required />
                         </div>
                         :
-                        <h1 className="text-center" style={{ width: '100%', fontSize: '258%', fontFamily: 'Inter, sans-serif', marginBottom: '0px', fontWeight: 'bold' }}>
+                        <h1 className="text-center" style={{ width: '100%',  fontSize: '258%', fontFamily: 'Inter, sans-serif', marginBottom: '5px', fontWeight: 'bold' }}>
                             {nameSurname}
                         </h1>
                     }
 
-                    {editMode
-                        ?
+                    {editMode &&
                         <div className="d-flex flex-row justify-content-center" style={{width:'100%', paddingTop:'5px', height:'37px'}}>
                             <input className="form-control mb-3" value={oldPassword} onChange={e=>setOldPassword(e.target.value)} type="password" name="old_password" placeholder="Old Password" style={inputStyles} required />
                             <input className="form-control mb-3" value={newPassword} onChange={e=>setNewPassword(e.target.value)} type="password" name="new_password" placeholder="New Password" style={inputStyles} required />
                             <input className="form-control mb-3" value={newPasswordConfirm} onChange={e=>setNewPasswordConfirm(e.target.value)} type="password" name="new_password" placeholder="Confirm New Password" style={inputStyles} required />
                         </div>
-                        :
-                        <div className="text-end d-flex d-xxl-flex flex-row justify-content-center align-items-center justify-content-xxl-center align-items-center" style={{fontSize: '16px', width: '100%' }}>
-                            <i className="bi bi-star-fill" style={{marginBottom: '0px', borderStyle:'none' ,color: 'var(--bs-yellow)'}}></i>
-                            <i className="bi bi-star-fill" style={{borderStyle:'none' ,color: 'var(--bs-yellow)'}}></i>
-                            <i className="bi bi-star-fill" style={{borderStyle:'none' ,color: 'var(--bs-yellow)'}}></i>
-                            <i className="bi bi-star-half" style={{borderStyle:'none' ,color: 'var(--bs-yellow)'}}></i>
-                            <i className="bi bi-star" style={{borderStyle:'none' ,color: 'var(--bs-yellow)'}}></i>
-                            <p style={{ marginTop:'3px', marginLeft:'5px', marginBottom: '0px', fontWeight: 'bold', fontFamily: 'Inter, sans-serif', width: '35px' }}>3.5/5</p>
-                        </div>
+
                     }
                 </div>
                 <hr className="d-xxl-flex justify-content-xxl-center align-items-xxl-center" style={{ width: '100%', margin: '0px', marginTop: '10px', marginBottom: '10px' }} />
@@ -411,7 +404,7 @@ function ProfileArea({myProfile,func} ) {
                     <p style={{ marginBottom: '0px', fontFamily: 'Inter, sans-serif', fontSize: '18px' }}>{email}</p>
                 </div>
                 <hr className="d-xxl-flex justify-content-xxl-center align-items-xxl-center" style={{ width: '100%', margin: '0px', marginTop: '10px', marginBottom: '10px' }} />
-                <div className="d-flex flex-column justify-content-between align-items-center align-content-around align-items-xxl-start" style={{ height: '25%', width: '100%', minHeight: '100px', background: '#edf0f7', borderRadius: '10px', paddingRight: '5px', paddingLeft: '10px', paddingTop: '3px', maxHeight: '200px' }}>
+                <div className="d-flex flex-column justify-content-between align-items-center align-content-around align-items-xxl-start" style={{ height: '30%', width: '100%', minHeight: '100px', background: '#edf0f7', borderRadius: '10px', paddingRight: '5px', paddingLeft: '10px', paddingTop: '3px', maxHeight: '200px' }}>
                     <div className="d-flex flex-row justify-content-between align-items-center align-content-around" style={{ height: '30%', width: '100%', minHeight: '40px' }}>
                         <h1 style={{fontSize: '1.6em', fontFamily: 'Inter, sans-serif', marginLeft: '0px', justifyContent:'start' }}>About Me</h1>
                     </div>

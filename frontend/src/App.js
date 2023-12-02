@@ -12,13 +12,14 @@ import Profile from "./components/Profile";
 import ForgotPasswordPage from "./components/ForgotPasswordPage";
 import MessagePage from "./components/MessagePage";
 import MessagesDeneme from "./components/MessagesDeneme";
-import MainPage from "./components/MainPage";
+import ProductMainPage from "./components/ProductMainPage";
 import ContextApi from "./context/ContextApi";
 import {useState, useEffect} from "react";
 import { ProductAddForm } from './components/ProductAddForm';
 import { EntryForm } from './components/EntryForm';
-import ComplaintsPage from "./components/ComplaintsPage";
+import EntryMainPage from "./components/EntryMainPage";
 import Chat from "./components/Chat";
+import MainPage from "./components/MainPage";
 
 // we don't need to add NavigationBar and Footer to each page because they are added here only the Routes part of the app will differ.
 function App() {
@@ -46,10 +47,11 @@ function App() {
                   <Route path='/profile' element={<><NavigationBarDefault/><Profile/></>}></Route>
                   <Route path='/messages' element={<><NavigationBarDefault/><MessagePage/></>}></Route>
                   <Route path='/messages_deneme' element={<><NavigationBarDefault/><MessagesDeneme/></>}></Route>
-                  <Route path='/product_detail/:id' element={<><NavigationBarDefault/><ProductDetailPage/></>}></Route>
-                  <Route path='/main_page' element={<><NavigationBarDefault/><MainPage/></>}> </Route>
+                  <Route path='/product_detail/:pageType/:id' element={<><NavigationBarDefault/><ProductDetailPage/></>}></Route>
+
+                  <Route path='/main_page/:pageType/:searchText?' element={<><NavigationBarDefault/><MainPage/></>}> </Route>
                   <Route path='/entry' element={<><NavigationBarDefault/><EntryForm/></>}> </Route>
-                  <Route path='/complaints' element={<><NavigationBarDefault/><ComplaintsPage/></>}> </Route>
+                  <Route path='/complaints' element={<><NavigationBarDefault/><EntryMainPage/></>}> </Route>
                   <Route path='/chat' element={<><NavigationBarDefault/><Chat/></>}> </Route>
               </Routes>
 

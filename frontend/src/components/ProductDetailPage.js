@@ -12,38 +12,37 @@ import {isDisabled} from "@testing-library/user-event/dist/utils";
 import {useContext} from "react";
 import ContextApi from "../context/ContextApi";
 import Carousel from 'react-bootstrap/Carousel';
-import Product from './assets/img/IMG_2252.png';
-import Product2 from './assets/img/products/3.jpg';
+import Product from './assets/img/burak2.jpeg';
+import Product2 from './assets/img/Shape.png';
 
 function ProductDetailPage() {
     const navigate = useNavigate();
-    const {pageType, sendNewMessage} = useContext(ContextApi);
+    const {sendNewMessage} = useContext(ContextApi);
 
 
-    const {id} = useParams();
+    const {pageType,id} = useParams();
 
     const [loading, setLoading] = useState(true);
     const [product, setProduct] = useState('');
-    const imageUrl = "http://127.0.0.1:8000/media/pphotos/102050644.png.webp";
-
-
-
 
     useEffect(()=>{
-        console.log("Page Type in detail page" + pageType);
+
+        console.log("Page Type in detail page" + localStorage.getItem("page_type"));
         if(pageType){
             uploadSelectedProduct(pageType);
         }
 
         // Messages in the selected index will be opened on the right side
-    },[])
+    },[pageType])
 
     const uploadSelectedProduct = async (pageType) => {
         try{
             axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
             const {data} = await axios.get('http://127.0.0.1:8000/api/product/' + pageType + '/'+ id);
-            console.log(data);
+
             setProduct(data);
+
+            console.log(data);
             setLoading(false);
 
         }
@@ -72,23 +71,24 @@ function ProductDetailPage() {
 
                     <div className=" d-flex flex-grow-1 justify-content-center align-items-center" data-aos="fade-right" data-aos-duration="600"  style={imageContainerStyle}>
                         <div className="d-flex justify-content-center align-items-center " style={sliderContainerStyle}>
-                                    <Carousel style={{height:'40wv', width: '94%', borderRadius:'10px', backgroundColor:'#2B2B2B'}}>
-                                        <Carousel.Item >
-                                            <div className="d-flex justify-content-center " style={{height:'40vw'}}>
-                                                <img className="d-block h-100 "  src={Product} alt="First slide"/>
-                                            </div>
-                                        </Carousel.Item>
-                                        <Carousel.Item>
-                                            <div className="d-flex justify-content-center " style={{height:'40vw'}}>
-                                                <img className="d-block h-100 "  src={Product2} alt="First slide"/>
-                                            </div>
-                                        </Carousel.Item>
-                                        <Carousel.Item>
-                                            <div className="d-flex justify-content-center " style={{height:'40vw'}}>
-                                                <img className="d-block h-100 "  src={Burak2} alt="First slide"/>
-                                            </div>
-                                        </Carousel.Item>
+                            <Carousel style={{height:'40wv', width: '94%', borderRadius:'10px', backgroundColor:'#2B2B2B'}}>
 
+                                        {product.product_photos && product.product_photos.length>0 ?
+                                            product.product_photos.map((photo, index) => (
+
+                                            <Carousel.Item  key={index}>
+                                                <div className="d-flex justify-content-center " style={{height:'40vw', borderRadius:'10px', overflow:'hidden'}}>
+                                                        <img className="d-block h-100"  src={photo.product_photos} alt="First slide"/> {/*src={photo.product_photos}*/}
+                                                </div>
+                                            </Carousel.Item>
+                                            ))
+                                        :
+                                            <Carousel.Item >
+                                                <div className="d-flex justify-content-center align-items-center" style={{height:'40vw'}}>
+                                                    <img className="d-block h-25"  src={Product2} alt="First slide"/>
+                                                </div>
+                                            </Carousel.Item>
+                                        }
 
                                     </Carousel>
 
@@ -102,20 +102,38 @@ function ProductDetailPage() {
                                 {loading && <span className="placeholder col-7"></span>}
                             </h1>
                             <hr style={hrStyle} />
-                            <h1 className="placeholder-glow" style={{ ...headingStyle, fontSize: '2.4em', fontWeight: 'bold' }}>{product.price}
-                                {loading && <span className="placeholder col-3"></span>}
-                            </h1>
+                            {(() => {
+                                if(product.category==="borrow"){
+                                return (
+                                    <h1 className="placeholder-glow d-flex align-items-center" style={{ ...headingStyle, fontWeight: 'bold' }}>{"Return Date: " + product.return_date}
+                                        {loading && <span className="placeholder col-3"></span>}
+                                    </h1>
+                                    )
+                                }
+                                else if(product.category==="donation"){
+                                    return (
+                                        <h1 className="placeholder-glow d-flex align-items-center" style={{ ...headingStyle, fontSize: '2.4em', fontWeight: 'bold' }}>
+                                            {loading && <span className="placeholder col-3"></span>}
+                                        </h1>
+                                    )
+                                }
+
+                                else{
+                                    return (
+                                        <h1 className="placeholder-glow d-flex align-items-center" style={{ ...headingStyle, fontSize: '2.4em', fontWeight: 'bold' }}>{(!loading && (product.price + " ₺"))}
+                                            {loading && <span className="placeholder col-3"></span>}
+                                        </h1>
+                                    )
+
+                                }
+                            })()}
                             <hr style={hrStyle} />
                             <div className="d-flex justify-content-between align-items-center placeholder-glow" style={{ height: '10%', width: '100%', marginTop: '10px', marginBottom: '10px' }}>
                                 <div className="d-flex flex-column justify-content-evenly" style={{ height: '100%', width: '100%'}}>
                                     {loading ? <span className="placeholder col-5 h-50"></span> : <h1 style={sellerNameStyle}>{product.user.name + " " + product.user.surname}</h1>}
                                     {loading ? <span className="placeholder col-5 h-25"></span> : <h1 style={sellerPhoneStyle}>123123213</h1>}
                                 </div>
-
-
-
-
-                                <img className="rounded-circle mb-3 fit-cover" data-bss-hover-animate="pulse" src={loading? Burak2 :imageUrl} style={imageStyle} />
+                                <img className="rounded-circle mb-3 fit-cover" data-bss-hover-animate="pulse" src={loading? Burak2 :product.user.profile_photo} style={imageStyle} />
                             </div>
                             <hr style={hrStyle} />
                             <div className="d-flex flex-row justify-content-between align-items-center" style={{ height: '10%', width: '100%', minHeight: '40px', maxHeight: '50px' }}>
@@ -138,7 +156,7 @@ function ProductDetailPage() {
                             <hr style={hrStyle} />
                             <div className="d-flex flex-column" style={{ height: '55%', width: '100%', minHeight: '120px', background: '#edf0f7', borderRadius: '10px', paddingRight: '10px', paddingLeft: '10px', paddingTop: '3px' }}>
                                 <div className="d-flex flex-row align-items-center " style={{ height: '20%', width: '100%', minHeight: '40px' }}>
-                                    <h1 style={{ ...headingStyle, fontSize: '1.6em' }}>Description</h1>
+                                    <h1 className="d-flex align-items-center" style={{ ...headingStyle, fontSize: '1.6em' }}>Description</h1>
                                     <button className="btn btn-primary disabled d-flex justify-content-center align-items-center" type="button" style={{ width: '30%', height: '70%', fontWeight: 'bold', background: '#717D96', borderStyle: 'none', borderColor: '#2d3648', marginRight: '0px', minWidth: '120px' }} disabled>
                                         <span className="d-flex" style={{ fontSize: '12px', fontFamily: 'Inter, sans-serif', fontWeight: 'bold', textAlign: 'center', marginRight: '-' }}>{product.category}</span>
                                     </button>
@@ -187,6 +205,7 @@ const cardStyle = {
 
 const headingStyle = {
     width: '100%',
+    height: '10%',
     fontSize: '2em',
     fontFamily: 'Inter, sans-serif',
     marginBottom: '0px',

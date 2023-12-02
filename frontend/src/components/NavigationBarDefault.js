@@ -1,18 +1,28 @@
-import React, {useContext} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import Logo from './assets/img/logo_bugbunny-removebg-preview.png'
 import Burak from './assets/img/burak.png'
 import ContextApi from "../context/ContextApi";
-import {useNavigate} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 
 function NavigationBarDefault() {
-    const {pageType, changePageType} = useContext(ContextApi);
-    console.log(pageType);
+    const {pageType,searchText} = useParams();
+    console.log("pagetype in nav" + pageType);
     const navigate = useNavigate();
+    const [searchInput, setSearchInput] = useState('');
+
+
+    const enterClick = (e) => {
+
+        if(e.key === "Enter") {
+            console.log("Enter Click")
+            navigate('/main_page/' + pageType + '/' + searchInput);
+        }
+    }
 
     return (
         <nav className="navbar navbar-expand-md sticky-top bg-body py-3" style={navbarStyle}>
             <div className="container">
-                <a onClick={() => {navigate('/main_page'); changePageType("secondhand");}} className="navbar-brand d-flex align-items-center">
+                <a onClick={() => {navigate('/main_page/secondhand')}} className="navbar-brand d-flex align-items-center">
                     <span className="bs-icon-sm bs-icon-rounded bs-icon-primary d-flex justify-content-center align-items-center me-2 bs-icon" style={brandIconStyle}>
                         <img style={brandLogoStyle} src={Logo} alt="Logo" />
                     </span>
@@ -24,14 +34,15 @@ function NavigationBarDefault() {
                 </button>
                 <div id="navcol-3" className="collapse navbar-collapse" style={{ fontFamily: 'Inter, sans-serif', fontSize: '14px' }}>
                     <nav className="navbar-nav mx-auto" style={{ fontWeight: 'bold' }}>
-                        <li className="nav-item"><a onClick={() => {navigate('/main_page'); changePageType("secondhand");}} className="nav-link" style={{ textDecoration: pageType==="secondhand" ? 'underline': '', color: pageType==="secondhand" ? '#2d3647': '' }}>Second-Hand</a></li>
-                        <li className="nav-item"><a onClick={() => {navigate('/main_page'); changePageType("lost&found");}} className="nav-link" style={{ textDecoration: pageType==="lost&found" ? 'underline': '', color: pageType==="lost&found" ? '#2d3647': '' }}>Lost & Found</a></li>
-                        <li className="nav-item"><a onClick={() => {navigate('/main_page'); changePageType("borrow");}} className="nav-link"  style={{ textDecoration: pageType==="borrow" ? 'underline': '', color: pageType==="borrow" ? '#2d3647': '' }}>Borrow</a></li>
-                        <li className="nav-item"><a onClick={() => {navigate('/main_page'); changePageType("donation");}} className="nav-link" style={{ textDecoration: pageType==="donation" ? 'underline': '', color: pageType==="donation" ? '#2d3647': '' }}>Donation</a></li>
-                        <li className="nav-item"><a onClick={() => {navigate('/main_page'); changePageType("complaint");}} className="nav-link" style={{ textDecoration: pageType==="complaint" ? 'underline': '', color: pageType==="complaint" ? '#2d3647': '' }}>Complaint</a></li>
+                        <li className="nav-item"><a onClick={() => {navigate('/main_page/secondhand')}} className="nav-link" style={{ textDecoration: pageType==="secondhand" ? 'underline': '', color: pageType==="secondhand" ? '#2d3647': '' }}>Second-Hand</a></li>
+                        <li className="nav-item"><a onClick={() => {navigate('/main_page/lost&found')}} className="nav-link" style={{ textDecoration: pageType==="lost&found" ? 'underline': '', color: pageType==="lost&found" ? '#2d3647': '' }}>Lost & Found</a></li>
+                        <li className="nav-item"><a onClick={() => {navigate('/main_page/borrow')}} className="nav-link"  style={{ textDecoration: pageType==="borrow" ? 'underline': '', color: pageType==="borrow" ? '#2d3647': '' }}>Borrow</a></li>
+                        <li className="nav-item"><a onClick={() => {navigate('/main_page/donation')}} className="nav-link" style={{ textDecoration: pageType==="donation" ? 'underline': '', color: pageType==="donation" ? '#2d3647': '' }}>Donation</a></li>
+                        <li className="nav-item"><a onClick={() => {navigate('/main_page/complaint')}} className="nav-link" style={{ textDecoration: pageType==="complaint" ? 'underline': '', color: pageType==="complaint" ? '#2d3647': '' }}>Complaint</a></li>
                     </nav>
                     <div className="me-4" style={{ maxWidth: '200px', height: '40px' }}>
-                        <input className="d-flex justify-content-xxl-center" type="search" style={{ width: '100%', height: '100%', borderRadius: '6px', border: '2px solid var(--bs-navbar-active-color)', paddingLeft: '5px', paddingRight: '5px', fontFamily: 'Inter, sans-serif', textAlign: 'center' }} placeholder="Search" />
+                        <input className="d-flex justify-content-xxl-center" onKeyDown={enterClick} onChange={(e)=> setSearchInput(e.target.value)}
+                             type="search" style={{ width: '100%', height: '100%', borderRadius: '6px', border: '2px solid var(--bs-navbar-active-color)', paddingLeft: '5px', paddingRight: '5px', fontFamily: 'Inter, sans-serif', textAlign: 'center' }} placeholder="Search" />
                     </div>
                     <button className="btn btn-primary d-xxl-flex justify-content-xxl-center align-items-xxl-center" type="button" style={{ background: '#2d3648', borderStyle: 'none', height: '40px', width: '90.6875px', padding: '0px', marginTop: '5px', marginBottom: '5px' }}>
                         Add
@@ -46,7 +57,7 @@ function NavigationBarDefault() {
                     <svg className="bi bi-envelope" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" style={{ fontSize: '30px', marginRight: '15px', marginTop: '5px', marginBottom: '5px' }}>
                         <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4Zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1H2Zm13 2.383-4.708 2.825L15 11.105V5.383Zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741ZM1 11.105l4.708-2.897L1 5.383v5.722Z"></path>
                     </svg>
-                    <div><img onClick={()=>{navigate('/profile');changePageType("")}} className="rounded-circle" style={{ width: '50px', height: '50px' }} src={Burak} alt="Profile" /></div>
+                    <div><img onClick={()=>{navigate('/profile')}} className="rounded-circle" style={{ width: '50px', height: '50px' }} src={Burak} alt="Profile" /></div>
                 </div>
             </div>
         </nav>
