@@ -21,7 +21,6 @@ function ProductMainPage() {
     const [products, setProducts] = useState([]);
     const [hasMore, setHasMore] = useState(true);
 
-
     useEffect(()=>{
         console.log("In use effect" + searchText);
         setProducts([]);

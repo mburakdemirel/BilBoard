@@ -43,7 +43,7 @@ function LoginPage(){
                 localStorage.setItem('refresh_token', data.refresh);
                 localStorage.setItem('authorization', `Bearer ${data['access']}`)
                 axios.defaults.headers.common['Authorization'] = `Bearer ${data['access']}`;
-                navigate("/main_page");
+                navigate("/main_page/secondhand");
 
             }
 

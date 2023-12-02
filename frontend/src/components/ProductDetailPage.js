@@ -24,16 +24,17 @@ function ProductDetailPage() {
 
     const [loading, setLoading] = useState(true);
     const [product, setProduct] = useState('');
+    const [favorites, setFavorites] = useState(JSON.parse(localStorage.getItem('favorites')));
+    console.log(favorites);
 
     useEffect(()=>{
-
-        console.log("Page Type in detail page" + localStorage.getItem("page_type"));
         if(pageType){
+            console.log(favorites.includes(4));
             uploadSelectedProduct(pageType);
         }
 
         // Messages in the selected index will be opened on the right side
-    },[pageType])
+    },[])
 
     const uploadSelectedProduct = async (pageType) => {
         try{
@@ -63,119 +64,134 @@ function ProductDetailPage() {
         navigate("/messages");
     }
 
-    return (
-        <section className=" d-flex justify-content-center align-items-center py-4"  style={{background: '#edf0f7',minHeight: '91vh'}}>
-            <div className="container">
-                <div className="row gx-1 gy-3"  style={{ width: '100%', marginTop: '-21px'}}>
+
+    const addFavourites = async (index) => {
+        console.log("includes " + favorites.includes(index));
+        if(favorites.includes(index)){
+            removeFavourites(index);
+        }
+        else{
+            axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization')
+            debugger;
+            console.log("index " + index);
+            const favorites = await axios.post('http://127.0.0.1:8000/api/product/add-favorites/', {product_id: 10}) ;
+            //console.log(data);
+            setFavorites([...favorites,index]);
+            console.log(favorites);
+            localStorage.setItem('favorites', JSON.stringify(favorites));
+        }
+
+    }
+    const removeFavourites = async (index) => {
+        console.log("removed");
+        setFavorites((current) =>
+            current.filter((favorite) => favorite !== index)
+        );
+        console.log(favorites);
+        localStorage.setItem('favorites', JSON.stringify(favorites));
+    }
+
+    return <section className=" d-flex justify-content-center align-items-center py-4"  style={{background: '#edf0f7',minHeight: '91vh'}}>
+        <div className="container">
+            <div className="row gx-1 gy-3"  style={{ width: '100%', marginTop: '-21px'}}>
 
 
-                    <div className=" d-flex flex-grow-1 justify-content-center align-items-center" data-aos="fade-right" data-aos-duration="600"  style={imageContainerStyle}>
-                        <div className="d-flex justify-content-center align-items-center " style={sliderContainerStyle}>
-                            <Carousel  style={{height:'40wv', width: '94%', borderRadius:'10px', backgroundColor:'#2B2B2B'}}>
-                                        {product.product_photos && product.product_photos.length>0 ?
-                                            product.product_photos.map((photo, index) => (
-                                            <Carousel.Item  key={index}>
-                                                <div className="d-flex justify-content-center align-items-center " style={{height:'40vw', borderRadius:'10px', overflow:'hidden'}}>
-                                                        <img className="d-block w-100"  src={photo.product_photos} alt="First slide"/> {/*src={photo.product_photos}*/}
-                                                </div>
-                                            </Carousel.Item>
-                                            ))
-                                        :
-                                            <Carousel.Item >
-                                                <div className="d-flex justify-content-center align-items-center" style={{height:'40vw'}}>
-                                                    <img className="d-block h-25"  src={Product2} alt="First slide"/>
-                                                </div>
-                                            </Carousel.Item>
-                                        }
+                <div className=" d-flex flex-grow-1 justify-content-center align-items-center" data-aos="fade-right" data-aos-duration="600"  style={imageContainerStyle}>
+                    <div className="d-flex justify-content-center align-items-center " style={sliderContainerStyle}>
+                        <Carousel  style={{height:'40wv', width: '94%', borderRadius:'10px', backgroundColor:'#2B2B2B'}}>
+                                    {product.product_photos && product.product_photos.length>0 ?
+                                        product.product_photos.map((photo, index) => <Carousel.Item  key={index}>
+                                            <div className="d-flex justify-content-center align-items-center " style={{height:'40vw', borderRadius:'10px', overflow:'hidden'}}>
+                                                    <img className="d-block w-100"  src={photo.product_photos} alt="First slide"/> {/*src={photo.product_photos}*/}
+                                            </div>
+                                        </Carousel.Item>)
+                                    :
+                                        <Carousel.Item >
+                                            <div className="d-flex justify-content-center align-items-center" style={{height:'40vw'}}>
+                                                <img className="d-block h-25"  src={Product2} alt="First slide"/>
+                                            </div>
+                                        </Carousel.Item>
+                                    }
 
-                                    </Carousel>
+                                </Carousel>
 
-                            </div>
+                        </div>
 
-                    </div>
+                </div>
 
-                    <div className="d-flex flex-grow-1 justify-content-center align-items-center" data-aos="fade-left" data-aos-duration="600" style={containerStyle}>
-                        <div className="d-flex flex-column " style={cardStyle}>
-                            <h1 className="placeholder-glow" style={headingStyle}>{product.title}
-                                {loading && <span className="placeholder col-7"></span>}
-                            </h1>
-                            <hr style={hrStyle} />
-                            {(() => {
-                                if(product.category==="borrow"){
-                                return (
-                                    <h1 className="placeholder-glow d-flex align-items-center" style={{ ...headingStyle, fontWeight: 'bold' }}>{"Return Date: " + product.return_date}
+                <div className="d-flex flex-grow-1 justify-content-center align-items-center" data-aos="fade-left" data-aos-duration="600" style={containerStyle}>
+                    <div className="d-flex flex-column " style={cardStyle}>
+                        <h1 className="placeholder-glow" style={headingStyle}>{product.title}
+                            {loading && <span className="placeholder col-7"></span>}
+                        </h1>
+                        <hr style={hrStyle} />
+                        {(() => {
+                            if(product.category==="borrow"){
+                            return <h1 className="placeholder-glow d-flex align-items-center" style={{ ...headingStyle, fontWeight: 'bold' }}>{"Return Date: " + product.return_date}
+                                    {loading && <span className="placeholder col-3"></span>}
+                                </h1>
+                            }
+                            else if(product.category==="donation"){
+                                return <h1 className="placeholder-glow d-flex align-items-center" style={{ ...headingStyle, fontSize: '2.4em', fontWeight: 'bold' }}>
                                         {loading && <span className="placeholder col-3"></span>}
                                     </h1>
-                                    )
-                                }
-                                else if(product.category==="donation"){
-                                    return (
-                                        <h1 className="placeholder-glow d-flex align-items-center" style={{ ...headingStyle, fontSize: '2.4em', fontWeight: 'bold' }}>
-                                            {loading && <span className="placeholder col-3"></span>}
-                                        </h1>
-                                    )
-                                }
+                            }
 
-                                else{
-                                    return (
-                                        <h1 className="placeholder-glow d-flex align-items-center" style={{ ...headingStyle, fontSize: '2.4em', fontWeight: 'bold' }}>{(!loading && (product.price + " ₺"))}
-                                            {loading && <span className="placeholder col-3"></span>}
-                                        </h1>
-                                    )
+                            else{
+                                return <h1 className="placeholder-glow d-flex align-items-center" style={{ ...headingStyle, fontSize: '2.4em', fontWeight: 'bold' }}>{(!loading && (product.price + " ₺"))}
+                                        {loading && <span className="placeholder col-3"></span>}
+                                    </h1>
 
-                                }
-                            })()}
-                            <hr style={hrStyle} />
-                            <div className="d-flex justify-content-between align-items-center placeholder-glow" style={{ height: '10%', width: '100%', marginTop: '10px', marginBottom: '10px' }}>
-                                <div className="d-flex flex-column justify-content-evenly" style={{ height: '100%', width: '100%'}}>
-                                    {loading ? <span className="placeholder col-5 h-50"></span> : <h1 style={sellerNameStyle}>{product.user.name + " " + product.user.surname}</h1>}
-                                    {loading ? <span className="placeholder col-5 h-25"></span> : <h1 style={sellerPhoneStyle}>123123213</h1>}
-                                </div>
-                                <img className="rounded-circle mb-3 fit-cover" data-bss-hover-animate="pulse" src={loading? Burak2 :product.user.profile_photo} style={imageStyle} />
+                            }
+                        })()}
+                        <hr style={hrStyle} />
+                        <div className="d-flex justify-content-between align-items-center placeholder-glow" style={{ height: '10%', width: '100%', marginTop: '10px', marginBottom: '10px' }}>
+                            <div className="d-flex flex-column justify-content-evenly" style={{ height: '100%', width: '100%'}}>
+                                {loading ? <span className="placeholder col-5 h-50"></span> : <h1 style={sellerNameStyle}>{product.user.name + " " + product.user.surname}</h1>}
+                                {loading ? <span className="placeholder col-5 h-25"></span> : <h1 style={sellerPhoneStyle}>123123213</h1>}
                             </div>
-                            <hr style={hrStyle} />
-                            <div className="d-flex flex-row justify-content-between align-items-center" style={{ height: '10%', width: '100%', minHeight: '40px', maxHeight: '50px' }}>
-                                <button onClick={sendMessage} disabled={loading} className="btn btn-primary d-flex justify-content-center align-items-center" role="button" style={{ width: '30%', height: '90%', fontWeight: 'bold', background: '#2d3648', borderStyle: 'none', borderColor: '#2d3648', minWidth: '150px' }} href="messages.html">
-                                    {!loading && <><span style={{ paddingRight: '10px', fontSize: '12px', fontFamily: 'Inter, sans-serif', fontWeight: 'bold' }}>Send Message</span>
-                                    <i className="bi bi-send-fill" style={{ fontSize: '16px', color:'white' }}  ></i></>}
+                            <img className="rounded-circle mb-3 fit-cover" data-bss-hover-animate="pulse" src={loading? Burak2 :product.user.profile_photo} style={imageStyle} />
+                        </div>
+                        <hr style={hrStyle} />
+                        <div className="d-flex flex-row justify-content-between align-items-center" style={{ height: '10%', width: '100%', minHeight: '40px', maxHeight: '50px' }}>
+                            <button onClick={sendMessage} disabled={loading} className="btn btn-primary d-flex justify-content-center align-items-center" role="button" style={{ width: '30%', height: '90%', fontWeight: 'bold', background: '#2d3648', borderStyle: 'none', borderColor: '#2d3648', minWidth: '150px' }} href="messages.html">
+                                {!loading && <><span style={{ paddingRight: '10px', fontSize: '12px', fontFamily: 'Inter, sans-serif', fontWeight: 'bold' }}>Send Message</span>
+                                <i className="bi bi-send-fill" style={{ fontSize: '16px', color:'white' }}  ></i></>}
+                            </button>
+                            <div className="d-flex flex-row justify-content-around align-items-center" style={{ height: '100%', minWidth: '90px' }}>
+                                <button onClick={ e =>  addFavourites(product.id)} disabled={loading} className="btn btn-primary" type="button" style={{ width: '40px', fontWeight: 'bold', background: '#2d3648', borderStyle: 'none', borderColor: '#2d3648', height: '90%' }}>
+                                    {!loading && !favorites.includes(product.id) && <i className="bi bi-heart"></i>}
+                                    {!loading && favorites.includes(product.id) && <i className="bi bi-heart-fill"></i>}
                                 </button>
-                                <div className="d-flex flex-row justify-content-around align-items-center" style={{ height: '100%', minWidth: '140px' }}>
-                                    <button disabled={loading} className="btn btn-primary" type="button" style={{ width: '40px', fontWeight: 'bold', background: '#2d3648', borderStyle: 'none', borderColor: '#2d3648', height: '90%', minWidth: '40px' }}>
-                                        {!loading && <i className="bi bi-bell-fill"></i>}
-                                    </button>
-                                    <button disabled={loading} className="btn btn-primary" type="button" style={{ width: '40px', fontWeight: 'bold', background: '#2d3648', borderStyle: 'none', borderColor: '#2d3648', height: '90%' }}>
-                                        {!loading && <i className="bi bi-heart-fill"></i>}
-                                    </button>
-                                    <button disabled={loading} className="btn btn-primary" type="button" style={{ width: '40px', fontWeight: 'bold', background: '#2d3648', borderStyle: 'none', borderColor: '#2d3648', height: '90%' }}>
-                                        {!loading && <i className="bi bi-share-fill" ></i>}
-                                    </button>
-                                </div>
+                                <button disabled={loading} className="btn btn-primary" type="button" style={{ width: '40px', fontWeight: 'bold', background: '#2d3648', borderStyle: 'none', borderColor: '#2d3648', height: '90%' }}>
+                                    {!loading && <i className="bi bi-share-fill" ></i>}
+                                </button>
                             </div>
-                            <hr style={hrStyle} />
-                            <div className="d-flex flex-column" style={{ height: '55%', width: '100%', minHeight: '120px', background: '#edf0f7', borderRadius: '10px', paddingRight: '10px', paddingLeft: '10px', paddingTop: '3px' }}>
-                                <div className="d-flex flex-row align-items-center " style={{ height: '20%', width: '100%', minHeight: '40px' }}>
-                                    <h1 className="d-flex align-items-center" style={{ ...headingStyle, fontSize: '1.6em' }}>Description</h1>
-                                    <button className="btn btn-primary disabled d-flex justify-content-center align-items-center" type="button" style={{ width: '30%', height: '70%', fontWeight: 'bold', background: '#717D96', borderStyle: 'none', borderColor: '#2d3648', marginRight: '0px', minWidth: '120px' }} disabled>
-                                        <span className="d-flex" style={{ fontSize: '12px', fontFamily: 'Inter, sans-serif', fontWeight: 'bold', textAlign: 'center', marginRight: '-' }}>{product.category}</span>
-                                    </button>
-                                </div>
-                                {loading &&<div className="d-flex flex-column placeholder-glow" style={{width:'100%'}}>
-                                    <span className="placeholder col-9"  style={{height:'17px', marginTop:'10px', marginBottom:'10px'}}></span>
-                                    <span className="placeholder col-7"  style={{height:'17px', marginBottom:'10px'}}></span>
-                                    <span className="placeholder col-5"  style={{height:'17px', marginBottom:'10px'}}></span>
+                        </div>
+                        <hr style={hrStyle} />
+                        <div className="d-flex flex-column" style={{ height: '55%', width: '100%', minHeight: '120px', background: '#edf0f7', borderRadius: '10px', paddingRight: '10px', paddingLeft: '10px', paddingTop: '3px' }}>
+                            <div className="d-flex flex-row align-items-center " style={{ height: '20%', width: '100%', minHeight: '40px' }}>
+                                <h1 className="d-flex align-items-center" style={{ ...headingStyle, fontSize: '1.6em' }}>Description</h1>
+                                <button className="btn btn-primary disabled d-flex justify-content-center align-items-center" type="button" style={{ width: '30%', height: '70%', fontWeight: 'bold', background: '#717D96', borderStyle: 'none', borderColor: '#2d3648', marginRight: '0px', minWidth: '120px' }} disabled>
+                                    <span className="d-flex" style={{ fontSize: '12px', fontFamily: 'Inter, sans-serif', fontWeight: 'bold', textAlign: 'center', marginRight: '-' }}>{product.category}</span>
+                                </button>
+                            </div>
+                            {loading &&<div className="d-flex flex-column placeholder-glow" style={{width:'100%'}}>
+                                <span className="placeholder col-9"  style={{height:'17px', marginTop:'10px', marginBottom:'10px'}}></span>
+                                <span className="placeholder col-7"  style={{height:'17px', marginBottom:'10px'}}></span>
+                                <span className="placeholder col-5"  style={{height:'17px', marginBottom:'10px'}}></span>
 
-                                </div>
-                                    }
-                                <p style={{height: '100%', width: '100%', fontSize: '14px', textAlign: 'left'}}>{product.description}</p>
                             </div>
+                                }
+                            <p style={{height: '100%', width: '100%', fontSize: '14px', textAlign: 'left'}}>{product.description}</p>
                         </div>
                     </div>
                 </div>
-
-
             </div>
-        </section>
-    );
+
+
+        </div>
+    </section>;
 
 
 };

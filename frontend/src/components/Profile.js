@@ -18,7 +18,7 @@ import Placeholder from "./assets/img/WF Image Placeholder2.png"
 
 function Profile() {
 
-
+    const [error, setError] = useState(null);
     const [myProfile, setMyProfile] = useState();
     const pull_data = (data) => {
         console.log("edit mode " + data); // LOGS DATA FROM CHILD (My name is Dean Winchester... &)
@@ -31,12 +31,27 @@ function Profile() {
             const {data} = await axios.get('http://127.0.0.1:8000/api/user/me/') ;
             console.log(data);
             setMyProfile(data);
-            const favourites = await axios.post('http://127.0.0.1:8000/api/product/add-favorites/1/') ;
-            console.log(favourites.data);
+            const id = {
+
+            };
+
+
 
         }
         catch (error){
+            if (error.response) {
+                if(error.response.status===401){
+                    setError(`Your email or password is wrong`);
+                }
+                else{
+                    setError(`Server responded with status code ${error.response.status}`);
+                }
 
+            } else if (error.request) {
+                setError('No response received from the server.');
+            } else {
+                setError('An error occurred while setting up the request.');
+            }
         }
     }
 
