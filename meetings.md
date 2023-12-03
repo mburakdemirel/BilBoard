@@ -48,3 +48,7 @@
 ## Meeting 11
 - Finalizing D4 report.
 - Discuss about product model and distribute work.
+
+## Meeting 12
+- Discussed some parts of our code and the design patterns in our class diagram.
+- Started to write the D5 report.
