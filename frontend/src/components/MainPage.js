@@ -38,10 +38,10 @@ function MainPage(){
 
 
     if(pageType==="secondhand" || pageType==="borrow" ||  pageType==="donation" ){
-        return (ProductMainPage());
+        return (<ProductMainPage></ProductMainPage>);
     }
     else if(pageType==="lost&found" || pageType==="complaint"){
-        return (EntryMainPage());
+        return (<EntryMainPage></EntryMainPage>);
     }
 
 }

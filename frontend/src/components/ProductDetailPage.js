@@ -15,6 +15,7 @@ import Carousel from 'react-bootstrap/Carousel';
 import Product from './assets/img//IMG_2252.png';
 import Product2 from './assets/img/Shape.png';
 
+// if the favorites data area is null then calling includes function creates errors
 function ProductDetailPage() {
     const navigate = useNavigate();
     const {sendNewMessage} = useContext(ContextApi);
@@ -29,7 +30,9 @@ function ProductDetailPage() {
 
     useEffect(()=>{
         if(pageType){
-            console.log(favorites.includes(4));
+            if(favorites) {
+                console.log(favorites.includes(4));
+            }
             uploadSelectedProduct(pageType);
         }
 
@@ -66,8 +69,8 @@ function ProductDetailPage() {
 
 
     const addFavourites = async (index) => {
-        console.log("includes " + favorites.includes(index));
-        if(favorites.includes(index)){
+        if(favorites){console.log("includes " + favorites.includes(index));}
+        if(favorites && favorites.includes(index)){
             removeFavourites(index);
         }
         else{
@@ -160,8 +163,8 @@ function ProductDetailPage() {
                             </button>
                             <div className="d-flex flex-row justify-content-around align-items-center" style={{ height: '100%', minWidth: '90px' }}>
                                 <button onClick={ e =>  addFavourites(product.id)} disabled={loading} className="btn btn-primary" type="button" style={{ width: '40px', fontWeight: 'bold', background: '#2d3648', borderStyle: 'none', borderColor: '#2d3648', height: '90%' }}>
-                                    {!loading && !favorites.includes(product.id) && <i className="bi bi-heart"></i>}
-                                    {!loading && favorites.includes(product.id) && <i className="bi bi-heart-fill"></i>}
+                                    {!loading && (!favorites || !favorites.includes(product.id)) && <i className="bi bi-heart"></i>}
+                                    {!loading && (favorites && favorites.includes(product.id)) && <i className="bi bi-heart-fill"></i>}
                                 </button>
                                 <button disabled={loading} className="btn btn-primary" type="button" style={{ width: '40px', fontWeight: 'bold', background: '#2d3648', borderStyle: 'none', borderColor: '#2d3648', height: '90%' }}>
                                     {!loading && <i className="bi bi-share-fill" ></i>}

@@ -124,7 +124,7 @@ function ProductMainPage() {
                                 <div className="row d-flex justify-content-center" style={{ minHeight:'100%',  marginRight: '5%', marginLeft: '5%' }}>
                                     {Array(products.length).fill().map((_, index) => {
                                         if (true) {
-                                            return(<div className="col-md-3" style={{ minWidth:'150px', maxWidth: '18vw', padding: '1%' }}
+                                            return(<div key={index} className="col-md-3" style={{ minWidth:'150px', maxWidth: '18vw', padding: '1%' }}
                                                         onClick={()=>sendProductDetailPage(products[index].id)}>
                                                     <div className="card" style={{ maxHeight:'35vw', height:'230px', borderRadius: '10px', borderStyle: 'none', padding: '5px', background: 'transparent', margin: '2%' }}>
                                                         <div className="card-body" style={{ width: '100%', height: '100%', padding: '0px' }}>

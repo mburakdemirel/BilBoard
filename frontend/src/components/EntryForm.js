@@ -1,13 +1,45 @@
+import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-export function EntryForm() {
-    const [title, setTitle] = useState("");
-    const [targetMail, setTargetMail] = useState("");
+export function EntryForm({ isComplaint }) {
+    const [topic, setTopic] = useState("");
     const [description, setDescription] = useState("");
+    const [category, setCategory] = useState("lost");
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        console.log("in submission");
+        let entry = new FormData();
+        entry.append("topic", topic);
+        entry.append("description", description);
+        if (!isComplaint) {
+            entry.append("category", category);
+            try {
+                axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
+                const response = axios.post("http://127.0.0.1:8000/api/user/laf-entry/", entry, { headers: { 'Content-Type': 'multipart/form-data' } });
+
+                console.log("Post was successful");
+                navigate("/main_page/secondhand");
+            }
+            catch (error) {
+                console.log(error.response);
+            }
+        }
+        else {
+            try {
+                axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
+                const response = axios.post("http://127.0.0.1:8000/api/user/complaint-entry/", entry, { headers: { 'Content-Type': 'multipart/form-data' } });
+
+                console.log("Post was successful");
+                navigate("/main_page/secondhand");
+
+            }
+            catch (error) {
+                console.log(error.response);
+            }
+        }
+
     }
 
     return (
@@ -32,14 +64,14 @@ export function EntryForm() {
                                 padding: '7%',
                             }}
                         >
-                            <h3 className="text-center" style={{ fontFamily: 'Inter,sans-serif' }}>Post a New Complaint</h3>
+                            {isComplaint ? <h3 className="text-center" style={{ fontFamily: 'Inter,sans-serif' }}>Post a New Complaint</h3> : <h3 className="text-center" style={{ fontFamily: 'Inter,sans-serif' }}>Post a Lost/Found Notice</h3>}
                             <form onSubmit={handleSubmit} method="post" className="form-card justify-content-center align-items-center" style={{ margin: 'auto', width: '60%' }}>
 
 
                                 <div className="col-xl-6 flex-column d-flex " style={{ width: '100%' }}>
                                     <div className="form-group row justify-content-between text-center">
-                                        <label className="form-control-label"><h5>Title</h5></label>
-                                        <input onChange={(e)=>setTitle(e.target.value)} required type="text" placeholder="Title"
+                                        <label className="form-control-label"><h5>Topic/Title</h5></label>
+                                        <input onChange={(e) => setTopic(e.target.value)} required type="text" placeholder="Title"
                                             className="form-control"
                                             style={{
                                                 width: '100%',
@@ -54,7 +86,7 @@ export function EntryForm() {
                                         >
                                         </input>
                                     </div>
-                                    <div className="form-group row justify-content-between text-center">
+                                    {/* <div className="form-group row justify-content-between text-center">
                                         <label className="form-control-label"><h5>Target Email</h5></label>
                                         <input onChange={(e)=>{setTargetMail(e.target.value)}} type="email" placeholder="Target Email"
                                             name="email"
@@ -71,10 +103,11 @@ export function EntryForm() {
                                             }}
                                         >
                                         </input>
-                                    </div>
-                                    <div className="form-group row justify-content-between text-center">
-                                        <label className="form-control-label" htmlFor="Category" style={{ fontFamily: 'Inter, sans-serif' }} ><h5>Category</h5></label>
-                                        <select
+                                    </div> */}
+
+                                    {!isComplaint ? <div className="form-group row justify-content-between text-center">
+                                        <label className="form-control-label" htmlFor="Category" style={{ fontFamily: 'Inter, sans-serif' }} ><h5>Choose Category</h5></label>
+                                        <select required onChange={(e) => {setCategory(e.target.value); console.log(e.target.value);}}
                                             id="Category"
                                             className="form-control"
                                             style={{
@@ -88,13 +121,13 @@ export function EntryForm() {
 
                                             }}
                                         >
-                                            <option>???</option>
-                                            <option>????</option>
+                                            <option value={"lost"}>Lost</option>
+                                            <option value={"found"}>Found</option>
                                         </select>
-                                    </div>
+                                    </div> : <></>}
                                     <div className="form-group row justify-content-between text-center">
                                         <label className="form-control-label" htmlFor="description" style={{ fontFamily: 'Inter, sans-serif' }}><h5>Enter your Description</h5></label>
-                                        <textarea required onChange={(e)=>{setDescription(e.target.value)}}
+                                        <textarea required onChange={(e) => { setDescription(e.target.value) }}
                                             id="description"
                                             placeholder="Description"
                                             rows={2}
@@ -108,14 +141,14 @@ export function EntryForm() {
                                             }}
                                         />
                                     </div>
-                                    <div style={{paddingTop:'20px'}} className="row justify-content-between text-left">
-                                    <div className="col-xl-6 flex-column d-flex">
-                                        <button onClick={()=>{navigate('/product_detail')}} className="btn btn-primary d-block w-100 mb-3" style={{ background: '#2d3648', border: 'none', fontFamily: 'Inter, sans-serif', height: '40px' }}>Cancel</button>
+                                    <div style={{ paddingTop: '20px' }} className="row justify-content-between text-left">
+                                        <div className="col-xl-6 flex-column d-flex">
+                                            <button onClick={() => { navigate("/main_page/secondhand") }} className="btn btn-primary d-block w-100 mb-3" style={{ background: '#2d3648', border: 'none', fontFamily: 'Inter, sans-serif', height: '40px' }}>Cancel</button>
+                                        </div>
+                                        <div className="col-xl-6 flex-column d-flex">
+                                            <button className="btn btn-primary d-block w-100 mb-3" type="submit" style={{ background: '#2d3648', border: 'none', fontFamily: 'Inter, sans-serif', height: '40px' }}>Post</button>
+                                        </div>
                                     </div>
-                                    <div className="col-xl-6 flex-column d-flex">
-                                        <button className="btn btn-primary d-block w-100 mb-3" type="submit" style={{ background: '#2d3648', border: 'none', fontFamily: 'Inter, sans-serif', height: '40px' }}>Post</button>
-                                    </div>
-                                </div>
                                 </div>
                             </form>
 
