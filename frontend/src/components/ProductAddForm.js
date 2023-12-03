@@ -1,65 +1,69 @@
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
+import "../ChooseFileInput.css"
 
 export function ProductAddForm() {
     const navigate = useNavigate();
     const [title, setTitle] = useState("");
     const [price, setPrice] = useState(0);
     const [description, setDescription] = useState("");
-    const [category, setCategory] = useState("Donation");
+    const [category, setCategory] = useState("donation");
     const [photo, setPhoto] = useState([]);
     const [returnDate, setReturnDate] = useState();
-    let product = {};
+
+    useEffect(() => {
+        setPrice(0);
+      }, [category]);
+      // this might be unnecessary check this!!!
+      useEffect(() => {
+        setReturnDate(null);
+      }, [returnDate]);
 
     //after submitting the form clean each form area values.
     const handleSubmit = async (e) => {
         e.preventDefault();
         console.log(category);
+        let product = new FormData();
+        //common data areas
+        product.append('title', title);
+        product.append('category', category);
+        product.append('description', description);
+        console.log(product.keys());
         if (category === "secondhand") {
             console.log("In secondhand");
-            product = {
-                title: title,
-                category: category,
-                description: description,
-                price: price
-            };
+            product.append('price', price);
             console.log({ title: title, category: category, description: description, price: price, product_photo: photo });
-
         }
         else if (category === "borrow") {
             console.log("in borrow");
-            product = {
-                title: title,
-                return_date: returnDate,
-                description: description,
-                category: category,
-                product_photo: photo
-            };
+            let date_str = formatDate(new Date(returnDate));
+            product.append('return_date', date_str);
             console.log(product);
         }
-        else {
-            product = {
-                title: title,
-                description: description,
-                category: category
-            };
-        }
+        // if(photo) {
+        //     product.append('product_photos', photo, photo.name); //this does not work :(
+        // }
         console.log(product);
         try {
             axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
-            const response = await axios.post('http://127.0.0.1:8000/api/user/product/', product);
+            const response = await axios.post('http://127.0.0.1:8000/api/user/product/', product,{headers: {'Content-Type':'multipart/form-data'}});
             if (response.status === 200 || response.status === 201) {
                 console.log("Post was successful");
-                navigate('/main_page');
+                navigate("/main_page/secondhand");
             }
         }
         catch (error) {
-            if (error.status === 500) { console.log("Internal Server Error"); }
-            else if (error.status === 400) { console.log("bad request"); }
+            if (error.status === 500) { console.log(error.response); }
+            else if (error.status === 400) { console.log(error.response); }
         }
-        {/** we can show the product after uploading with response.data ??? idk */ }
+    }
 
+    function formatDate(date) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() +1).padStart(2,0);
+        const day = String(date.getDate()).padStart(2,0);
+        return `${year}-${month}-${day}`;
     }
 
     return (
@@ -84,7 +88,7 @@ export function ProductAddForm() {
                                 padding: '7%',
                             }}
                         >
-                            <h3 className="text-center" style={{ fontFamily: 'Inter,sans-serif' }}>Create a Product Post</h3>
+                            <h3 className="text-center" style={{ fontFamily: 'Inter,sans-serif' }}>Add a New Product</h3>
                             <form onSubmit={handleSubmit} method="post" className="form-card" style={{ width: '100%' }}>
                                 <div className="row justify-content-between text-left" style={{ paddingTop: '5px' }}>
                                     <div className="form-group col-xl-6 flex-column d-flex">
@@ -131,7 +135,7 @@ export function ProductAddForm() {
                                         className="form-group col-xl-6 flex-column d-flex">
                                         {/** should I make this areas readonly according to the category??? */}
                                         <label className="form-control-label"><h5>Price</h5></label>
-                                        <input readOnly={category !== "secondhand"} value={price} onChange={(e) => setPrice(e.target.value)} min={0} placeholder="Enter Price (in Turkish Liras)" type="number"
+                                        <input required={category === "secondhand"} readOnly={category !== "secondhand"} value={price} onChange={(e) => setPrice(e.target.value)} min={0} placeholder="Enter Price (in Turkish Liras)" type="number"
                                             className="form-control"
                                             style={{
                                                 width: '100%',
@@ -141,25 +145,17 @@ export function ProductAddForm() {
                                                 background: '#a0abc0',
                                                 borderRadius: '10px',
                                                 paddingLeft: '15px',
-                                                marginTop: '15px'
+                                               
                                             }}
                                         >
 
                                         </input>
                                     </div>
                                     <div className="form-group col-xl-6 flex-column d-flex">
-                                        <h5 style={{ fontFamily: 'Inter, sans-serif' }}>Pictures</h5>
+                                        <h5 style={{ fontFamily: 'Inter, sans-serif' }}>Photos</h5>
                                         <label className="form-control-label" htmlFor="FormControl" style={{ fontFamily: 'Inter, sans-serif', textAlign: 'left' }}>Choose files to upload (at most 5)</label>
-                                        <input onChange={(e) => { if (e.target.files.length > 5) { alert("You cannot upload more than 5 photos."); e.target.files = null; } else { setPhoto(e.target.files[0]); console.log(photo); } }}
-                                            style={{
-                                                width: '100%',
-                                                fontFamily: 'Inter, sans-serif',
-                                                marginBottom: '0px',
-                                                height: '100%',
-                                                background: '#a0abc0',
-                                                borderRadius: '10px',
-                                                paddingLeft: '15px',
-                                            }} id="FormControl" type="file" className="form-control" accept="image/png, image/jpg, image/jpeg" multiple></input>
+                                        <input onChange={(e) => { setPhoto(e.target.files[0]); console.log(photo); } } 
+                                            id="FormControl" type="file"  accept="image/png, image/jpg, image/jpeg" multiple></input>
                                     </div>
                                 </div>
 
@@ -196,7 +192,7 @@ export function ProductAddForm() {
                                 </div>
                                 <div style={{ paddingTop: '20px' }} className="row justify-content-between text-left">
                                     <div className="col-xl-6 flex-column d-flex">
-                                        <button onClick={()=>{navigate("/main_page")}} className="btn btn-primary d-block w-100 mb-3" style={{ background: '#2d3648', border: 'none', fontFamily: 'Inter, sans-serif', height: '40px' }}>Cancel</button>
+                                        <button onClick={() => { navigate("/main_page/secondhand"); }} className="btn btn-primary d-block w-100 mb-3" style={{ background: '#2d3648', border: 'none', fontFamily: 'Inter, sans-serif', height: '40px' }}>Cancel</button>
                                     </div>
                                     <div className="col-xl-6 flex-column d-flex">
                                         <button className="btn btn-primary d-block w-100 mb-3" type="submit" style={{ background: '#2d3648', border: 'none', fontFamily: 'Inter, sans-serif', height: '40px' }}>Post</button>

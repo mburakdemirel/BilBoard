@@ -55,6 +55,9 @@ function App() {
                   <Route path='/entry' element={<><NavigationBarDefault/><EntryForm/></>}> </Route>
                   <Route path='/complaints' element={<><NavigationBarDefault/><EntryMainPage/></>}> </Route>
                   <Route path='/chat' element={<><NavigationBarDefault/><Chat/></>}> </Route>
+                  <Route path='/add_product' element={<><NavigationBarDefault/><ProductAddForm/></>}></Route>
+                  <Route path='/post_complaint' element={<><NavigationBarDefault/><EntryForm isComplaint={true}></EntryForm></>}></Route>
+                  <Route path='/post_l&f' element={<><NavigationBarDefault/><EntryForm isComplaint={false}></EntryForm></>}></Route>
               </Routes>
 
               <Footer></Footer>

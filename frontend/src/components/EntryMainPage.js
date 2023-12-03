@@ -103,7 +103,7 @@ function EntryMainPage(){
                                     <ul className="list-group" style={{ width: '100%', height: '100%', overflow: 'scroll' }} data-bs-smooth-scroll="true">
                                         {Array(products.length).fill().map((_, index) => {
                                             return (
-                                                <li className="list-group-item" style={{ padding: '0px', paddingBottom: '10px', borderStyle: 'none' }}>
+                                                <li key={index} className="list-group-item" style={{ padding: '0px', paddingBottom: '10px', borderStyle: 'none' }}>
                                                     <div className="card" style={{ borderStyle: 'none', background: '#A0ABC0' }}>
                                                         <div className="card-body d-flex flex-row " style={{ borderStyle: 'none', height: '11vw', minHeight: '80px', paddingLeft: '5px', paddingBottom: '5px', paddingRight: '5px', paddingTop: '5px' }}>
                                                             <div className="d-flex flex-column justify-content-between" style={{ width: '90%', height: '90%', margin: '0.7%', minWidth: '200px' }}>
