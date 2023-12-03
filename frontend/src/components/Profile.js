@@ -7,8 +7,10 @@ import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover'
 import Button from 'react-bootstrap/Button';
 import alert from "bootstrap/js/src/alert";
-import {useNavigate} from "react-router-dom";
+import {useNavigate, useParams, useLocation} from "react-router-dom";
 import Placeholder from "./assets/img/WF Image Placeholder2.png"
+import {set} from "react-hook-form";
+import {json} from "react-router";
 
 //There are two kinds of profiles and they are rendered according to the value of myProfile boolean.
 //Probably myProfile will take its value from a context. Or we might directly pass is as props.
@@ -17,47 +19,54 @@ import Placeholder from "./assets/img/WF Image Placeholder2.png"
 
 
 function Profile() {
+    const location = useLocation();
+    const navigate = useNavigate();
 
+    const {id} = useParams();
+    console.log(id);
     const [error, setError] = useState(null);
     const [myProfile, setMyProfile] = useState();
-    const pull_data = (data) => {
+
+
+     const pull_data = (data) => {
         console.log("edit mode " + data); // LOGS DATA FROM CHILD (My name is Dean Winchester... &)
     }
 
     const onLoad = async () => {
-        try{
-            // Create the GET request
-            axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
-            const {data} = await axios.get('http://127.0.0.1:8000/api/user/me/') ;
-            console.log(data);
-            setMyProfile(data);
-            const id = {
-
-            };
-
-
-
-        }
-        catch (error){
-            if (error.response) {
-                if(error.response.status===401){
-                    setError(`Your email or password is wrong`);
+        setMyProfile(JSON.parse(localStorage.getItem('myProfile')));
+            if(!myProfile){
+                try{
+                    // Create the GET request
+                    axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
+                    const {data} = await axios.get('http://127.0.0.1:8000/api/user/me/') ;
+                    //console.log(data);
+                    setMyProfile(data);
                 }
-                else{
-                    setError(`Server responded with status code ${error.response.status}`);
-                }
+                catch (error){
+                    if (error.response) {
+                        if(error.response.status===401){
+                            setError(`Your email or password is wrong`);
+                        }
+                        else{
+                            setError(`Server responded with status code ${error.response.status}`);
+                        }
 
-            } else if (error.request) {
-                setError('No response received from the server.');
-            } else {
-                setError('An error occurred while setting up the request.');
+                    } else if (error.request) {
+                        setError('No response received from the server.');
+                    } else {
+                        setError('An error occurred while setting up the request.');
+                    }
+                }
             }
         }
-    }
+
+
+
 
 
     useEffect(()=>{
         onLoad();
+
     },[])
 
     return (
@@ -65,7 +74,7 @@ function Profile() {
             {myProfile ?
                 <div className="container d-sm-flex d-md-flex d-lg-flex d-xl-flex d-xxl-flex">
                 <div className="row gx-1 gy-3 justify-content-center" ></div>
-                <Products myProfile={myProfile} func={pull_data}></Products>
+                <Products  myProfile={myProfile} func={pull_data}></Products>
                 <ProfileArea myProfile={myProfile} func={pull_data}></ProfileArea>
                 </div>
                 :
@@ -80,21 +89,36 @@ function Profile() {
 
 
 function Products({myProfile, func}) {
-
+    const [uploadedOrFavorites, setUploadedOrFavorites] = useState('uploaded');
     const [filteredProductsType, setFilteredProductsType] = useState('secondhand');
     const [products, setProducts] = useState([]);
+    const [favorites,setFavorites] = useState(JSON.parse(localStorage.getItem('favoritesObjects')));
+    const [showedProducts, setShowedProducts] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
     useEffect(()=>{
         uploadMyProducts();
-
     },[])
 
+    useEffect(() => {
+        console.log(uploadedOrFavorites)
+        if(uploadedOrFavorites==="uploaded"){
+            setShowedProducts(products);
+        }
+        else{
+            setShowedProducts(favorites);
+        }
+    }, [uploadedOrFavorites,loading]);
+
     const uploadMyProducts = async () => {
+
         try{
+            setLoading(true);
             axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
             const {data} = await axios.get('http://127.0.0.1:8000/api/user/product/');
-            console.log(data);
-            setProducts(data);
-
+            console.log("my products ",data);
+            console.log("favorites", JSON.parse(localStorage.getItem('favoritesObjects')));
+            setProducts(data.results);
 
         }
         catch (error){
@@ -106,6 +130,11 @@ function Products({myProfile, func}) {
                 console.log('An error occurred while setting up the request.');
             }
         }
+        setLoading(false);
+    }
+
+    const sendProductDetailPage = (index,pageType) => {
+        navigate('/product_detail/' + pageType + '/' + index);
     }
 
 
@@ -113,29 +142,14 @@ function Products({myProfile, func}) {
         <div className="col-xxl-6 d-flex d-sm-flex d-md-flex d-lg-flex d-xl-flex d-xxl-flex flex-grow-1 justify-content-center align-items-center justify-content-sm-center align-items-sm-center align-items-md-center align-items-lg-center"
             data-aos="fade-right" data-aos-duration="600" style={{height: '40vw', width: '600px', minHeight: '380px', maxWidth:'93vw', paddingTop:'10px'}}>
             <div className="d-flex d-xxl-flex flex-column align-items-center  " style={{background: '#ffffff', fontSize: '12px', borderRadius: '10px', width: '95%', minWidth:'90%', padding: '5%', height: '100%',}} data-bs-smooth-scroll="true">
-                {myProfile ? (<h1 className="text-center" id="h1-products" style={{width: '100%', fontSize: '250%', fontFamily: 'Inter, sans-serif', marginBottom: '5px',}}>My Posts</h1>)
-                    :
-                    (<h1 className="text-center" id="h1-products" style={{width: '100%', fontSize: '250%', fontFamily: 'Inter, sans-serif', marginBottom: '5px',}}>Posts</h1>)}
 
-                <div
-                    className="input-group text-center d-flex d-xl-flex flex-row justify-content-lg-center justify-content-xl-center mt-3"
-                    style={{
-                        width: '100%',
-                        borderStyle: 'none',
-                        borderBottomStyle: 'none',
-                        height: '40px',
-                        marginBottom: '10px',
-                    }}
-                >
+
+                <div className="input-group text-center d-flex d-xl-flex flex-row justify-content-lg-center justify-content-xl-center "
+                     style={{width: '100%', borderStyle: 'none', borderBottomStyle: 'none', height: '40px', marginBottom: '0px',}}>
                     <button
                         className="d-flex d-xl-flex d-xxl-flex justify-content-center justify-content-xl-center justify-content-xxl-center input-group-text"
                         onClick={(event) => setFilteredProductsType("secondhand")}
                         id="secondhand" style={{background: filteredProductsType==="secondhand"? '#2d3648' : '#717d96' , color: '#ffffff', width: '20%', fontFamily: 'Inter, sans-serif', fontSize: 'inherit', fontWeight: filteredProductsType==="secondhand"? 'bold':''}}>Second Hand
-                    </button>
-                    <button
-                        className="d-flex d-xl-flex d-xxl-flex justify-content-center justify-content-xl-center justify-content-xxl-center input-group-text"
-                        onClick={(event) => setFilteredProductsType("lostandfound")}
-                        id="l&f" style={{background: filteredProductsType==="lostandfound"? '#2d3648' : '#717d96' , width: '20%', color: '#ffffff', fontFamily: 'Inter, sans-serif', fontSize: 'inherit',fontWeight: filteredProductsType==="lostandfound"? 'bold':''}}>Lost & Found
                     </button>
                     <button
                         className="d-flex d-xl-flex d-xxl-flex justify-content-center justify-content-xl-center justify-content-xxl-center input-group-text" id="borrow"
@@ -143,42 +157,61 @@ function Products({myProfile, func}) {
                         style={{background: filteredProductsType==="borrow"? '#2d3648' : '#717d96' , color: '#ffffff', fontSize: 'inherit', fontFamily: 'Inter, sans-serif', fontWeight: filteredProductsType==="borrow"? 'bold':''}}>Borrow
                     </button>
                     <button className="d-flex d-xl-flex d-xxl-flex justify-content-center justify-content-xl-center justify-content-xxl-center input-group-text"
-                            onClick={(event) => setFilteredProductsType("complaints")}
-                            id="complaint" style={{background: filteredProductsType==="complaints"? '#2d3648' : '#717d96' , width: '20%', color: '#ffffff', fontFamily: 'Inter, sans-serif', fontSize: 'inherit',fontWeight: filteredProductsType==="complaints"? 'bold':''}}>Complaints
-                    </button>
-                    <button className="d-flex d-xl-flex d-xxl-flex justify-content-center justify-content-xl-center justify-content-xxl-center input-group-text"
                             onClick={(event) => setFilteredProductsType("donation")}
                             id="donation" style={{background: filteredProductsType==="donation"? '#2d3648' : '#717d96' , width: '20%', color: '#ffffff', fontFamily: 'Inter, sans-serif', fontSize: 'inherit',fontWeight: filteredProductsType==="donation"? 'bold':''}}>Donation
                     </button>
-
-
+                    <button
+                        className="d-flex d-xl-flex d-xxl-flex justify-content-center justify-content-xl-center justify-content-xxl-center input-group-text"
+                        onClick={(event) => setFilteredProductsType("lostandfound")}
+                        id="l&f" style={{background: filteredProductsType==="lostandfound"? '#2d3648' : '#717d96' , width: '20%', color: '#ffffff', fontFamily: 'Inter, sans-serif', fontSize: 'inherit',fontWeight: filteredProductsType==="lostandfound"? 'bold':''}}>Lost & Found
+                    </button>
+                    <button className="d-flex d-xl-flex d-xxl-flex justify-content-center justify-content-xl-center justify-content-xxl-center input-group-text"
+                            onClick={(event) => setFilteredProductsType("complaints")}
+                            id="complaint" style={{background: filteredProductsType==="complaints"? '#2d3648' : '#717d96' , width: '20%', color: '#ffffff', fontFamily: 'Inter, sans-serif', fontSize: 'inherit',fontWeight: filteredProductsType==="complaints"? 'bold':''}}>Complaints
+                    </button>
                 </div>
-                <hr
-                    className="d-xxl-flex justify-content-xxl-center align-items-xxl-center"
-                    style={{
-                        width: '100%',
-                        margin: '0',
-                        marginTop: '8px',
-                        marginBottom: '8px',
-                    }}
-                />
+                <hr className="d-xxl-flex justify-content-xxl-center align-items-xxl-center" style={{ width: '90%', margin: '0px', marginTop: '10px', marginBottom: '10px' }} />
+
+                    <div className="input-group text-center d-flex flex-row "  style={{width: '91%', borderStyle: 'none', borderBottomStyle: 'none', height: '40px', marginBottom: '10px',}}>
+                        <ul className="nav nav-pills d-flex justify-content-between w-100">
+                            <li className="nav-item" style={{width: '48%'}}>
+                                <a className="nav-link active" aria-current="page"
+                                   onClick={(event) => setUploadedOrFavorites("uploaded")}
+                                   style={{background: uploadedOrFavorites==="uploaded"? '#2d3648' : '#717d96' , color: '#ffffff', fontFamily: 'Inter, sans-serif', fontSize: 'inherit',fontWeight: uploadedOrFavorites==="uploaded"? 'bold':''}}>Uploaded</a>
+
+                            </li>
+                            {filteredProductsType!=="lostandfound" &&
+                                <li className="nav-item " style={{width: '48%'}}>
+                                    <a className="nav-link " tabIndex="-1" aria-disabled="true"
+                                       onClick={(event) => setUploadedOrFavorites("favorites")}
+                                       style={{background: uploadedOrFavorites==="favorites"? '#2d3648' : '#717d96', color: '#ffffff', fontFamily: 'Inter, sans-serif', fontSize: 'inherit',fontWeight: uploadedOrFavorites==="favorites"? 'bold':''}}>{filteredProductsType==="complaints"?"Voted" : "Favourites"}</a>
+
+                                </li>
+                            }
+                        </ul>
+                    </div>
+
+
+
+
                 <div
                     className="card-group d-flex d-xxl-flex flex-row justify-content-start flex-sm-nowrap flex-md-nowrap flex-lg-nowrap flex-xl-nowrap align-items-xxl-start flex-xxl-wrap"
-                    style={{ height: 'initial', overflow: 'auto', width:'93%' }}>
-
+                    style={{ height: '80%', overflow: 'auto', width:'93%'}}>
+                    {loading && <div style={{width:'100%'}}><span className="spinner-border spinner-border" aria-hidden="true" ></span></div> }
                     {/** this is for testing purposes normally we should use result.map(product => (<div> ...) where result is the result of the http
                  * request and we should use product's data in ... part
                 */}
-                    {Array(products.length).fill().map((_, index) => {
-                        if (products[index] && products[index].category === filteredProductsType) {
-                            return(<div className="card" key={index} id="product" style={{width: '170px', height: '170px', borderRadius: '10px', borderStyle: 'none', borderBottomStyle: 'none', padding: '5px', minWidth: '170px', maxWidth: '170px',}}>
-                                <div className="card-body" style={{ width: '100%', height: '100%', padding: '0' }}>
+                    {Array(showedProducts.length).fill().map((_, index) => {
+                        if (showedProducts[index] && showedProducts[index].category === filteredProductsType) {
+                            return(<div className="card" key={index} id="product" style={{width: '170px', height: '170px', borderRadius: '10px', borderStyle: 'none', borderBottomStyle: 'none', padding: '5px', minWidth: '170px', maxWidth: '170px',}}
+                                        onClick={()=>sendProductDetailPage(showedProducts[index].id,showedProducts[index].category)}>
+                                <div className="card-body" style={{ width: '100%', height: '100%', padding: '3px' }}>
                                     <img style={{ width: '100%', height: '100%' }} src={PlaceHolder} alt={`Product ${index}`}/>
                                     <div style={{height: '40px', width: '100%', marginTop: '-40px', background: '#21252955', position: 'relative', borderBottomRightRadius: '10px', borderBottomLeftRadius: '10px', paddingTop: '3px', paddingBottom: '3px', paddingRight: '5px', paddingLeft: '5px'}}>
                                         <h1 className="text-center d-flex d-xxl-flex justify-content-start align-items-start justify-content-xxl-start"
-                                            style={{width: '100%', fontSize: '16px', fontFamily: 'Inter, sans-serif', marginBottom: '0px'}}>{products[index].title}</h1>
+                                            style={{width: '100%', fontSize: '14px', fontFamily: 'Inter, sans-serif', marginBottom: '0px'}}>{showedProducts[index].title}</h1>
                                         <h1 className="text-center d-flex d-xxl-flex justify-content-start justify-content-xxl-start"
-                                            style={{width: '100%', fontSize: '12px', fontFamily: 'Inter, sans-serif', marginBottom: '0px'}}>{products[index].price}</h1>
+                                            style={{width: '100%', fontSize: '10px', fontFamily: 'Inter, sans-serif', marginBottom: '0px'}}>{showedProducts[index].price}</h1>
                                     </div>
 
                                 </div>
@@ -195,10 +228,9 @@ function Products({myProfile, func}) {
 function ProfileArea({myProfile,func} ) {
     const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
     const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
-
-    const imageUrl = "http://127.0.0.1:8000/media/pphotos/IMG_2252.png";
-
     const navigate = useNavigate();
+    const location = useLocation();
+
 
     const [loading, setLoading] = useState(false);
     const [nameSurname, setNameSurname] = useState(myProfile.name + " " + myProfile.surname);
@@ -215,14 +247,13 @@ function ProfileArea({myProfile,func} ) {
     const updateUser = async (user) => {
         setLoading(true);
         try{
-
             // do update operations
             const {data} = await axios.patch('http://127.0.0.1:8000/api/user/me/', user);
-
+            localStorage.setItem('myProfile', JSON.stringify(data));
             console.log(data);
             myProfile = data;
-            setNameSurname(myProfile.name + " " + myProfile.surname)
-            setEmail(myProfile.email);
+            setNameSurname(data.name + " " + data.surname)
+            setEmail(data.email);
             setEditMode(false);
             setLoading(false);
         }
@@ -319,8 +350,7 @@ function ProfileArea({myProfile,func} ) {
 
     return (
         <div
-            className="col-xl-6 col-xxl-5 offset-xxl-0 d-flex d-sm-flex d-md-flex d-lg-flex d-xl-flex d-xxl-flex flex-grow-1 justify-content-center align-items-center order-last justify-content-sm-center align-items-sm-center justify-content-md-center align-items-md-center justify-content-lg-center align-items-lg-center justify-content-xl-center align-items-xl-center justify-content-xxl-center align-items-xxl-center"
-            data-aos="fade-left" data-aos-duration="600" style={{width: '600px', height: '40vw', minHeight: '554px', maxWidth:'93vw', paddingTop:'10px',}}>
+            className=" d-flex  flex-grow-1 justify-content-center align-items-center order-last"  data-aos="fade-left" data-aos-duration="600" style={{width: '600px', height: '40vw', minHeight: '554px', maxWidth:'93vw', paddingTop:'10px',}}>
             <div
                 className="d-flex d-xxl-flex flex-column justify-content-xxl-center align-items-xxl-center"
                 style={{background: '#ffffff', fontSize: '12px', borderRadius: '10px', height: '100%', width: '95%', padding: '5%', paddingTop: '2%',}}>
@@ -370,13 +400,13 @@ function ProfileArea({myProfile,func} ) {
                 </div>
                 <hr className="d-xxl-flex justify-content-xxl-center align-items-xxl-center" style={{ width: '100%', margin: '0px', marginTop: '10px', marginBottom: '10px' }} />
                 <div className="d-flex flex-row justify-content-between align-items-center align-content-around" style={{ height: 'initial', width: '100%', padding: '2%' }}>
-                    <p style={{ marginBottom: '0px', fontFamily: 'Inter, sans-serif', fontSize: '18px' }}>Phone</p>
-                    <p style={{ marginBottom: '0px', fontFamily: 'Inter, sans-serif', fontSize: '18px' }}>{email}</p>
+                    <p style={{ marginBottom: '0px', fontFamily: 'Inter, sans-serif', fontSize: '17px' }}>+90 546 877 39 27</p>
+                    <p style={{ marginBottom: '0px', fontFamily: 'Inter, sans-serif', fontSize: '17px' }}>{email}</p>
                 </div>
                 <hr className="d-xxl-flex justify-content-xxl-center align-items-xxl-center" style={{ width: '100%', margin: '0px', marginTop: '10px', marginBottom: '10px' }} />
                 <div className="d-flex flex-column justify-content-between align-items-center align-content-around align-items-xxl-start" style={{ height: '30%', width: '100%', minHeight: '100px', background: '#edf0f7', borderRadius: '10px', paddingRight: '5px', paddingLeft: '10px', paddingTop: '3px', maxHeight: '200px' }}>
                     <div className="d-flex flex-row justify-content-between align-items-center align-content-around" style={{ height: '30%', width: '100%', minHeight: '40px' }}>
-                        <h1 style={{fontSize: '1.6em', fontFamily: 'Inter, sans-serif', marginLeft: '0px', justifyContent:'start' }}>About Me</h1>
+                        <h1 style={{fontSize: '1.6em', fontFamily: 'Inter, sans-serif', marginLeft: '0px', justifyContent:'start' }}>About</h1>
                     </div>
                 </div>
                 <hr className="d-xxl-flex justify-content-xxl-center align-items-xxl-center" style={{ width: '100%', margin: '0px', marginTop: '10px', marginBottom: '10px' }} />
@@ -390,12 +420,7 @@ function ProfileArea({myProfile,func} ) {
                                         <path d="M2 0a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2.5a1 1 0 0 1 .8.4l1.9 2.533a1 1 0 0 0 1.6 0l1.9-2.533a1 1 0 0 1 .8-.4H14a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"></path>
                                     </svg>
                                 </button>
-                                <button className="btn btn-primary d-flex d-xxl-flex justify-content-center align-items-center justify-content-xxl-center align-items-xxl-center" style={{ width: '48%', height: '90%', fontWeight: 'bold', background: '#2d3648', borderStyle: 'none', borderColor: '#2d3648', minWidth: '20px' }}>
-                                    <span style={{ paddingRight: '10px', fontSize: '12px', fontFamily: 'Inter, sans-serif', fontWeight: 'bold' }}>Favourites</span>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" className="bi bi-heart-fill" style={{ fontSize: '16px' }}>
-                                        <path fillRule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z"></path>
-                                    </svg>
-                                </button>
+
                             </>) :
                             (<>
                                 <button className="btn btn-primary d-flex d-xxl-flex justify-content-center align-items-center justify-content-xxl-center align-items-xxl-center" style={{ width: '48%', height: '90%', fontWeight: 'bold', background: '#2d3648', borderStyle: 'none', borderColor: '#2d3648', minWidth: '20px' }}>

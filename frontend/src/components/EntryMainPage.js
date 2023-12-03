@@ -9,7 +9,7 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 function EntryMainPage(){
     const navigate = useNavigate();
     const imageUrl = "http://127.0.0.1:8000/media/pphotos/Activity_Diagram1.jpg";
-    const {pageType} = useParams();
+    const {pageType,searchText} = useParams();
 
     const [loading, setLoading] = useState(true);
     const [productCategory, setProductCategory] = useState();
@@ -23,7 +23,7 @@ function EntryMainPage(){
         setProducts([]);
         setPage(1)
         // Messages in the selected index will be opened on the right side
-    },[pageType])
+    },[pageType,searchText])
 
     useEffect(() => {
         console.log("page use effect" + page);
@@ -40,13 +40,24 @@ function EntryMainPage(){
             axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
             if(pageType){
 
-                const {data} = await axios.get('http://127.0.0.1:8000/api/entry/' + 'complaint-entry/' + `?page=${page}`);
-                console.log(data.results);
-                console.log(hasMore);
-                setProducts(prevProducts => [...prevProducts, ...data.results]);
-                setPage(prevPage => prevPage + 1);
-                setHasMore(data.results.length >= 16);
+                if(searchText){
+                    const {data} = await axios.get('http://127.0.0.1:8000/api/entry/complaint-entry/' + `?search=${searchText}`)
+                    console.log(data.results);
+                    console.log(hasMore);
+                    setProducts(prevProducts => [...prevProducts, ...data.results]);
+                    setPage(prevPage => prevPage + 1);
+                    setHasMore(data.results.length >= 16);
+                }
+                else{
+                    const {data} = await axios.get('http://127.0.0.1:8000/api/entry/complaint-entry/' + `?page=${page}`);
+                    console.log(data.results);
+                    console.log(hasMore);
+                    setProducts(prevProducts => [...prevProducts, ...data.results]);
+                    setPage(prevPage => prevPage + 1);
+                    setHasMore(data.results.length >= 16);
+                }
                 setLoading(false);
+
             }
 
         }

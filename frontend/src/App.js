@@ -20,6 +20,7 @@ import { EntryForm } from './components/EntryForm';
 import EntryMainPage from "./components/EntryMainPage";
 import Chat from "./components/Chat";
 import MainPage from "./components/MainPage";
+import ProfileOther from "./components/ProfileOther";
 
 // we don't need to add NavigationBar and Footer to each page because they are added here only the Routes part of the app will differ.
 function App() {
@@ -35,7 +36,7 @@ function App() {
     }
 
     return (
-      <ContextApi.Provider value={{pageType: type, changePageType:changeType, newMessage: message, sendNewMessage: sendMessage, }}>
+      <ContextApi.Provider value={{isImageViewerOpen: type, changeIsImageViewerOpen:changeType, newMessage: message, sendNewMessage: sendMessage, }}>
           <div className="App">
 
               <Routes>
@@ -45,6 +46,7 @@ function App() {
                   <Route path='/change_password' element={<><NavigationBarLanding/><ForgotPasswordPage/></>}></Route>
                   {/** We will probably add a new component called <ProtectedRoute> or something for pages that should be seen after authentication */}
                   <Route path='/profile' element={<><NavigationBarDefault/><Profile/></>}></Route>
+                  <Route path='/profile/:id' element={<><NavigationBarDefault/><ProfileOther/></>}></Route>
                   <Route path='/messages' element={<><NavigationBarDefault/><MessagePage/></>}></Route>
                   <Route path='/messages_deneme' element={<><NavigationBarDefault/><MessagesDeneme/></>}></Route>
                   <Route path='/product_detail/:pageType/:id' element={<><NavigationBarDefault/><ProductDetailPage/></>}></Route>

@@ -2,11 +2,13 @@ import React from 'react';
 import Logo from './assets/img/burak.png'
 import Footer from "./Footer";
 import NavigationBarLanding from "./NavigationBarLanding";
+import ImageViewer from 'react-simple-image-viewer';
 import './assets/bootstrap/css/bootstrap.min.css'; // Import Bootstrap CSS
 import "bootstrap-icons/font/bootstrap-icons.css";
 import Burak2 from './assets/img/burak2.jpeg';
-import {useEffect, useState} from 'react';
+import {useEffect, useState, useCallback } from 'react';
 import {useNavigate, useParams} from 'react-router-dom';
+import { render } from 'react-dom';
 import axios from "axios";
 import {isDisabled} from "@testing-library/user-event/dist/utils";
 import {useContext} from "react";
@@ -17,31 +19,41 @@ import Product2 from './assets/img/Shape.png';
 
 function ProductDetailPage() {
     const navigate = useNavigate();
-    const {sendNewMessage} = useContext(ContextApi);
-
+    const{isImageViewerOpen, changeIsImageViewerOpen, sendNewMessage} = useContext(ContextApi);
 
     const {pageType,id} = useParams();
 
     const [loading, setLoading] = useState(true);
     const [product, setProduct] = useState('');
+    const [myProfile, setMyProfile] = useState(JSON.parse(localStorage.getItem('myProfile')));
     const [favorites, setFavorites] = useState(JSON.parse(localStorage.getItem('favorites')));
-    console.log(favorites);
+
+
+    const [currentImage, setCurrentImage] = useState(0);
+    const [isViewerOpen, setIsViewerOpen] = useState(false);
+    const [images, setImages] = useState([]);
 
     useEffect(()=>{
         if(pageType){
-            console.log(favorites.includes(4));
             uploadSelectedProduct(pageType);
         }
-
-        // Messages in the selected index will be opened on the right side
     },[])
+
+    useEffect(() => {
+        console.log(favorites);
+        localStorage.setItem('favorites', JSON.stringify(favorites));
+    }, [favorites]);
+
 
     const uploadSelectedProduct = async (pageType) => {
         try{
+
+
             axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
             const {data} = await axios.get('http://127.0.0.1:8000/api/product/' + pageType + '/'+ id);
 
             setProduct(data);
+            data.product_photos.forEach( (photo) => images.push(photo.product_photos));
 
             console.log(data);
             setLoading(false);
@@ -64,7 +76,6 @@ function ProductDetailPage() {
         navigate("/messages");
     }
 
-
     const addFavourites = async (index) => {
         console.log("includes " + favorites.includes(index));
         if(favorites.includes(index)){
@@ -72,37 +83,65 @@ function ProductDetailPage() {
         }
         else{
             axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization')
-            debugger;
+            const {data} = await axios.post('http://127.0.0.1:8000/api/product/add-favorites/', {product_id: index}) ;
+            console.log(data);
             console.log("index " + index);
-            const favorites = await axios.post('http://127.0.0.1:8000/api/product/add-favorites/', {product_id: 10}) ;
-            //console.log(data);
             setFavorites([...favorites,index]);
-            console.log(favorites);
-            localStorage.setItem('favorites', JSON.stringify(favorites));
         }
 
     }
     const removeFavourites = async (index) => {
         console.log("removed");
+        const {data} = await axios.post('http://127.0.0.1:8000/api/product/remove-favorites/', {product_id: index}) ;
+        console.log(data)
         setFavorites((current) =>
             current.filter((favorite) => favorite !== index)
         );
-        console.log(favorites);
-        localStorage.setItem('favorites', JSON.stringify(favorites));
     }
 
-    return <section className=" d-flex justify-content-center align-items-center py-4"  style={{background: '#edf0f7',minHeight: '91vh'}}>
+
+    const openImageViewer = useCallback((index) => {
+        changeIsImageViewerOpen(true);
+        console.log("opened image viewer " + index , images)
+        setCurrentImage(index);
+        setIsViewerOpen(true);
+    }, []);
+
+    const closeImageViewer = () => {
+        changeIsImageViewerOpen(false);
+        setCurrentImage(0);
+        setIsViewerOpen(false);
+    };
+
+    const goToProfile = () => {
+       navigate('/profile/' + product.user.id,  {state:{user: product.user}});
+
+    }
+
+    return (
+
+        <section className=" d-flex justify-content-center align-items-center py-4"  style={{background: '#edf0f7',minHeight: '91vh'}}>
+            {isViewerOpen ?
+                <ImageViewer
+                    src={ images }
+                    currentIndex={ currentImage }
+                    disableScroll={ true }
+                    closeOnClickOutside={ true }
+                    onClose={ closeImageViewer }
+                    style={{maxHeight:'50%'}}
+                />
+
+                :
+
         <div className="container">
             <div className="row gx-1 gy-3"  style={{ width: '100%', marginTop: '-21px'}}>
-
-
                 <div className=" d-flex flex-grow-1 justify-content-center align-items-center" data-aos="fade-right" data-aos-duration="600"  style={imageContainerStyle}>
                     <div className="d-flex justify-content-center align-items-center " style={sliderContainerStyle}>
                         <Carousel  style={{height:'40wv', width: '94%', borderRadius:'10px', backgroundColor:'#2B2B2B'}}>
                                     {product.product_photos && product.product_photos.length>0 ?
                                         product.product_photos.map((photo, index) => <Carousel.Item  key={index}>
                                             <div className="d-flex justify-content-center align-items-center " style={{height:'40vw', borderRadius:'10px', overflow:'hidden'}}>
-                                                    <img className="d-block w-100"  src={photo.product_photos} alt="First slide"/> {/*src={photo.product_photos}*/}
+                                                    <img className="d-block w-100" onClick={ () => openImageViewer(index) } src={photo.product_photos} alt="First slide"/> {/*src={photo.product_photos}*/}
                                             </div>
                                         </Carousel.Item>)
                                     :
@@ -145,7 +184,9 @@ function ProductDetailPage() {
                             }
                         })()}
                         <hr style={hrStyle} />
-                        <div className="d-flex justify-content-between align-items-center placeholder-glow" style={{ height: '10%', width: '100%', marginTop: '10px', marginBottom: '10px' }}>
+
+                        <div className="d-flex justify-content-between align-items-center placeholder-glow" style={{ height: '10%', width: '100%', marginTop: '10px', marginBottom: '10px' }}
+                             onClick={goToProfile}>
                             <div className="d-flex flex-column justify-content-evenly" style={{ height: '100%', width: '100%'}}>
                                 {loading ? <span className="placeholder col-5 h-50"></span> : <h1 style={sellerNameStyle}>{product.user.name + " " + product.user.surname}</h1>}
                                 {loading ? <span className="placeholder col-5 h-25"></span> : <h1 style={sellerPhoneStyle}>123123213</h1>}
@@ -154,15 +195,24 @@ function ProductDetailPage() {
                         </div>
                         <hr style={hrStyle} />
                         <div className="d-flex flex-row justify-content-between align-items-center" style={{ height: '10%', width: '100%', minHeight: '40px', maxHeight: '50px' }}>
-                            <button onClick={sendMessage} disabled={loading} className="btn btn-primary d-flex justify-content-center align-items-center" role="button" style={{ width: '30%', height: '90%', fontWeight: 'bold', background: '#2d3648', borderStyle: 'none', borderColor: '#2d3648', minWidth: '150px' }} href="messages.html">
-                                {!loading && <><span style={{ paddingRight: '10px', fontSize: '12px', fontFamily: 'Inter, sans-serif', fontWeight: 'bold' }}>Send Message</span>
-                                <i className="bi bi-send-fill" style={{ fontSize: '16px', color:'white' }}  ></i></>}
-                            </button>
-                            <div className="d-flex flex-row justify-content-around align-items-center" style={{ height: '100%', minWidth: '90px' }}>
-                                <button onClick={ e =>  addFavourites(product.id)} disabled={loading} className="btn btn-primary" type="button" style={{ width: '40px', fontWeight: 'bold', background: '#2d3648', borderStyle: 'none', borderColor: '#2d3648', height: '90%' }}>
-                                    {!loading && !favorites.includes(product.id) && <i className="bi bi-heart"></i>}
-                                    {!loading && favorites.includes(product.id) && <i className="bi bi-heart-fill"></i>}
+                            {product.user && product.user.id !== myProfile.id &&
+                                <button onClick={sendMessage} disabled={loading} className="btn btn-primary d-flex justify-content-center align-items-center" role="button" style={{ width: '30%', height: '90%', fontWeight: 'bold', background: '#2d3648', borderStyle: 'none', borderColor: '#2d3648', minWidth: '150px' }} href="messages.html">
+                                    {!loading && <><span style={{ paddingRight: '10px', fontSize: '12px', fontFamily: 'Inter, sans-serif', fontWeight: 'bold' }}>Send Message</span>
+                                    <i className="bi bi-send-fill" style={{ fontSize: '16px', color:'white' }}  ></i></>}
                                 </button>
+                            }
+                            <div className="d-flex flex-row justify-content-around align-items-center" style={{ height: '100%', minWidth: '90px' }}>
+                                {product.user && product.user.id === myProfile.id ?
+                                    <button disabled={loading} className="btn btn-primary" type="button" style={{ width: '40px', fontWeight: 'bold', background: '#2d3648', borderStyle: 'none', borderColor: '#2d3648', height: '90%' }}>
+                                        {!loading && <i className="bi bi-trash"></i>}
+                                    </button>
+                                    :
+                                    <button onClick={ e =>  addFavourites(product.id)} disabled={loading} className="btn btn-primary" type="button" style={{ width: '40px', fontWeight: 'bold', background: '#2d3648', borderStyle: 'none', borderColor: '#2d3648', height: '90%' }}>
+                                        {!loading && !favorites.includes(product.id) && <i className="bi bi-heart"></i>}
+                                        {!loading && favorites.includes(product.id) && <i className="bi bi-heart-fill"></i>}
+                                    </button>
+
+                                }
                                 <button disabled={loading} className="btn btn-primary" type="button" style={{ width: '40px', fontWeight: 'bold', background: '#2d3648', borderStyle: 'none', borderColor: '#2d3648', height: '90%' }}>
                                     {!loading && <i className="bi bi-share-fill" ></i>}
                                 </button>
@@ -191,8 +241,11 @@ function ProductDetailPage() {
 
 
         </div>
-    </section>;
 
+            }
+    </section>
+
+    );
 
 };
 const imageContainerStyle = {
@@ -276,6 +329,7 @@ const slideStyle = {
     background: 'url("https://cdn.bootstrapstudio.io/placeholders/1400x800.png") center center / cover no-repeat',
     height: '100%',
 };
+
 
 
 export default ProductDetailPage;

@@ -1,6 +1,6 @@
 import React from "react";
 
 
-const context = React.createContext({pageType:null, changePageType:(pageType)=>{}, newMessage:null, sendNewMessage:(Message)=>{}});
+const context = React.createContext({isImageViewerOpen:null, changeIsImageViewerOpen:(isImageViewerOpen)=>{}, newMessage:null, sendNewMessage:(Message)=>{}});
 
 export default context;

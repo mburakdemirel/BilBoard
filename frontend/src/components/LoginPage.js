@@ -32,6 +32,8 @@ function LoginPage(){
             // Create the POST request
             const {data} = await axios.post('http://127.0.0.1:8000/api/user/token/', user) ;
             //const {data} = await axios.get('http://127.0.0.1:8000/api/user/verify/'+ "?token="+ token);
+
+
             console.log(data);
             if(!data.is_verified){
                 setError('Email is not verified');
@@ -97,7 +99,6 @@ function LoginPage(){
             console.log(isForgotPassword)
             setLoading(false);
         }
-
 
     };
 
