@@ -142,7 +142,7 @@ class Message(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.author.id +  " - " + self.timestamp.strftime("%d/%m/%Y, %H:%M:%S")
+        return str(self.author.id) +  " - " + self.timestamp.strftime("%d/%m/%Y, %H:%M:%S")
 
 class Chat(models.Model):
     participiants = models.ManyToManyField(get_user_model(), related_name="chats")

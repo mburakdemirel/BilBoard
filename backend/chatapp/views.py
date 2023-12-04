@@ -1,19 +1,18 @@
-# # chat/views.py
-# from django.shortcuts import render
-# from django.contrib.auth.decorators import login_required
-# from django.utils.safestring import mark_safe
-# import json
+# chat/views.py
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+from django.utils.safestring import mark_safe
+import json
 
-# def index(request):
-#     return render(request, "chat/index.html")
+def index(request):
+    return render(request, "chat/index.html")
 
-# @login_required
-# def room(request, room_name):
-#     payload = {
-#         "room_name": mark_safe(json.dumps(room_name)),
-#         "author": request.user,
-#     }
-#     return render(request, "chat/room.html", payload)
+def room(request, room_name):
+    payload = {
+        "room_name": mark_safe(json.dumps(room_name)),
+        "author": request.user,
+    }
+    return render(request, "chat/room.html", payload)
 
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import get_user_model
@@ -45,7 +44,7 @@ class ChatListView(ListAPIView):
 
 class ChatDetailView(RetrieveAPIView):
     serializer_class = ChatSerializer
-    permission_classes = (permissions.IsAuthenticated,)
+    permission_classes = (permissions.AllowAny,)
     def get_queryset(self):
         queryset = None
         user_id = self.request.user.id
@@ -57,16 +56,16 @@ class ChatDetailView(RetrieveAPIView):
 class ChatCreateView(CreateAPIView):
     queryset = Chat.objects.all()
     serializer_class = ChatSerializer
-    permission_classes = (permissions.IsAuthenticated,)
+    permission_classes = (permissions.AllowAny,)
 
 class ChatUpdateView(UpdateAPIView):
     queryset = Chat.objects.all()
     serializer_class = ChatSerializer
-    permission_classes = (permissions.IsAuthenticated,)
+    permission_classes = (permissions.AllowAny,)
 
 class ChatDeleteView(DestroyAPIView):
     serializer_class = ChatSerializer
-    permission_classes = (permissions.IsAuthenticated,)
+    permission_classes = (permissions.AllowAny,)
     def get_queryset(self):
         queryset = None
         user_id = self.request.user.id

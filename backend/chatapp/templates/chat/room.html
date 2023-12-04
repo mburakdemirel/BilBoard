@@ -22,7 +22,7 @@
       <div id="profile">
         <div class="wrap">
           <img id="profile-img" src="http://emilcarlsson.se/assets/mikeross.png" class="online" alt="" />
-          <p>Mike Ross</p>
+          <p>{{user.name}}</p>
           <i class="fa fa-chevron-down expand-button" aria-hidden="true"></i>
           <div id="status-options">
             <ul>
@@ -114,6 +114,7 @@
 <script>
     var roomName = {{ room_name }};
     var authorName = {{ user.id }};
+    var chat_id = Number(roomName);
 
     var chatSocket = new ReconnectingWebSocket(
         'ws://' + window.location.host +
@@ -151,7 +152,8 @@
         chatSocket.send(JSON.stringify({
             'command': 'new_message',
             'message': message,
-            'author': authorName
+            'author': authorName,
+            'chat_id': chat_id
         }));
 
         messageInputDom.value = '';
@@ -160,7 +162,7 @@
 
 
     function loadMessages() {
-      chatSocket.send(JSON.stringify({'command': 'load_messages' }));
+      chatSocket.send(JSON.stringify({'command': 'load_messages', 'chat_id': chat_id }));
     }
 
     function createMessage(data) {

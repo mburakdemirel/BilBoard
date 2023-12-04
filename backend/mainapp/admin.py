@@ -33,7 +33,7 @@ class UserAdmin(BaseUserAdmin):
 
 class ProductImageInline(admin.TabularInline):
     model = models.ProductImage
-    extra = 1 
+    extra = 1
 
 
 class ProductAdmin(admin.ModelAdmin):
@@ -84,11 +84,13 @@ class LostAndFoundEntryAdmin(admin.ModelAdmin):
         }),
     )
 
-    
+
 
 
 class ChatAdmin(admin.ModelAdmin):
     list_display = ('id', 'get_participiants')
+    readonly_fields = ['id', 'messages']
+
 
 admin.site.register(models.CustomUser, UserAdmin)
 admin.site.register(models.Product, ProductAdmin)
@@ -97,3 +99,4 @@ admin.site.register(models.ComplaintEntry)
 
 # Test
 admin.site.register(models.Chat, ChatAdmin)
+admin.site.register(models.Message)

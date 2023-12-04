@@ -1,7 +1,7 @@
-# # chat/urls.py
-# from django.urls import path
+# chat/urls.py
+from django.urls import path
 
-# from . import views
+from . import views
 
 
 # urlpatterns = [
@@ -26,4 +26,6 @@ urlpatterns = [
     path('<pk>/', ChatDetailView.as_view(), name='chat-detail'),
     path('<pk>/update/', ChatUpdateView.as_view(), name='chat-update'),
     path('<pk>/delete/', ChatDeleteView.as_view(), name='chat-delete'),
+    path('test/testroom/', views.index, name="index"),
+    path('test/<str:room_name>/', views.room, name="room"),
 ]
