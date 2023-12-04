@@ -114,13 +114,12 @@ class EntryBase(models.Model):
 
 
 class LostAndFoundEntry(EntryBase):
-    CATEGORY_CHOICES = [
+    """CATEGORY_CHOICES = [
         ('lost', 'Lost'),
         ('found', 'Found'),
-    ]
+    ]"""
     #null = True?
-    category = models.CharField(max_length=10, choices=CATEGORY_CHOICES)
-    REQUIRED_FIELDS = ['category']
+    #category = models.CharField(max_length=10, choices=CATEGORY_CHOICES)
 
     def _str_(self):
         return super()._str_()
@@ -131,6 +130,7 @@ class ComplaintEntry(EntryBase):
     Complaint entry is different from base entry, because it has additional upvote and downvote rates.
     """
     vote = models.DecimalField(max_digits=6, decimal_places=0,null=True, blank=True, default=0)
+    target_mail = models.EmailField(verbose_name="target mail", max_length=100, blank=True, null=True)
 
     def _str_(self):
         return super()._str_()
