@@ -26,10 +26,11 @@ function Profile() {
     console.log(id);
     const [error, setError] = useState(null);
     const [myProfile, setMyProfile] = useState();
-
+    const [editMode, setEditMode] = useState(false);
 
      const pull_data = (data) => {
         console.log("edit mode " + data); // LOGS DATA FROM CHILD (My name is Dean Winchester... &)
+         setEditMode(data);
     }
 
     const onLoad = async () => {
@@ -74,7 +75,7 @@ function Profile() {
             {myProfile ?
                 <div className="container d-sm-flex d-md-flex d-lg-flex d-xl-flex d-xxl-flex">
                 <div className="row gx-1 gy-3 justify-content-center" ></div>
-                <Products  myProfile={myProfile} func={pull_data}></Products>
+                <Products  myProfile={myProfile} func={pull_data} editMode={editMode}></Products>
                 <ProfileArea myProfile={myProfile} func={pull_data}></ProfileArea>
                 </div>
                 :
@@ -88,7 +89,7 @@ function Profile() {
 }
 
 
-function Products({myProfile, func}) {
+function Products({myProfile, func, editMode}) {
     const [uploadedOrFavorites, setUploadedOrFavorites] = useState('uploaded');
     const [filteredProductsType, setFilteredProductsType] = useState('secondhand');
     const [products, setProducts] = useState([]);
@@ -108,7 +109,7 @@ function Products({myProfile, func}) {
         else{
             setShowedProducts(favorites);
         }
-    }, [uploadedOrFavorites,loading]);
+    }, [uploadedOrFavorites,loading,favorites]);
 
     const uploadMyProducts = async () => {
 
@@ -119,7 +120,6 @@ function Products({myProfile, func}) {
             console.log("my products ",data);
             console.log("favorites", JSON.parse(localStorage.getItem('favoritesObjects')));
             setProducts(data.results);
-
         }
         catch (error){
             if (error.response) {
@@ -136,6 +136,37 @@ function Products({myProfile, func}) {
     const sendProductDetailPage = (index,pageType) => {
         navigate('/product_detail/' + pageType + '/' + index);
     }
+
+    const deleteProduct = async (product) => {
+        setLoading(true);
+        let confirmed;
+        if (window.confirm("Do you confirm deleting the product?")) {
+            confirmed = true;
+        } else {
+            confirmed = false;
+        }
+
+        if(confirmed){
+            try{
+                // do update operations
+                await axios.delete('http://127.0.0.1:8000/api/product/' +  product.category + '/' + product.id);
+                uploadMyProducts();
+            }
+            catch (error){
+            }
+        }
+
+    };
+
+    const deleteFav = async (product) => {
+        console.log("removed");
+        const {data} = await axios.post('http://127.0.0.1:8000/api/product/remove-favorites/', {product_id: product.id}) ;
+        console.log(data)
+        setFavorites((current) =>
+            current.filter((favorite) => favorite.id !== product.id)
+        );
+        localStorage.setItem('favoritesObjects', JSON.stringify(favorites));
+    };
 
 
     return (
@@ -191,33 +222,46 @@ function Products({myProfile, func}) {
                         </ul>
                     </div>
 
-
-
-
                 <div
-                    className="card-group d-flex d-xxl-flex flex-row justify-content-start flex-sm-nowrap flex-md-nowrap flex-lg-nowrap flex-xl-nowrap align-items-xxl-start flex-xxl-wrap"
-                    style={{ height: '80%', overflow: 'auto', width:'93%'}}>
-                    {loading && <div style={{width:'100%'}}><span className="spinner-border spinner-border" aria-hidden="true" ></span></div> }
+                    className="card-group d-flex flex-row justify-content-start "
+                    style={{ maxHeight: '80%', overflow: 'auto', width:'93%'}}>
+                    {loading ? <div style={{width:'100%'}}><span className="spinner-border spinner-border" aria-hidden="true" ></span></div>
+                    :
+                        <>
+                            {Array(showedProducts.length).fill().map((_, index) => {
+                                if (showedProducts[index] && showedProducts[index].category === filteredProductsType) {
+                                    return(
+                                        <div className="card d-flex align-items-end" key={index} id="product" style={{width: '170px', height: '170px', borderRadius: '10px', borderStyle: 'none', borderBottomStyle: 'none', padding: '5px',maxHeight:'170px',minHeight:'170px' ,minWidth: '170px', maxWidth: '170px',}}>
+                                            {editMode &&
+                                                <button
+                                                    className="btn btn-primary position-relative d-flex align-items-center justify-content-center rounded-circle"
+                                                    type="button"
+                                                    onClick={()=>{{uploadedOrFavorites==="uploaded" ? deleteProduct(showedProducts[index]) : deleteFav(showedProducts[index])}    }}
+                                                    style={{height: '30px', width: '30px', marginBottom: '-30px', marginLeft:'5%', position: 'relative', background: '#2d3648', borderStyle: 'none',}}>
+                                                    <i className="bi bi-trash-fill"></i>
+                                                </button>
+                                            }
+                                            <div className="card-body" style={{ width: '100%', height: '100%', padding: '3px' }}
+                                                 onClick={()=>sendProductDetailPage(showedProducts[index].id,showedProducts[index].category)}>
+                                                <img style={{ width: '100%', height: '100%' }} src={PlaceHolder} alt={`Product ${index}`}/>
+                                                <div style={{height: '40px', width: '100%', marginTop: '-40px', background: '#21252955', position: 'relative', borderBottomRightRadius: '10px', borderBottomLeftRadius: '10px', paddingTop: '3px', paddingBottom: '3px', paddingRight: '5px', paddingLeft: '5px'}}>
+                                                    <h1 className="text-center d-flex justify-content-start align-items-start text-truncate"
+                                                        style={{width: '100%', fontSize: '14px', fontFamily: 'Inter, sans-serif', marginBottom: '0px',color:'white'}}>{showedProducts[index].title}</h1>
+                                                    <h1 className="text-center d-flex d-xxl-flex justify-content-start justify-content-xxl-start text-truncate"
+                                                        style={{width: '100%', fontSize: '10px', fontFamily: 'Inter, sans-serif', marginBottom: '0px',color:'white'}}>{showedProducts[index].price}</h1>
+                                                </div>
+
+                                            </div>
+                                        </div>)
+                                }
+                            })}
+                        </>
+
+                    }
                     {/** this is for testing purposes normally we should use result.map(product => (<div> ...) where result is the result of the http
                  * request and we should use product's data in ... part
                 */}
-                    {Array(showedProducts.length).fill().map((_, index) => {
-                        if (showedProducts[index] && showedProducts[index].category === filteredProductsType) {
-                            return(<div className="card" key={index} id="product" style={{width: '170px', height: '170px', borderRadius: '10px', borderStyle: 'none', borderBottomStyle: 'none', padding: '5px', minWidth: '170px', maxWidth: '170px',}}
-                                        onClick={()=>sendProductDetailPage(showedProducts[index].id,showedProducts[index].category)}>
-                                <div className="card-body" style={{ width: '100%', height: '100%', padding: '3px' }}>
-                                    <img style={{ width: '100%', height: '100%' }} src={PlaceHolder} alt={`Product ${index}`}/>
-                                    <div style={{height: '40px', width: '100%', marginTop: '-40px', background: '#21252955', position: 'relative', borderBottomRightRadius: '10px', borderBottomLeftRadius: '10px', paddingTop: '3px', paddingBottom: '3px', paddingRight: '5px', paddingLeft: '5px'}}>
-                                        <h1 className="text-center d-flex d-xxl-flex justify-content-start align-items-start justify-content-xxl-start"
-                                            style={{width: '100%', fontSize: '14px', fontFamily: 'Inter, sans-serif', marginBottom: '0px'}}>{showedProducts[index].title}</h1>
-                                        <h1 className="text-center d-flex d-xxl-flex justify-content-start justify-content-xxl-start"
-                                            style={{width: '100%', fontSize: '10px', fontFamily: 'Inter, sans-serif', marginBottom: '0px'}}>{showedProducts[index].price}</h1>
-                                    </div>
 
-                                </div>
-                            </div>)
-                        }
-                    })}
                 </div>
             </div>
         </div>
@@ -255,6 +299,7 @@ function ProfileArea({myProfile,func} ) {
             setNameSurname(data.name + " " + data.surname)
             setEmail(data.email);
             setEditMode(false);
+            func(false);
             setLoading(false);
         }
         catch (error){
@@ -304,12 +349,14 @@ function ProfileArea({myProfile,func} ) {
         }
         else{
             setEditMode(true);
+            func(true);
         }
     };
 
     const cancelUpdate =  () => {
         if(editMode){
             setEditMode(false);
+            func(false);
         }
 
     };
@@ -333,8 +380,6 @@ function ProfileArea({myProfile,func} ) {
                 setLoading(false);
             }
         }
-
-
     };
 
 
@@ -356,15 +401,13 @@ function ProfileArea({myProfile,func} ) {
                 style={{background: '#ffffff', fontSize: '12px', borderRadius: '10px', height: '100%', width: '95%', padding: '5%', paddingTop: '2%',}}>
                 <div className="d-flex justify-content-end" style={{height: '45px', width: '100%', marginRight:'-35px'}}>
                     <button
-                        className="btn btn-primary d-flex d-xxl-flex justify-content-center align-items-center justify-content-xxl-center align-items-xxl-center"
+                        className="btn btn-primary  d-flex d-xxl-flex justify-content-center align-items-center justify-content-xxl-center align-items-xxl-center"
                         type="button"
                         onClick={logOut}
                         style={{
                             width: '40px',
-                            fontWeight: 'bold',
                             background: '#2d3648',
                             borderStyle: 'none',
-                            borderColor: '#2d3648',
                             height: '90%',
                             minWidth: '40px',
                             padding: '0px'

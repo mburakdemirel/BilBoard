@@ -116,7 +116,7 @@ function EntryMainPage2(){
                                                             </h4>
                                                         </div>
                                                         <div className="d-flex  justify-content-end align-items-center ">
-                                                            <button className="btn btn-primary d-flex justify-content-center align-items-center" type="button" style={{ width: '36%', height: '100%', fontWeight: 'bold', background: '#717D96', borderStyle: 'none', borderColor: '#2d3648', marginRight: '1%', minWidth: '120px' }}>
+                                                            <button className="btn btn-primary d-flex justify-content-center align-items-center" type="button" style={{ width: '36%', height: '100%', fontWeight: 'bold', background: '#2d3648', borderStyle: 'none', borderColor: '#2d3648', marginRight: '1%', minWidth: '120px' }}>
                                                                 <i className="bi bi-send-fill" style={{ fontSize: '12px', color:'white', marginRight:'5px' }}  ></i>
                                                                 <span className="d-flex" style={{ fontSize: '11px', fontFamily: 'Inter, sans-serif', fontWeight: 'bold', textAlign: 'center' }}>Send Message</span>
                                                             </button>
@@ -156,7 +156,7 @@ function EntryMainPage2(){
                                                             </h4>
                                                         </div>
                                                         <div className="d-flex  justify-content-end align-items-center ">
-                                                            <button className="btn btn-primary d-flex justify-content-center align-items-center" type="button" style={{ width: '36%', height: '100%', fontWeight: 'bold', background: '#717D96', borderStyle: 'none', borderColor: '#2d3648', marginRight: '1%', minWidth: '120px' }}>
+                                                            <button className="btn btn-primary d-flex justify-content-center align-items-center" type="button" style={{ width: '36%', height: '100%', fontWeight: 'bold', background: '#2d3648', borderStyle: 'none', borderColor: '#2d3648', marginRight: '1%', minWidth: '120px' }}>
                                                                 <i className="bi bi-send-fill" style={{ fontSize: '12px', color:'white', marginRight:'5px' }}  ></i>
                                                                 <span className="d-flex" style={{ fontSize: '11px', fontFamily: 'Inter, sans-serif', fontWeight: 'bold', textAlign: 'center' }}>Send Message</span>
 

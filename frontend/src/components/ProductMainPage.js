@@ -89,22 +89,7 @@ function ProductMainPage() {
 
     return (
         <div st className="d-flex flex-column">
-            <section className="d-flex  justify-content-center" style={{ backgroundColor:'', width: '100%' }}>
-                <div className="d-xl-flex justify-content-between " style={{ height: '100%', width: '1265px', marginTop: '5px', marginBottom: '5px' }}>
-                    <div className="d-flex justify-content-center" style={{ maxWidth: '100%', marginTop: '5px', marginBottom: '5px' }}>
-                        <a className="btn btn-primary fw-semibold" role="button" style={{ background:  '#717D96', borderStyle: 'none', fontFamily: 'Inter, sans-serif', fontSize: '14px', textAlign: 'center', maxWidth: '150px', width: 'inherit', marginRight: '5px', marginLeft: '5px' }} href="index.html">Electronics</a>
-                        <a className="btn btn-primary fw-semibold" role="button" style={{ background: '#717D96', borderStyle: 'none', fontFamily: 'Inter, sans-serif', fontSize: '14px', textAlign: 'center', maxWidth: '140px', width: 'inherit', marginRight: '5px', marginLeft: '5px' }} href="index.html">Book</a>
-                        <a className="btn btn-primary fw-semibold" role="button" style={{ background: '#717D96', width: 'inherit', borderStyle: 'none', fontFamily: 'Inter, sans-serif', fontSize: '14px', textAlign: 'center', maxWidth: '140px', marginRight: '5px', marginLeft: '5px' }} href="index.html">Household</a>
-                        <a className="btn btn-primary fw-semibold" role="button" style={{ background: '#717D96', borderStyle: 'none', fontFamily: 'Inter, sans-serif', fontSize: '14px', textAlign: 'center', maxWidth: '140px', width: 'inherit', marginRight: '5px', marginLeft: '5px' }} href="index.html">Others</a>
-                    </div>
-                    <div className="d-flex justify-content-center" style={{ maxWidth: '100%', marginTop: '5px', marginBottom: '5px' }}>
-                        <input type="number" style={{ borderRadius: '6px', borderStyle: 'solid', borderColor: '#2d3648', textAlign: 'center', fontFamily: 'Inter, sans-serif', maxWidth: '100px' }} min="0" placeholder="Min" />
-                        <hr style={{ width: '20px', background: '#2d3648', color: '#2d3648', marginRight: '5px', marginLeft: '5px' }} />
-                        <input type="number" style={{ borderRadius: '6px', borderStyle: 'solid', borderColor: '#2d3648', textAlign: 'center', maxWidth: '100px' }} placeholder="Max" />
-                        <a className="btn btn-primary fw-semibold" role="button" style={{ background: '#2d3648', borderStyle: 'none', fontFamily: 'Inter, sans-serif', fontSize: '14px', textAlign: 'center', marginLeft: '10px', maxWidth: '75px' }} href="index.html">Apply</a>
-                    </div>
-                </div>
-            </section>
+
 
 
 
@@ -130,9 +115,9 @@ function ProductMainPage() {
                                                         <div className="card-body" style={{ width: '100%', height: '100%', padding: '0px' }}>
                                                             <img style={{ width: '100%', height: '100%', borderRadius:'10px'}} src={products[index].product_photos && products[index].product_photos.length > 0 ? products[index].product_photos[0].product_photos : Placeholder} width="247" height="247" />
                                                             <div className="div-special" style={{ height: '45px', width: '100%', marginTop: '-45px', background: '#21252955', position: 'relative', borderBottomRightRadius: '10px', borderBottomLeftRadius: '10px', paddingTop: '3px', paddingBottom: '3px', paddingRight: '5px', paddingLeft: '5px' }}>
-                                                                <h1 className="text-center d-flex d-xxl-flex justify-content-start align-items-start justify-content-xxl-start"
+                                                                <h1 className="text-center text-truncate d-flex d-xxl-flex justify-content-start align-items-start justify-content-xxl-start"
                                                                     style={{ width: '100%', fontSize: '16px', fontFamily: 'Inter, sans-serif', marginBottom: '0px', color:'#EDF0F7' }}>{products[index].title}</h1>
-                                                                <h1 className="text-center d-flex d-xxl-flex justify-content-start align-items-start justify-content-xxl-start"
+                                                                <h1 className="text-center text-truncate d-flex d-xxl-flex justify-content-start align-items-start justify-content-xxl-start"
                                                                     style={{ width: '100%', fontSize: '14px', fontFamily: 'Inter, sans-serif', marginBottom: '0px', color: '#EDF0F7' }}>{products[index].price}</h1>
                                                             </div>
                                                         </div>

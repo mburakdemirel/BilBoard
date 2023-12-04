@@ -26,6 +26,7 @@ import ProfileOther from "./components/ProfileOther";
 function App() {
 
     const [type, setType] = useState('');
+    const [category, setCategory] = useState('');
     const [message, setMessage] = useState('');
     const sendMessage = (nMessage) => {
         setMessage(nMessage);
@@ -35,8 +36,13 @@ function App() {
         setType(newType);
     }
 
+    const changeProductCategory = (newCategory) => {
+        setType(newCategory);
+    }
+
+
     return (
-      <ContextApi.Provider value={{isImageViewerOpen: type, changeIsImageViewerOpen:changeType, newMessage: message, sendNewMessage: sendMessage, }}>
+      <ContextApi.Provider value={{isImageViewerOpen: type, changeIsImageViewerOpen:changeType, newMessage: message, sendNewMessage: sendMessage, productCategory:category, changeCategory:changeProductCategory}}>
           <div className="App">
 
               <Routes>
@@ -53,7 +59,7 @@ function App() {
 
                   <Route path='/main_page/:pageType/:searchText?' element={<><NavigationBarDefault/><MainPage/></>}> </Route>
                   <Route path='/entry' element={<><NavigationBarDefault/><EntryForm/></>}> </Route>
-                  <Route path='/complaints' element={<><NavigationBarDefault/><EntryMainPage/></>}> </Route>
+                  <Route path='/complaints' element={<><NavigationBarDefault/> <EntryMainPage/></>}> </Route>
                   <Route path='/chat' element={<><NavigationBarDefault/><Chat/></>}> </Route>
                   <Route path='/add_product' element={<><NavigationBarDefault/><ProductAddForm/></>}></Route>
                   <Route path='/post_complaint' element={<><NavigationBarDefault/><EntryForm isComplaint={true}></EntryForm></>}></Route>

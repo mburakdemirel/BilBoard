@@ -84,7 +84,7 @@ function LoginPage(){
                 const forgotData ={
                     email: email
                 }
-                const {data} = await axios.post('http://127.0.0.1:8000/api/user/forget-password/', forgotData) ;
+                const {data} = await axios.post('http://127.0.0.1:8000/api/user/forget-password/', forgotData);
                 console.log(data);
                 setIsForgotPassword(false);
             }

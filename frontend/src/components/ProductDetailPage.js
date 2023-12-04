@@ -26,12 +26,13 @@ function ProductDetailPage() {
     const [loading, setLoading] = useState(true);
     const [product, setProduct] = useState('');
     const [myProfile, setMyProfile] = useState(JSON.parse(localStorage.getItem('myProfile')));
-    const [favorites, setFavorites] = useState(JSON.parse(localStorage.getItem('favorites')));
-
+    const [favorites, setFavorites] = useState(JSON.parse(localStorage.getItem('favoritesObjects')));
+    const [favoritesAdded, setFavoritesAdded] = useState(false);
 
     const [currentImage, setCurrentImage] = useState(0);
     const [isViewerOpen, setIsViewerOpen] = useState(false);
     const [images, setImages] = useState([]);
+
 
     useEffect(()=>{
         if(pageType){
@@ -40,15 +41,14 @@ function ProductDetailPage() {
     },[])
 
     useEffect(() => {
-        console.log(favorites);
-        localStorage.setItem('favorites', JSON.stringify(favorites));
+        console.log("in use effect ",favorites);
+
+        localStorage.setItem('favoritesObjects', JSON.stringify(favorites));
     }, [favorites]);
 
 
     const uploadSelectedProduct = async (pageType) => {
         try{
-
-
             axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
             const {data} = await axios.get('http://127.0.0.1:8000/api/product/' + pageType + '/'+ id);
 
@@ -75,10 +75,20 @@ function ProductDetailPage() {
         sendNewMessage(newMessage);
         navigate("/messages");
     }
+    const checkContains = (index) => {
+        if (favorites.some(favorite => favorite.id === index)) {
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
 
     const addFavourites = async (index) => {
+
+        setFavoritesAdded(true);
         console.log("includes " + favorites.includes(index));
-        if(favorites.includes(index)){
+        if (checkContains(index)) {
             removeFavourites(index);
         }
         else{
@@ -86,16 +96,17 @@ function ProductDetailPage() {
             const {data} = await axios.post('http://127.0.0.1:8000/api/product/add-favorites/', {product_id: index}) ;
             console.log(data);
             console.log("index " + index);
-            setFavorites([...favorites,index]);
+            setFavorites([...favorites,product]);
         }
 
     }
     const removeFavourites = async (index) => {
+        setFavoritesAdded(false);
         console.log("removed");
         const {data} = await axios.post('http://127.0.0.1:8000/api/product/remove-favorites/', {product_id: index}) ;
         console.log(data)
         setFavorites((current) =>
-            current.filter((favorite) => favorite !== index)
+            current.filter((favorite) => favorite.id !== index)
         );
     }
 
@@ -137,7 +148,7 @@ function ProductDetailPage() {
             <div className="row gx-1 gy-3"  style={{ width: '100%', marginTop: '-21px'}}>
                 <div className=" d-flex flex-grow-1 justify-content-center align-items-center" data-aos="fade-right" data-aos-duration="600"  style={imageContainerStyle}>
                     <div className="d-flex justify-content-center align-items-center " style={sliderContainerStyle}>
-                        <Carousel  style={{height:'40wv', width: '94%', borderRadius:'10px', backgroundColor:'#2B2B2B'}}>
+                        <Carousel style={{height:'40wv', width: '94%', borderRadius:'10px', backgroundColor:'#2B2B2B'}}>
                                     {product.product_photos && product.product_photos.length>0 ?
                                         product.product_photos.map((photo, index) => <Carousel.Item  key={index}>
                                             <div className="d-flex justify-content-center align-items-center " style={{height:'40vw', borderRadius:'10px', overflow:'hidden'}}>
@@ -207,9 +218,9 @@ function ProductDetailPage() {
                                         {!loading && <i className="bi bi-trash"></i>}
                                     </button>
                                     :
-                                    <button onClick={ e =>  addFavourites(product.id)} disabled={loading} className="btn btn-primary" type="button" style={{ width: '40px', fontWeight: 'bold', background: '#2d3648', borderStyle: 'none', borderColor: '#2d3648', height: '90%' }}>
-                                        {!loading && !favorites.includes(product.id) && <i className="bi bi-heart"></i>}
-                                        {!loading && favorites.includes(product.id) && <i className="bi bi-heart-fill"></i>}
+                                    <button onClick={ ()=>  {addFavourites(product.id)}} disabled={loading} className="btn btn-primary" type="button" style={{ width: '40px', fontWeight: 'bold', background: '#2d3648', borderStyle: 'none', borderColor: '#2d3648', height: '90%' }}>
+                                        {!loading && !checkContains(product.id) && <i className="bi bi-heart"></i>}
+                                        {!loading && checkContains(product.id) && <i className="bi bi-heart-fill"></i>}
                                     </button>
 
                                 }

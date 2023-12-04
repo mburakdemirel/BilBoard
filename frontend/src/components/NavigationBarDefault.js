@@ -72,14 +72,19 @@ function NavigationBarDefault() {
 
 
 
-                    <i className="bi bi-bell" type="button" onClick={handleClick} style={{ fontSize: '28px',marginRight: '15px', marginLeft: '15px'}}></i>
+                    <i className="bi bi-bell position-relative" type="button" onClick={handleClick} style={{ fontSize: '28px',marginRight: '15px', marginLeft: '15px'}}>
+                        <span class="d-flex justify-content-center position-absolute top-0 start-100 bg-danger translate-middle p-2 rounded-circle " style={{height:'20px', width:'20px'}}>
+                            <h1 className="d-flex justify-content-center align-items-center" style={{fontSize:'14px', fontFamily:'Inter,sans-serif'}}>9</h1>
+                      </span>
+
+                    </i>
                     <Overlay  show={show} target={target} placement="bottom" container={ref.current} containerPadding={10} >
                         <Popover id="popover-contained" s>
                             <Popover.Header>Notifications</Popover.Header>
                             <Popover.Body >
                                 {Array(5).fill().map((_, index) => {
                                         return(
-                                            <div style={{width:'240px', height:'inherit', background:'#EDF0F7', marginBottom:'10px', padding:'10px', borderRadius:'10px'}}>
+                                            <div style={{width:'240px', height:'inherit', background:'#EDF0F7', marginBottom:'10px', padding:'10px', borderRadius:'10px', border:'solid', borderWidth:'1.6px',borderColor:'#A0ABC0' }}>
                                                 <p style={{width:'100%',fontFamily: 'Inter, sans-serif', fontSize:'13px', marginBottom:'5px'}}>Burak Demirel “McQueen Yatak az yatılmış” adlı ürününüz için mesaj gönderdi.</p>
                                                 <div className="d-flex justify-content-between" style={{width:'100%'}}>
                                                     <button className="btn" href="#" style={{paddingTop:'2px', paddingBottom:'2px', fontFamily: 'Inter, sans-serif', fontSize:'11px',color:'white' , background:'#2d3648'}}>See Message</button>
@@ -98,8 +103,13 @@ function NavigationBarDefault() {
                         </Popover>
                     </Overlay>
 
-                    <i className="bi bi-envelope" type="button" style={{ fontSize: '28px', marginRight: '15px', marginTop: '5px', marginBottom: '5px' }}
-                       onClick={() => {navigate('/messages')}}></i>
+                    <i className="bi bi-envelope position-relative" type="button" style={{ fontSize: '28px', marginRight: '15px', marginTop: '5px', marginBottom: '5px' }}
+                       onClick={() => {navigate('/messages')}}>
+                        <span className="d-flex justify-content-center position-absolute top-0 start-100 bg-danger translate-middle p-2 rounded-circle " style={{height:'20px', width:'20px'}}>
+                            <h1 className="d-flex justify-content-center align-items-center" style={{fontSize:'14px', fontFamily:'Inter,sans-serif'}}>9</h1>
+                      </span>
+
+                    </i>
 
                     <div><img onClick={(e)=>navigate('/profile')} className="rounded-circle" style={{ width: '50px', height: '50px' }} src={Burak} alt="Profile" /></div>
                 </div>

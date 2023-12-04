@@ -6,6 +6,7 @@ import EntryMainPage from "./EntryMainPage";
 import axios from "axios";
 import LostFoundPage from "./LostFoundPage";
 import EntryMainPage2 from "./EntryMainPage2";
+import FilterBar from "./FilterBar";
 function MainPage(){
     const {pageType} = useParams();
     const [myProfile, setMyProfile] = useState(JSON.parse(localStorage.getItem('myProfile')));
@@ -17,6 +18,7 @@ function MainPage(){
         if(!myProfile){
             try{
                 axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
+
                 const {data} = await axios.get('http://127.0.0.1:8000/api/user/me/') ;
                 console.log(data);
                 localStorage.setItem('myProfile', JSON.stringify(data));
@@ -65,13 +67,13 @@ function MainPage(){
 
 
     if(pageType==="secondhand" || pageType==="borrow" ||  pageType==="donation" ){
-        return (ProductMainPage());
+        return (<><FilterBar></FilterBar><ProductMainPage></ProductMainPage></>);
     }
     else if(pageType==="complaint"){
-        return (EntryMainPage());
+        return (<EntryMainPage></EntryMainPage>);
     }
     else if(pageType==="lost&found"){
-        return (EntryMainPage2());
+        return (<EntryMainPage2></EntryMainPage2>);
     }
 
 }

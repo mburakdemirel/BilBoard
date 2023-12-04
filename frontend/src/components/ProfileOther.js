@@ -47,13 +47,15 @@ function ProfileOther() {
 
 
 function Products({myProfile, func}) {
+    const navigate = useNavigate();
     const [filteredProductsType, setFilteredProductsType] = useState('secondhand');
     const [products, setProducts] = useState([]);
-
+    const [loading, setLoading] = useState();
     const uploadProducts = async () => {
         try{
+            setLoading(true);
             axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
-            const {data} = await axios.post('http://127.0.0.1:8000/api/products/by-id/' + myProfile.id);
+            const {data} = await axios.post('http://127.0.0.1:8000/api/products/by-id/', {user_id: myProfile.id});
             console.log(data);
             setProducts(data);
 
@@ -68,13 +70,18 @@ function Products({myProfile, func}) {
                 console.log('An error occurred while setting up the request.');
             }
         }
+        setLoading(false);
     }
 
 
     useEffect(()=>{
         uploadProducts();
-
     },[])
+
+    const sendProductDetailPage = (index,pageType) => {
+        navigate('/product_detail/' + pageType + '/' + index);
+    }
+
 
     return (
         <div className="col-xxl-6 d-flex d-sm-flex d-md-flex d-lg-flex d-xl-flex d-xxl-flex flex-grow-1 justify-content-center align-items-center justify-content-sm-center align-items-sm-center align-items-md-center align-items-lg-center"
@@ -113,27 +120,35 @@ function Products({myProfile, func}) {
 
                 <div
                     className="card-group d-flex d-xxl-flex flex-row justify-content-start flex-sm-nowrap flex-md-nowrap flex-lg-nowrap flex-xl-nowrap align-items-xxl-start flex-xxl-wrap"
-                    style={{ height: 'initial', overflow: 'auto', width:'93%' }}>
+                    style={{ maxHeight: '89%', overflow: 'auto', width:'93%' }}>
 
                     {/** this is for testing purposes normally we should use result.map(product => (<div> ...) where result is the result of the http
                  * request and we should use product's data in ... part
                 */}
-                    {Array(products.length).fill().map((_, index) => {
-                        if (products[index] && products[index].category === filteredProductsType) {
-                            return(<div className="card" key={index} id="product" style={{width: '170px', height: '170px', borderRadius: '10px', borderStyle: 'none', borderBottomStyle: 'none', padding: '5px', minWidth: '170px', maxWidth: '170px',}}>
-                                <div className="card-body" style={{ width: '100%', height: '100%', padding: '0' }}>
-                                    <img style={{ width: '100%', height: '100%' }} src={PlaceHolder} alt={`Product ${index}`}/>
-                                    <div style={{height: '40px', width: '100%', marginTop: '-40px', background: '#21252955', position: 'relative', borderBottomRightRadius: '10px', borderBottomLeftRadius: '10px', paddingTop: '3px', paddingBottom: '3px', paddingRight: '5px', paddingLeft: '5px'}}>
-                                        <h1 className="text-center d-flex d-xxl-flex justify-content-start align-items-start justify-content-xxl-start"
-                                            style={{width: '100%', fontSize: '16px', fontFamily: 'Inter, sans-serif', marginBottom: '0px'}}>{products[index].title}</h1>
-                                        <h1 className="text-center d-flex d-xxl-flex justify-content-start justify-content-xxl-start"
-                                            style={{width: '100%', fontSize: '12px', fontFamily: 'Inter, sans-serif', marginBottom: '0px'}}>{products[index].price}</h1>
-                                    </div>
+                    {loading ? <div style={{width:'100%'}}><span className="spinner-border spinner-border" aria-hidden="true" ></span></div>
+                        :
+                        <>
+                            {Array(products.length).fill().map((_, index) => {
+                                if (products[index] && products[index].category === filteredProductsType) {
+                                    return(<div className="card" key={index} id="product" style={{width: '170px', height: '170px', borderRadius: '10px', borderStyle: 'none', borderBottomStyle: 'none', padding: '5px', minWidth: '170px', maxWidth: '170px',}}>
+                                        <div className="card-body" style={{ width: '100%', height: '100%', padding: '0' }}
+                                             onClick={()=>sendProductDetailPage(products[index].id,products[index].category)}>
+                                            <img style={{ width: '100%', height: '100%' }} src={PlaceHolder} alt={`Product ${index}`}/>
+                                            <div style={{height: '40px', width: '100%', marginTop: '-40px', background: '#21252955', position: 'relative', borderBottomRightRadius: '10px', borderBottomLeftRadius: '10px', paddingTop: '3px', paddingBottom: '3px', paddingRight: '5px', paddingLeft: '5px'}}>
+                                                <h1 className="text-center text-truncate d-flex d-xxl-flex justify-content-start align-items-start justify-content-xxl-start"
+                                                    style={{width: '100%', fontSize: '14px', fontFamily: 'Inter, sans-serif', marginBottom: '0px',color:'white'}}>{products[index].title}</h1>
+                                                <h1 className="text-center text-truncate d-flex d-xxl-flex justify-content-start justify-content-xxl-start"
+                                                    style={{width: '100%', fontSize: '10px', fontFamily: 'Inter, sans-serif', marginBottom: '0px', color:'white'}}>{products[index].price}</h1>
+                                            </div>
 
-                                </div>
-                            </div>)
-                        }
-                    })}
+                                        </div>
+                                    </div>)
+                                }
+                            })}
+                        </>
+
+                    }
+
                 </div>
             </div>
         </div>
