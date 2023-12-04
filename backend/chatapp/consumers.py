@@ -3,7 +3,7 @@ import json
 from django.contrib.auth import get_user_model
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import WebsocketConsumer
-from mainapp.models import Message
+from mainapp.models import Message, Chat
 
 class ChatConsumer(WebsocketConsumer):
     def load_messages(self, data):
@@ -16,10 +16,13 @@ class ChatConsumer(WebsocketConsumer):
 
     def new_message(self, data):
         author_user = get_user_model().objects.get(id=data["author"])
+        chat = Chat.objects.get(id=data["chat_id"])
         message = Message.objects.create(
             author=author_user,
             content=data["message"],
         )
+        chat.messages.add(message)
+        chat.save()
         content = {
             "command": "new_message",
             "message": self.msg_to_json(message)

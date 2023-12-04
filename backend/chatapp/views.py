@@ -33,32 +33,38 @@ def get_user_or_404(user_id):
 
 class ChatListView(ListAPIView):
     serializer_class = ChatSerializer
-    permission_classes = (permissions.AllowAny,)
+    permission_classes = (permissions.IsAuthenticated,)
 
     def get_queryset(self):
         queryset = None
-        user_id = self.request.query_params.get("user_id", None)
-        if user_id is not None and user_id.isdigit():
+        user_id = self.request.user.id
+        if user_id is not None:
             actual_user = get_user_or_404(user_id)
             queryset = actual_user.chats.all()
         return queryset
 
 class ChatDetailView(RetrieveAPIView):
-    queryset = Chat.objects.all()
     serializer_class = ChatSerializer
-    permission_classes = (permissions.AllowAny,)
+    permission_classes = (permissions.IsAuthenticated,)
+    def get_queryset(self):
+        queryset = None
+        user_id = self.request.user.id
+        if user_id is not None:
+            actual_user = get_user_or_404(user_id)
+            queryset = actual_user.chats.all()
+        return queryset
 
 class ChatCreateView(CreateAPIView):
     queryset = Chat.objects.all()
     serializer_class = ChatSerializer
-    permission_classes = (permissions.AllowAny,)
+    permission_classes = (permissions.IsAuthenticated,)
 
 class ChatUpdateView(UpdateAPIView):
     queryset = Chat.objects.all()
     serializer_class = ChatSerializer
-    permission_classes = (permissions.AllowAny,)
+    permission_classes = (permissions.IsAuthenticated,)
 
 class ChatDeleteView(DestroyAPIView):
     queryset = Chat.objects.all()
     serializer_class = ChatSerializer
-    permission_classes = (permissions.AllowAny,)
+    permission_classes = (permissions.IsAuthenticated,)
