@@ -65,8 +65,6 @@ class UserComplaintEntryViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         if self.action in ['create']:
             return serializers.CreateComplaintEntrySerializer
-        elif self.action in ['retrieve']:
-            return serializers.ComplaintEntrySerializer
         return serializers.DefaultComplaintEntrySerializer
 
     def get_queryset(self):
@@ -84,11 +82,6 @@ class ComplaintEntryViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = ComplaintEntry.objects.all()
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
-
-    def get_serializer_class(self):
-        if self.action in ['retrieve']:
-            return serializers.ComplaintEntrySerializer
-        return serializers.DefaultComplaintEntrySerializer
 
     def get_queryset(self):
         """Retrieve all LaF entries or filter based on title using trigram similarity for fuzzy search."""
