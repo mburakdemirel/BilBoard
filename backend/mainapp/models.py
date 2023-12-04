@@ -43,8 +43,8 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     phone_number = models.CharField(max_length=15, blank=True, null=True)
     used_password_reset_token = models.CharField(max_length=300, blank=True, null=True)
     favorited_products = models.ManyToManyField(
-        'Product', 
-        related_name='favorited_by', 
+        'Product',
+        related_name='favorited_by',
         blank=True
     )
     is_active = models.BooleanField(default=True)
@@ -87,13 +87,13 @@ class Product(models.Model):
 
     def _str_(self):
         return self.title
-    
+
 
 class ProductImage(models.Model):
     product = models.ForeignKey(Product, related_name='product_photos', on_delete=models.CASCADE)
     product_photos = models.ImageField(upload_to='product_photos/', blank=True, null=True)
 
-    
+
 class EntryBase(models.Model):
     """
     This model is used for Lost and Found entry, also it is a base for Complaint entry.
@@ -111,7 +111,7 @@ class EntryBase(models.Model):
 
     def _str_(self):
         return self.topic + " from " + self.user
-    
+
 
 class LostAndFoundEntry(EntryBase):
     CATEGORY_CHOICES = [
