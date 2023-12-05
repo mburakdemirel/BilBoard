@@ -3,10 +3,6 @@ from mainapp.models import Chat, Message
 
 from django.contrib.auth import get_user_model
 
-# class ParticipantSerializer(serializers.StringRelatedField):
-#     def to_internal_value(self, value):
-#         return value
-
 class MessageSerializer(serializers.ModelSerializer):
     timestamp = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only=True)
     class Meta:
@@ -14,6 +10,23 @@ class MessageSerializer(serializers.ModelSerializer):
         fields = ('id', 'author', 'content', 'timestamp')
         read_only_fields = ('id', 'author', 'content', 'timestamp')
 
+class ChatListSerializer(serializers.ModelSerializer):
+    participiants = serializers.StringRelatedField(many=True)
+    class Meta:
+        model = Chat
+        fields = ('id', 'participiants')
+        read_only_fields = ('id', 'participiants')
+
+    def to_representation(self, instance):
+        user = self.context['request'].user
+        participiants = instance.participiants.all()
+        contact = participiants.exclude(id=user.id).distinct()
+        representation = super().to_representation(instance)
+        representation['participiants'] = {
+            "contact_name": contact.first().name,
+            "contact_surname": contact.first().surname,
+            }
+        return representation
 
 class ChatSerializer(serializers.ModelSerializer):
     messages = MessageSerializer(many=True, read_only=True)

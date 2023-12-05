@@ -25,15 +25,14 @@ from rest_framework.generics import (
     UpdateAPIView,
 )
 from mainapp.models import Chat
-from .serializers import ChatSerializer
+from .serializers import ChatSerializer, ChatListSerializer
 
 def get_user_or_404(user_id):
     return get_object_or_404(get_user_model(), pk=user_id)
 
 class ChatListView(ListAPIView):
-    serializer_class = ChatSerializer
+    serializer_class = ChatListSerializer
     permission_classes = (permissions.IsAuthenticated,)
-
     def get_queryset(self):
         queryset = None
         user_id = self.request.user.id
