@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from mainapp.models import Chat
+from mainapp.models import Chat, Message
 
 from django.contrib.auth import get_user_model
 
@@ -7,11 +7,20 @@ from django.contrib.auth import get_user_model
 #     def to_internal_value(self, value):
 #         return value
 
+class MessageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Message
+        fields = ('id', 'author', 'content', 'timestamp')
+        read_only_fields = ('id', 'author', 'content', 'timestamp')
+
+
 class ChatSerializer(serializers.ModelSerializer):
+    messages = MessageSerializer(many=True, read_only=True)
     class Meta:
         model = Chat
         fields = ('id', 'participiants', 'messages')
         read_only_fields = ('id',)
+
 
     def create(self, validated_data):
         current_user_id = self.context['request'].user.id
