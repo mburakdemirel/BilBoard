@@ -8,6 +8,7 @@ from django.contrib.auth import get_user_model
 #         return value
 
 class MessageSerializer(serializers.ModelSerializer):
+    timestamp = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only=True)
     class Meta:
         model = Message
         fields = ('id', 'author', 'content', 'timestamp')
