@@ -38,7 +38,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     name = models.CharField(max_length=40)
     surname = models.CharField(max_length=40)
     rate_ratio = models.FloatField(verbose_name="user rate", default=0.0)
-    profile_photo = models.ImageField(upload_to='pphotos/', blank=True, null=True)
+    profile_photo = models.ImageField(upload_to='profile_photos/', blank=True, null=True)
     description = models.TextField(verbose_name="information about user", blank=True, null=True)
     phone_number = models.CharField(max_length=15, blank=True, null=True)
     used_password_reset_token = models.CharField(max_length=300, blank=True, null=True)

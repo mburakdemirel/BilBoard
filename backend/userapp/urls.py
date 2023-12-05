@@ -1,4 +1,6 @@
 from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
 from rest_framework_simplejwt.views import (
     TokenRefreshView,
     TokenObtainPairView
@@ -25,4 +27,4 @@ urlpatterns = [
     path('forget-password/' ,ForgetPassword , name="forget_password"),
     path('change-password/' , ChangePassword , name="change_password"),
     path('my-favorites/', ListMyFavorites, name='my_favorites'),
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

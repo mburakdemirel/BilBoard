@@ -102,32 +102,37 @@ class ManageUserView(generics.RetrieveUpdateDestroyAPIView):
     def get_object(self):
         return self.request.user
     
-    def update(self, request, *args, **kwargs): 
-        response = super().update(request, *args, **kwargs)
+    def update(self, request, *args, **kwargs):
         user = self.request.user
-        data = request.data
-        old_password = data.get('old_password', None) if data.get('old_password', None) else None
-        new_password = data.get('new_password', None) if data.get('new_password', None) else None
-        
-        if old_password:
-            if user.check_password(old_password):
-                try:
-                    validate_password(new_password, user)
-                    user.set_password(new_password)
-                    user.save()
-                    return response
-                except ValidationError as e:
-                    return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
-            else:
-                return Response({
-                'error': 'Wrong old password',
-                }, status=status.HTTP_400_BAD_REQUEST)
-        elif new_password:
-            return Response({
-                'error': 'Please provide old password'
-            }, status=status.HTTP_400_BAD_REQUEST)
+        serializer = self.get_serializer(user, data=request.data, partial=True)
+
+        if serializer.is_valid():
+            #get profile photo from request with name profile_photo
+            file = request.FILES.get('profile_photo', None)
+            if file:
+                user.profile_photo = file
+
+            old_password = serializer.validated_data.get('old_password', None)
+            new_password = serializer.validated_data.get('new_password', None)
+            if old_password and new_password:
+                if user.check_password(old_password):
+                    try:
+                        validate_password(new_password, user)
+                        user.set_password(new_password)
+                    except ValidationError as e:
+                        return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+                else:
+                    return Response({'error': 'Wrong old password'}, status=status.HTTP_400_BAD_REQUEST)
+            elif new_password and not old_password:
+                return Response({'error': 'Please provide old password'}, status=status.HTTP_400_BAD_REQUEST)
+
+            # Save the user with updated fields
+            user.save()
+            serializer.save()
+
+            return Response(serializer.data)
         else:
-            return response
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     #İleride user silindiğinde ürünlere yaptığı yorumları reviewları da sil eklemeyi unutma!! save tarzı bi şey ile
     def delete(self, request):

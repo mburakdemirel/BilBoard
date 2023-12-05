@@ -167,7 +167,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 MEDIA_URL = '/media/'
 
-MEDIA_ROOT = BASE_DIR/'pphotos/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'photos')
 
 SIMPLE_JWT = {
     #It contains all the information the server needs to know if the user / device can access the resource you are
