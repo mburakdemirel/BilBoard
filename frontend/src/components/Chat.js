@@ -1,11 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { w3cwebsocket as W3CWebSocket } from "websocket";
+import ReconnectingWebSocket from 'reconnecting-websocket';
+import axios from "axios";
 
 function Chat() {
+
     const [socket, setSocket] = useState(null);
     const [username, setUsername] = useState("");
     const [message, setMessage] = useState("");
     const [messages, setMessages] = useState([]);
+
+
 
     useEffect(() => {
         // Get the username from local storage or prompt the user to enter it
@@ -22,11 +27,27 @@ function Chat() {
         }
 
         // Connect to the WebSocket server with the username as a query parameter
-        const newSocket = new WebSocket("ws://139.179.201.220:8000/ws/chat/");
+        //const newSocket = new WebSocket("ws://127.0.0.1:8000/ws/chat/26/");
+        const newSocket = new ReconnectingWebSocket("ws://127.0.0.1:8000/ws/chat/26/");
+
+        newSocket.onopen = function (e) {
+            console.log("WebSocket is connected");
+            newSocket.send(JSON.stringify({command: 'load_messages', chat_id: 26 }));
+        }
+
+        newSocket.onmessage = function (e) {
+            const data = JSON.parse(e.data);
+            console.log(data);
+            // Handle the data received from the server here
+        };
+
+        newSocket.onerror = function(event) {
+            console.error("WebSocket error observed:", event);
+        };
         setSocket(newSocket);
 
-        newSocket.onopen = () => console.log("WebSocket connected");
-        newSocket.onclose = () => console.log("WebSocket disconnected");
+
+
 
         // Clean up the WebSocket connection when the component unmounts
         return () => {
@@ -45,15 +66,8 @@ function Chat() {
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        if (message && socket) {
-            const data = {
-                message: message,
-                username: username,
-            };
-            socket.send(JSON.stringify(data));
-            setMessage("");
-        }
     };
+
 
     return (
         <div className="chat-container">
