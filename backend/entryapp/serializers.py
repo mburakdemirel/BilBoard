@@ -1,5 +1,8 @@
 from rest_framework import serializers
 from mainapp.models import LostAndFoundEntry, CustomUser, ComplaintEntry
+import requests
+import detectlanguage
+
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -48,3 +51,28 @@ class CreateComplaintEntrySerializer(serializers.ModelSerializer):
     class Meta:
         model = ComplaintEntry
         fields = ['id', 'topic', 'description', 'upload_date', 'target_mail']
+
+    def validate_description(self, description):
+        if check_for_toxicity(description):
+            raise serializers.ValidationError("Description includes inappropriate content.")
+        detectlanguage.configuration.api_key = "ccb2449f11adf19c28cf8807d854b658"
+        result = detectlanguage.detect(description)
+        if result[0].get('language') != 'en': 
+            raise serializers.ValidationError('Description must be in English.')
+        return description
+
+
+
+def check_for_toxicity(description):
+    url = 'https://commentanalyzer.googleapis.com/v1alpha1/comments:analyze?key=AIzaSyBx_JtJ4B1AxpRoIU0PUU_X6eXRcV7_gNM'
+    data = {
+        'comment': {'text': description},
+        'languages': ['en'],
+        'requestedAttributes': {'TOXICITY': {}}
+    }
+    response = requests.post(url, json=data)
+    response_data = response.json()
+    # Assuming a threshold of 0.7 for toxicity
+    toxicity_score = response_data['attributeScores']['TOXICITY']['summaryScore']['value']
+    return toxicity_score > 0.5
+
