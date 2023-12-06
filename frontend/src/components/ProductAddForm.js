@@ -9,16 +9,16 @@ export function ProductAddForm() {
     const [price, setPrice] = useState(0);
     const [description, setDescription] = useState("");
     const [category, setCategory] = useState("donation");
-    const [photo, setPhoto] = useState([]);
+    const [photo, setPhoto] = useState();
     const [returnDate, setReturnDate] = useState();
 
     useEffect(() => {
         setPrice(0);
-      }, [category]);
-      // this might be unnecessary check this!!!
-      useEffect(() => {
-        setReturnDate(null);
-      }, [returnDate]);
+    }, [category]);
+
+    function handleImage(e) {
+        setPhoto(e.target.files);
+    }
 
     //after submitting the form clean each form area values.
     const handleSubmit = async (e) => {
@@ -39,15 +39,20 @@ export function ProductAddForm() {
             console.log("in borrow");
             let date_str = formatDate(new Date(returnDate));
             product.append('return_date', date_str);
-            console.log(product);
+            console.log(date_str);
         }
-        // if(photo) {
-        //     product.append('product_photos', photo, photo.name); //this does not work :(
-        // }
+        if(photo) {
+            console.log("trying to post a photo");
+            for (let i = 0; i < photo.length; i++) {
+                const element = photo[i];
+                product.append('product_photo', element, element.name);
+            }
+            console.log(product.get('product_photo'));
+        }
         console.log(product);
         try {
             axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
-            const response = await axios.post('http://127.0.0.1:8000/api/user/product/', product,{headers: {'Content-Type':'multipart/form-data'}});
+            const response = await axios.post('http://127.0.0.1:8000/api/user/product/', product, { headers: { 'Content-Type': 'multipart/form-data' } });
             if (response.status === 200 || response.status === 201) {
                 console.log("Post was successful");
                 navigate("/main_page/secondhand");
@@ -61,8 +66,8 @@ export function ProductAddForm() {
 
     function formatDate(date) {
         const year = date.getFullYear();
-        const month = String(date.getMonth() +1).padStart(2,0);
-        const day = String(date.getDate()).padStart(2,0);
+        const month = String(date.getMonth() + 1).padStart(2, 0);
+        const day = String(date.getDate()).padStart(2, 0);
         return `${year}-${month}-${day}`;
     }
 
@@ -145,7 +150,7 @@ export function ProductAddForm() {
                                                 background: '#a0abc0',
                                                 borderRadius: '10px',
                                                 paddingLeft: '15px',
-                                               
+
                                             }}
                                         >
 
@@ -154,8 +159,8 @@ export function ProductAddForm() {
                                     <div className="form-group col-xl-6 flex-column d-flex">
                                         <h5 style={{ fontFamily: 'Inter, sans-serif' }}>Photos</h5>
                                         <label className="form-control-label" htmlFor="FormControl" style={{ fontFamily: 'Inter, sans-serif', textAlign: 'left' }}>Choose files to upload (at most 5)</label>
-                                        <input onChange={(e) => { setPhoto(e.target.files[0]); console.log(photo); } } 
-                                            id="FormControl" type="file"  accept="image/png, image/jpg, image/jpeg" multiple></input>
+                                        <input name="product_photos" onChange={(e) => {handleImage(e);}}
+                                            id="FormControl" type="file" accept="image/*" multiple></input>
                                     </div>
                                 </div>
 
@@ -178,7 +183,7 @@ export function ProductAddForm() {
                                     </div>
                                     <div className="form-group col-sm-6 flex-column d-flex">
                                         <label htmlFor="date" className="form-control-label"><h5>Return Date</h5></label>
-                                        <input readOnly={category !== "borrow"} required={category === "borrow"} onChange={(e) => { setReturnDate(e.target.value); }} id="date" className="form-control" style={{
+                                        <input readOnly={category !== "borrow"} required={category === "borrow"} onChange={(e) => { setReturnDate(e.target.value); console.log(e.target.value) }} id="date" className="form-control" style={{
                                             fontFamily: 'Inter, sans-serif',
                                             background: '#a0abc0',
                                             borderRadius: '10px',

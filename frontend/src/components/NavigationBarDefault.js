@@ -8,6 +8,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Popover from 'react-bootstrap/Popover';
 import Overlay from 'react-bootstrap/Overlay';
 import PlaceHolder from "./assets/img/WF Image Placeholder.png";
+import {Dropdown} from 'react-bootstrap';
 
 function NavigationBarDefault() {
     const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
@@ -62,16 +63,21 @@ function NavigationBarDefault() {
                         <input className="d-flex justify-content-xxl-center" onKeyDown={enterClick} onChange={(e)=> setSearchInput(e.target.value)}
                              type="search" disabled={!pageType} style={{ width: '100%', height: '100%', borderRadius: '6px', border: '2px solid var(--bs-navbar-active-color)', paddingLeft: '5px', paddingRight: '5px', fontFamily: 'Inter, sans-serif', textAlign: 'center' }} placeholder="Search" />
                     </div>
-                    <button className="btn btn-primary d-xxl-flex justify-content-xxl-center align-items-xxl-center" type="button" style={{ background: '#2d3648', borderStyle: 'none', height: '40px', width: '90.6875px', padding: '0px', marginTop: '5px', marginBottom: '5px' }}>
-                        Add
-                        <svg className="bi bi-plus-circle" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" style={{ marginLeft: '7px', fontSize: '20px' }}>
-                            <path d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 1 8 0a8 8 0 0 1 0 16z"></path>
-                            <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"></path>
-                        </svg>
-                    </button>
+                    <Dropdown>
+                        <Dropdown.Toggle variant="primary" id="dropdown-basic" style={{ background: '#2d3648', borderStyle: 'none', height: '40px', width: '90.6875px', padding: '0px', marginTop: '5px', marginBottom: '5px' }}>
+                            Add
+                            <svg className="bi bi-plus-circle" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" style={{ marginLeft: '7px', fontSize: '20px' }}>
+                                <path d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 1 8 0a8 8 0 0 1 0 16z"></path>
+                                <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"></path>
+                            </svg>
+                        </Dropdown.Toggle>
 
-
-
+                        <Dropdown.Menu>
+                            <Dropdown.Item onClick={() => {navigate("/add_product")}}>Add Product</Dropdown.Item>
+                            <Dropdown.Item onClick={() => {navigate("/post_complaint")}}>Add Complaint</Dropdown.Item>
+                            <Dropdown.Item onClick={() => {navigate("/post_l&f")}}>Add Lost or Found Entry</Dropdown.Item>
+                        </Dropdown.Menu>
+                    </Dropdown>
                     <i className="bi bi-bell position-relative" type="button" onClick={handleClick} style={{ fontSize: '28px',marginRight: '15px', marginLeft: '15px'}}>
                         <span class="d-flex justify-content-center position-absolute top-0 start-100 bg-danger translate-middle p-2 rounded-circle " style={{height:'20px', width:'20px'}}>
                             <h1 className="d-flex justify-content-center align-items-center" style={{fontSize:'14px', fontFamily:'Inter,sans-serif'}}>9</h1>
@@ -95,10 +101,6 @@ function NavigationBarDefault() {
 
                                             </div>)
                                 })}
-
-
-                                {/* Here you can add your custom notification content */}
-
                             </Popover.Body>
                         </Popover>
                     </Overlay>
