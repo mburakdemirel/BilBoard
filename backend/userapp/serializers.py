@@ -12,7 +12,7 @@ class UserSerializer(serializers.ModelSerializer):
     profile_photo = serializers.ImageField(required=False)
     class Meta:
         model = get_user_model()
-        fields = ('email', 'name', 'surname', 'password', 'is_verified', 'profile_photo')
+        fields = ('id', 'email', 'name', 'surname', 'password', 'is_verified', 'profile_photo', 'description', 'phone_number', 'favorited_products')
         extra_kwargs = {
             'password': {'write_only': True, 'min_length': 8},
             'is_verified': {'read_only': True},
