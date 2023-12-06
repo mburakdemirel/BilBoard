@@ -89,9 +89,9 @@ class Product(models.Model):
         return self.title
 
 
-class ProductImage(models.Model):
-    product = models.ForeignKey(Product, related_name='product_photos', on_delete=models.CASCADE)
-    product_photos = models.ImageField(upload_to='product_photos/', blank=True, null=True)
+class ProductImage(models.Model):                     
+    product = models.ForeignKey(Product, related_name='images', on_delete=models.CASCADE)
+    image = models.ImageField(upload_to='product_photos/', blank=True, null=True)
 
 
 class EntryBase(models.Model):
