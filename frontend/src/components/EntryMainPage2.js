@@ -14,18 +14,16 @@ function EntryMainPage2(){
     const {pageType,searchText} = useParams();
 
     const [loading, setLoading] = useState(true);
-    const [productCategory, setProductCategory] = useState();
+
     const [page, setPage] = useState();
     const [products, setProducts] = useState([]);
     const [hasMore, setHasMore] = useState(true);
 
     useEffect(()=>{
         console.log("pageType in entry page " + pageType);
-
-        setProducts([]);
         setPage(1)
         // Messages in the selected index will be opened on the right side
-    },[pageType,searchText])
+    },[searchText])
 
     useEffect(() => {
         console.log("page use effect" + page);
@@ -47,14 +45,16 @@ function EntryMainPage2(){
                     console.log(data.results);
                     console.log(hasMore);
                     setProducts(prevProducts => [...prevProducts, ...data.results]);
+                    console.log("search products", products);
                     setPage(prevPage => prevPage + 1);
                     setHasMore(data.results.length >= 16);
                 }
                 else{
                     const {data} = await axios.get('http://127.0.0.1:8000/api/entry/laf-entry/' + `?page=${page}`);
-                    console.log(data.results);
+                    console.log("products", data.results);
                     console.log(hasMore);
                     setProducts(prevProducts => [...prevProducts, ...data.results]);
+                    console.log("products", products);
                     setPage(prevPage => prevPage + 1);
                     setHasMore(data.results.length >= 16);
                 }
@@ -77,7 +77,7 @@ function EntryMainPage2(){
 
 
     return (
-        <div st className="d-flex flex-column">
+        <div  className="d-flex flex-column">
         <section className="d-flex  justify-content-center" style={{ backgroundColor:'', width: '100%' }}>
             <div className="d-xl-flex justify-content-between " style={{ height: '100%', width: '1265px', marginTop: '5px', marginBottom: '5px' }}>
                 <div className="d-flex justify-content-center" style={{ maxWidth: '100%', marginTop: '5px', marginBottom: '5px' }}>
@@ -99,7 +99,7 @@ function EntryMainPage2(){
                         <div className="col" style={{ width: '45%', margin: '1%' }}>
                             <div className="d-flex flex-column" style={{ background: 'var(--bs-white)', fontSize: '12px', borderRadius: '10px', height: '100%', width: '100%', padding: '2%' }} data-bs-smooth-scroll="true">
                                 <ul className="list-group" style={{ width: '100%', height: '100%', overflow: 'scroll' }} data-bs-smooth-scroll="true">
-                                    { products.map((item) => ( item.category==="lost" &&
+                                    {products.map((item) => ( item.category==="lost" &&
                                         <li className="list-group-item" key={item.id} style={{ padding: '0px', paddingBottom: '10px', borderStyle: 'none', margin: '1%' }}>
                                             <div className="card" style={{ borderStyle: 'none', background: '#A0ABC0' }}>
                                                 <div className="card-body d-flex align-items-center" style={{ borderStyle: 'none', height: '11vw', minHeight: '80px', paddingLeft: '5px', paddingBottom: '5px', paddingRight: '5px', paddingTop: '5px' }}>

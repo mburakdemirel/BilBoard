@@ -76,7 +76,7 @@ function ProductDetailPage() {
         navigate("/messages");
     }
     const checkContains = (index) => {
-        if (favorites.some(favorite => favorite.id === index)) {
+        if (favorites && favorites.some(favorite => favorite.id === index)) {
             return true;
         }
         else{

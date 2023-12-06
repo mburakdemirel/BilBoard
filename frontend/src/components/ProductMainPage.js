@@ -24,7 +24,7 @@ function ProductMainPage() {
     useEffect(()=>{
         console.log("In use effect" + searchText);
         setProducts([]);
-        setPage(1)
+        setPage(1);
         // Messages in the selected index will be opened on the right side
     },[pageType,searchText])
 
@@ -32,7 +32,6 @@ function ProductMainPage() {
         console.log("page use effect" + page);
         if (page === 1) {
             setLoading(true);
-
             uploadProducts();
         }
 
