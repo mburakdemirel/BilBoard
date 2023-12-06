@@ -10,27 +10,24 @@ class UserSerializer(serializers.ModelSerializer):
 class CreateLostAndFoundEntrySerializer(serializers.ModelSerializer):
     class Meta:
         model = LostAndFoundEntry
-        fields = ['id', 'topic', 'description', 'upload_date']
+        fields = ['id', 'topic', 'description', 'upload_date', 'category']
 
 #2 serializer da aynı oldu güncellemelerle ileride düzelt!!!!
 class DefaultLostAndFoundEntrySerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
     class Meta:
         model = LostAndFoundEntry
-        fields = ['id', 'user', 'topic', 'description', 'upload_date']
+        fields = ['id', 'user', 'topic', 'description', 'upload_date', 'category']
 
 #user returns as object
 class UserLostAndFoundEntrySerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
     class Meta:
         model = LostAndFoundEntry
-        fields = ['id', 'user', 'topic', 'description', 'upload_date']
+        fields = ['id', 'user', 'topic', 'description', 'upload_date', 'category']
 
 
 class DefaultComplaintEntrySerializer(serializers.ModelSerializer):
-    """
-    liste olarak görünümde description göstermeyen serializer
-    """
     user = UserSerializer(read_only=True)
     class Meta:
         model = ComplaintEntry

@@ -114,12 +114,12 @@ class EntryBase(models.Model):
 
 
 class LostAndFoundEntry(EntryBase):
-    """CATEGORY_CHOICES = [
+    CATEGORY_CHOICES = [
         ('lost', 'Lost'),
         ('found', 'Found'),
-    ]"""
-    #null = True?
-    #category = models.CharField(max_length=10, choices=CATEGORY_CHOICES)
+    ]
+    #NULL VE BLANK I Sil db bozulmasın diye ekledim!!!!!!! SİL SİL SİL
+    category = models.CharField(max_length=10, choices=CATEGORY_CHOICES, null=True, blank=True)
 
     def _str_(self):
         return super()._str_()

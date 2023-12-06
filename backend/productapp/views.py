@@ -121,7 +121,7 @@ def get_products_by_user_id(request):
     user_id = request.data.get('user_id')
     try:
         products = Product.objects.filter(user_id=user_id)
-        serializer = serializers.ProductSerializer(products, many=True)
+        serializer = serializers.ProductUserSerializer(products, many=True)
         return Response(serializer.data)
     except Product.DoesNotExist:
         return Response({'error': 'No products found for the given user ID'}, status=404)
