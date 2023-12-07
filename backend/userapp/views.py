@@ -206,3 +206,17 @@ def ListMyFavorites(request):
         return Response({"message": "There are no favorited products of user", })
     else:
         return Response({"message": serializer.data})  
+    
+
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def delete_profile_photo(request):
+    user = CustomUser.objects.get(email=request.user)
+    #truthy falsy
+    if user.profile_photo:
+        user.profile_photo.delete()
+        user.profile_photo = None
+        user.save()
+        return Response({"message": "Profile photo deleted"}, status=status.HTTP_200_OK)
+    else:
+        return Response({"error": "Profile photo does not exist"}, status=status.HTTP_404_NOT_FOUND)

@@ -1,7 +1,8 @@
 """Views for the product APIs."""
 from abc import ABC, abstractmethod
+import os
 from django.contrib.postgres.search import TrigramSimilarity
-from mainapp.models import Product 
+from mainapp.models import Product, ProductImage
 from .permissions import IsOwnerOrReadOnly
 from productapp import serializers
 from rest_framework import viewsets 
@@ -170,3 +171,27 @@ def remove_favorites(request):
 
     
     return Response({'status': 'User didnt favorited this product. '})
+
+
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def delete_product_photo(request):
+    user = request.user
+    product_id = request.data.get('product_id')
+    image_id = request.data.get('image_id')
+    try:
+        product = Product.objects.get(id=product_id, user=user)
+    except Product.DoesNotExist:
+        return Response({"error": "Product not found"}, status=404)
+
+    try:
+        image = product.images.get(id=image_id)
+    except ProductImage.DoesNotExist:
+        return Response({"error": "Image not found"}, status=404)
+
+    if image.image:
+        if os.path.isfile(image.image.path):
+            os.remove(image.image.path)
+
+    image.delete()
+    return Response({"message": "Image deleted"}, status=200)

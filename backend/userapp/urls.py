@@ -12,7 +12,8 @@ from userapp.views import (
     ManageUserView,
     ForgetPassword,
     ChangePassword,
-    ListMyFavorites
+    ListMyFavorites,
+    delete_profile_photo
 )
 
 app_name = 'user'
@@ -27,4 +28,5 @@ urlpatterns = [
     path('forget-password/' ,ForgetPassword , name="forget_password"),
     path('change-password/' , ChangePassword , name="change_password"),
     path('my-favorites/', ListMyFavorites, name='my_favorites'),
+    path('delete-profile-photo/', delete_profile_photo, name='delete_profile_photo'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

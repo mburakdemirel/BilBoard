@@ -38,4 +38,5 @@ urlpatterns = [
     path('products/by-id/', get_products_by_user_id, name='get-products-by-user-id'),
     path('product/add-favorites/', add_favorites, name='add-favorites'),
     path('product/remove-favorites/', remove_favorites, name='remove-favorites'),
+    path('product/delete-product-photo/', views.delete_product_photo, name='delete_product_photo')
 ]

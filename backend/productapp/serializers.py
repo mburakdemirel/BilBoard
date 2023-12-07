@@ -66,9 +66,14 @@ class ProductUserSerializer(serializers.ModelSerializer):
 
 class ProductUpdateSerializer(serializers.ModelSerializer):
     images = ProductImageSerializer(many=True, read_only=True)
+    product_photo = serializers.ListField(
+        child=serializers.ImageField(), 
+        required=False, 
+        write_only=True
+    )
     class Meta:
         model = Product
-        fields = ['id', 'title', 'price', 'return_date', 'images', 'category', 'description', 'upload_date', 'product_type', 'user']
+        fields = ['id', 'title', 'price', 'return_date', 'images', 'product_photo', 'category', 'description', 'upload_date', 'product_type', 'user']
         read_only_fields = ['id', 'user', 'category', 'upload_date']
 
     def validate(self, data):
@@ -84,6 +89,13 @@ class ProductUpdateSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError("Price should not be included for borrow products.")
             
         return data
+    
+    def update(self, instance, validated_data):
+        new_images_data = validated_data.pop('product_photo', [])
+        for image_data in new_images_data:
+            ProductImage.objects.create(product=instance, image=image_data)
+
+        return super(ProductUpdateSerializer, self).update(instance, validated_data)
     
     
 class ProductSerializer(serializers.ModelSerializer):
