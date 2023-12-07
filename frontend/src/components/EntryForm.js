@@ -59,14 +59,14 @@ export function EntryForm({ isComplaint }) {
                                 background: '#ffffff',
                                 fontSize: '12px',
                                 borderRadius: '10px',
-                                height: '100%',
+                                height: '90%',
                                 width: '100%',
                                 padding: '7%',
                             }}
                         >
-                            {isComplaint ? <h3 className="text-center" style={{ fontFamily: 'Inter,sans-serif' }}>Post a New Complaint</h3> : <h3 className="text-center" style={{ fontFamily: 'Inter,sans-serif' }}>Post a Lost/Found Notice</h3>}
                             <form onSubmit={handleSubmit} method="post" className="form-card justify-content-center align-items-center" style={{ margin: 'auto', width: '60%' }}>
 
+                            {isComplaint ? <h3 className="text-center" style={{ fontFamily: 'Inter,sans-serif' }}>Post a New Complaint</h3> : <h3 className="text-center" style={{ fontFamily: 'Inter,sans-serif' }}>Post a Lost/Found Notice</h3>}
 
                                 <div className="col-xl-6 flex-column d-flex " style={{ width: '100%' }}>
                                     <div className="form-group row justify-content-between text-center">
@@ -126,7 +126,7 @@ export function EntryForm({ isComplaint }) {
                                         </select>
                                     </div> : <></>}
                                     <div className="form-group row justify-content-between text-center">
-                                        <label className="form-control-label" htmlFor="description" style={{ fontFamily: 'Inter, sans-serif' }}><h5>Enter your Description</h5></label>
+                                        <label className="form-control-label" htmlFor="description" style={{ fontFamily: 'Inter, sans-serif' }}><h5>Enter Description</h5></label>
                                         <textarea required onChange={(e) => { setDescription(e.target.value) }}
                                             id="description"
                                             placeholder="Description"
