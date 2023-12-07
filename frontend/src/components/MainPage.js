@@ -20,6 +20,7 @@ function MainPage(){
     useEffect(()=>{
         getProfile();
     },[])*/
+    //x
 
 
     if(pageType==="secondhand" || pageType==="borrow" ||  pageType==="donation" ){
