@@ -8,6 +8,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Popover from 'react-bootstrap/Popover';
 import Overlay from 'react-bootstrap/Overlay';
 import PlaceHolder from "./assets/img/WF Image Placeholder.png";
+import axios from "axios";
 
 function NavigationBarDefault() {
     const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
@@ -15,6 +16,59 @@ function NavigationBarDefault() {
     const [show, setShow] = useState(false);
     const [target, setTarget] = useState(null);
     const ref = React.useRef(null);
+    const favoritesIdList = [];
+    const [myProfile, setMyProfile] = useState(JSON.parse(localStorage.getItem('myProfile')));
+
+    useEffect(() => {
+        getProfile();
+        getFavorites();
+    }, [favoritesIdList,myProfile]);
+
+
+    const getProfile = async () =>{
+        if(!myProfile){
+            try{
+                axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
+
+                const {data} = await axios.get('http://127.0.0.1:8000/api/user/me/') ;
+                console.log(data);
+                localStorage.setItem('myProfile', JSON.stringify(data));
+            }
+            catch (error){
+                if (error.response) {
+                    console.log(error.response.data);
+                } else if (error.request) {
+                    console.log('No response received from the server.');
+                } else {
+                    console.log('An error occurred while setting up the request.');
+                }
+            }
+        }
+
+    }
+
+    const getFavorites = async () => {
+        try{
+            axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
+            const {data} = await axios.get('http://127.0.0.1:8000/api/user/my-favorites/') ;
+            console.log("favorites from backend " , data.message);
+            data.message.forEach((product) => favoritesIdList.push(product.id));
+            localStorage.setItem('favoritesObjects', JSON.stringify(data.message));
+            console.log(favoritesIdList);
+            localStorage.setItem('favorites', JSON.stringify(favoritesIdList));
+        }
+        catch (error){
+            if (error.response) {
+                console.log(error.response.data);
+            } else if (error.request) {
+                console.log('No response received from the server.');
+            } else {
+                console.log('An error occurred while setting up the request.');
+            }
+        }
+    }
+
+
     const handleClick = (event) => {
         setShow(!show);
         setTarget(event.target);

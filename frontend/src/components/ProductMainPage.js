@@ -13,7 +13,8 @@ import Placeholder from "./assets/img/WF Image Placeholder2.png"
 function ProductMainPage() {
     const navigate = useNavigate();
 
-    const {pageType,searchText} = useParams();
+    let {pageType,searchText} = useParams();
+
     console.log("pageType in mainpage" + pageType);
     const [loading, setLoading] = useState(true);
     const [productCategory, setProductCategory] = useState();
@@ -32,6 +33,7 @@ function ProductMainPage() {
         console.log("page use effect" + page);
         if (page === 1) {
             setLoading(true);
+
             uploadProducts();
         }
 
@@ -40,6 +42,7 @@ function ProductMainPage() {
     const uploadProducts = async () => {
         try{
             axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
+
             if(pageType){
 
                 if(searchText){
@@ -112,7 +115,7 @@ function ProductMainPage() {
                                                         onClick={()=>sendProductDetailPage(products[index].id)}>
                                                     <div className="card" style={{ maxHeight:'35vw', height:'230px', borderRadius: '10px', borderStyle: 'none', padding: '5px', background: 'transparent', margin: '2%' }}>
                                                         <div className="card-body" style={{ width: '100%', height: '100%', padding: '0px' }}>
-                                                            <img style={{ width: '100%', height: '100%', borderRadius:'10px'}} src={products[index].product_photos && products[index].product_photos.length > 0 ? products[index].product_photos[0].product_photos : Placeholder} width="247" height="247" />
+                                                            <img style={{ width: '100%', height: '100%', borderRadius:'10px'}} src={products[index].images && products[index].images.length > 0 ? products[index].images[0].image : Placeholder} width="247" height="247" />
                                                             <div className="div-special" style={{ height: '45px', width: '100%', marginTop: '-45px', background: '#21252955', position: 'relative', borderBottomRightRadius: '10px', borderBottomLeftRadius: '10px', paddingTop: '3px', paddingBottom: '3px', paddingRight: '5px', paddingLeft: '5px' }}>
                                                                 <h1 className="text-center text-truncate d-flex d-xxl-flex justify-content-start align-items-start justify-content-xxl-start"
                                                                     style={{ width: '100%', fontSize: '16px', fontFamily: 'Inter, sans-serif', marginBottom: '0px', color:'#EDF0F7' }}>{products[index].title}</h1>

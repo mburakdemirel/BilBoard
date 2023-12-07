@@ -228,7 +228,8 @@ function Products({myProfile, func, editMode}) {
                     {loading ? <div style={{width:'100%'}}><span className="spinner-border spinner-border" aria-hidden="true" ></span></div>
                     :
                         <>
-                            {Array(showedProducts.length).fill().map((_, index) => {
+
+                            {showedProducts && Array(showedProducts.length).fill().map((_, index) => {
                                 if (showedProducts[index] && showedProducts[index].category === filteredProductsType) {
                                     return(
                                         <div className="card d-flex align-items-end" key={index} id="product" style={{width: '170px', height: '170px', borderRadius: '10px', borderStyle: 'none', borderBottomStyle: 'none', padding: '5px',maxHeight:'170px',minHeight:'170px' ,minWidth: '170px', maxWidth: '170px',}}>

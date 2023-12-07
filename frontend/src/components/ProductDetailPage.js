@@ -27,6 +27,7 @@ function ProductDetailPage() {
     const [product, setProduct] = useState('');
     const [myProfile, setMyProfile] = useState(JSON.parse(localStorage.getItem('myProfile')));
     const [favorites, setFavorites] = useState(JSON.parse(localStorage.getItem('favoritesObjects')));
+    console.log("favorites in product detail", favorites);
     const [favoritesAdded, setFavoritesAdded] = useState(false);
 
     const [currentImage, setCurrentImage] = useState(0);
@@ -51,9 +52,10 @@ function ProductDetailPage() {
         try{
             axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
             const {data} = await axios.get('http://127.0.0.1:8000/api/product/' + pageType + '/'+ id);
-
+            console.log(data);
             setProduct(data);
-            data.product_photos.forEach( (photo) => images.push(photo.product_photos));
+
+            data.images.forEach( (photo) => images.push(photo.image));
 
             console.log(data);
             setLoading(false);
@@ -76,6 +78,8 @@ function ProductDetailPage() {
         navigate("/messages");
     }
     const checkContains = (index) => {
+        debugger;
+        console.log(favorites);
         if (favorites && favorites.some(favorite => favorite.id === index)) {
             return true;
         }
@@ -87,11 +91,12 @@ function ProductDetailPage() {
     const addFavourites = async (index) => {
 
         setFavoritesAdded(true);
-        console.log("includes " + favorites.includes(index));
-        if (checkContains(index)) {
+
+        if (favorites && checkContains(index)) {
             removeFavourites(index);
         }
         else{
+            debugger;
             axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization')
             const {data} = await axios.post('http://127.0.0.1:8000/api/product/add-favorites/', {product_id: index}) ;
             console.log(data);
@@ -149,10 +154,10 @@ function ProductDetailPage() {
                 <div className=" d-flex flex-grow-1 justify-content-center align-items-center" data-aos="fade-right" data-aos-duration="600"  style={imageContainerStyle}>
                     <div className="d-flex justify-content-center align-items-center " style={sliderContainerStyle}>
                         <Carousel style={{height:'40wv', width: '94%', borderRadius:'10px', backgroundColor:'#2B2B2B'}}>
-                                    {product.product_photos && product.product_photos.length>0 ?
-                                        product.product_photos.map((photo, index) => <Carousel.Item  key={index}>
+                                    {product.images && product.images.length>0 ?
+                                        product.images.map((photo, index) => <Carousel.Item  key={index}>
                                             <div className="d-flex justify-content-center align-items-center " style={{height:'40vw', borderRadius:'10px', overflow:'hidden'}}>
-                                                    <img className="d-block w-100" onClick={ () => openImageViewer(index) } src={photo.product_photos} alt="First slide"/> {/*src={photo.product_photos}*/}
+                                                    <img className="d-block w-100" onClick={ () => openImageViewer(index) } src={photo.image} alt="First slide"/> {/*src={photo.product_photos}*/}
                                             </div>
                                         </Carousel.Item>)
                                     :
