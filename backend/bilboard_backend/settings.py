@@ -217,3 +217,13 @@ EMAIL_HOST_PASSWORD = 'kvsc crds bmtp flji'
 SWAGGER_SETTINGS = {
     "exclude_namespaces": ["urlpatterns"],    #  List URL namespaces to ignore
 }
+
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/1", # Local Link provided by the redis-server command
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    }
+}

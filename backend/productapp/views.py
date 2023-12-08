@@ -2,6 +2,7 @@
 from abc import ABC, abstractmethod
 import os
 from django.contrib.postgres.search import TrigramSimilarity
+from django.http import HttpResponse
 from mainapp.models import Product, ProductImage
 from .permissions import IsOwnerOrReadOnly
 from productapp import serializers
@@ -10,6 +11,10 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.response import Response
+from django.core.cache import cache
+import time
+import redis
+redis_instance = redis.StrictRedis(host='127.0.0.1', port=6379, db=1)
 
 class ProductViewSet(viewsets.ModelViewSet, ABC):
     serializer_class = serializers.ProductSerializer
@@ -49,7 +54,38 @@ class UserProductViewSet(ProductViewSet):
     def perform_create(self, serializer):
         """Create a new product."""
         serializer.save(user=self.request.user)
+        product = serializer.instance
 
+        if product.category == 'secondhand':
+            cache.delete_pattern("secondhand_products_*")
+        elif product.category == 'borrow':
+            cache.delete_pattern("borrow_products_*")
+        elif product.category == 'donation':
+            cache.delete_pattern("donation_products_*")
+
+    def perform_update(self, serializer):
+        super().perform_update(serializer)
+
+        product_category = serializer.instance.category
+
+        if product_category == 'secondhand':
+            cache.delete_pattern("secondhand_products_*")
+        elif product_category == 'borrow':
+            cache.delete_pattern("borrow_products_*")
+        elif product_category == 'donation':
+            cache.delete_pattern("donation_products_*")
+        
+    def perform_destroy(self, instance):
+        product_category = instance.category
+        super().perform_destroy(instance)
+
+        # Kategoriye göre cache'i geçersiz kıl
+        if product_category == 'secondhand':
+            cache.delete_pattern("secondhand_products_*")
+        elif product_category == 'borrow':
+            cache.delete_pattern("borrow_products_*")
+        elif product_category == 'donation':
+            cache.delete_pattern("donation_products_*")
 
 class SecondhandProductViewSet(ProductViewSet):
     """View for managing all secondhand products in the system."""
@@ -59,12 +95,34 @@ class SecondhandProductViewSet(ProductViewSet):
             return serializers.ProductUserSerializer
         return serializers.ProductSerializer
 
+    def list(self, request, *args, **kwargs):
+        search_query = request.query_params.get('search', None)
+        page_number = request.query_params.get('page', 1)  # Default to page 1 if no page is specified
+        cache_key = f"secondhand_products_{search_query or 'all'}_page_{page_number}"
+        cached_data = cache.get(cache_key)
+
+        if cached_data is not None:
+            # Return the cached data for the specific page
+            return Response(cached_data)
+
+        queryset = self.get_queryset()
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            cached_data = serializer.data
+            cache.set(cache_key, cached_data, timeout=60*60)  # Cache for 1 hour
+            return self.get_paginated_response(cached_data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        cached_data = serializer.data
+        cache.set(cache_key, cached_data, timeout=60*60) 
+        return Response(cached_data)
+    
     def get_queryset(self):
         """Retrieve all secondhand products or filter based on title using trigram similarity for fuzzy search."""
-        queryset = Product.objects.filter(category='secondhand')
-
         search_query = self.request.query_params.get('search', None)
 
+        queryset = Product.objects.filter(category='secondhand')
         if search_query:
             queryset = queryset.annotate(
                 similarity=TrigramSimilarity('title', search_query)
@@ -80,12 +138,35 @@ class BorrowProductViewSet(ProductViewSet):
         if self.action in ['retrieve']:
             return serializers.ProductUserSerializer
         return serializers.ProductSerializer
+    
+    def list(self, request, *args, **kwargs):
+        search_query = request.query_params.get('search', None)
+        page_number = request.query_params.get('page', 1)  # Default to page 1 if no page is specified
+        cache_key = f"borrow_products_{search_query or 'all'}_page_{page_number}"
+        cached_data = cache.get(cache_key)
+
+        if cached_data is not None:
+            # Return the cached data for the specific page
+            return Response(cached_data)
+
+        queryset = self.get_queryset()
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            cached_data = serializer.data
+            cache.set(cache_key, cached_data, timeout=60*60)  # Cache for 1 hour
+            return self.get_paginated_response(cached_data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        cached_data = serializer.data
+        cache.set(cache_key, cached_data, timeout=60*60) 
+        return Response(cached_data)
 
     def get_queryset(self):
         """Retrieve all borrowable products or filter based on title using trigram similarity for fuzzy search."""
-        queryset = Product.objects.filter(category='borrow')  # Adjusted category
 
         search_query = self.request.query_params.get('search', None)
+        queryset = Product.objects.filter(category='borrow')  # Adjusted category
 
         if search_query:
             queryset = queryset.annotate(
@@ -102,6 +183,29 @@ class DonationProductViewSet(ProductViewSet):
         if self.action in ['retrieve']:
             return serializers.ProductUserSerializer
         return serializers.ProductSerializer
+    
+    def list(self, request, *args, **kwargs):
+        search_query = request.query_params.get('search', None)
+        page_number = request.query_params.get('page', 1)  # Default to page 1 if no page is specified
+        cache_key = f"donation_products_{search_query or 'all'}_page_{page_number}"
+        cached_data = cache.get(cache_key)
+
+        if cached_data is not None:
+            # Return the cached data for the specific page
+            return Response(cached_data)
+
+        queryset = self.get_queryset()
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            cached_data = serializer.data
+            cache.set(cache_key, cached_data, timeout=60*60)  # Cache for 1 hour
+            return self.get_paginated_response(cached_data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        cached_data = serializer.data
+        cache.set(cache_key, cached_data, timeout=60*60) 
+        return Response(cached_data)
 
     def get_queryset(self):
         """Retrieve all donations or filter based on title using trigram similarity for fuzzy search."""
@@ -194,4 +298,12 @@ def delete_product_photo(request):
             os.remove(image.image.path)
 
     image.delete()
+
+    if product.category == 'secondhand':
+            cache.delete_pattern("secondhand_products_*")
+    elif product.category == 'borrow':
+        cache.delete_pattern("borrow_products_*")
+    elif product.category == 'donation':
+        cache.delete_pattern("donation_products_*")
+
     return Response({"message": "Image deleted"}, status=200)
