@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from mainapp.models import Chat, Message
-
 from django.contrib.auth import get_user_model
+from mainapp.models import Product, LostAndFoundEntry
 
 class MessageSerializer(serializers.ModelSerializer):
     timestamp = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only=True)
@@ -15,7 +15,7 @@ class ChatListSerializer(serializers.ModelSerializer):
     participiants = serializers.StringRelatedField(many=True)
     class Meta:
         model = Chat
-        fields = ('id', 'participiants')
+        fields = ('id', 'participiants', 'category', 'product_id', 'image_url')
         read_only_fields = ('id', 'participiants')
 
     def to_representation(self, instance):
@@ -30,10 +30,18 @@ class ChatListSerializer(serializers.ModelSerializer):
         return representation
 
 class ChatSerializer(serializers.ModelSerializer):
+    CATEGORY_CHOICES = [
+        ('secondhand', 'Secondhand'),
+        ('borrow', 'Borrow'),
+        ('donation', 'Donation'),
+        ('lost', 'Lost'),
+        ('found', 'Found'),
+    ]
+
     messages = serializers.SerializerMethodField(read_only=True)
     class Meta:
         model = Chat
-        fields = ('id', 'participiants', 'messages')
+        fields = ('id', 'participiants', 'messages', 'category', 'product_id', 'image_url')
         read_only_fields = ('id',)
 
     def get_messages(self, instance):
@@ -41,22 +49,50 @@ class ChatSerializer(serializers.ModelSerializer):
         serializer = MessageSerializer(messages, many=True, read_only=True)
         return serializer.data
 
+    def validate(self, attrs):
+        current_user_id = self.context['request'].user.id
+        if len(attrs.get('participiants')) != 1:
+            raise serializers.ValidationError("Participant error")
+        reciever_id = attrs.get('participiants')[0].id
+        if current_user_id is reciever_id:
+            raise serializers.ValidationError("User cannot create chat with himself")
+        if not get_user_model().objects.filter(id=reciever_id).exists():
+            raise serializers.ValidationError("User not found")
+
+        category = attrs.get('category')
+        product_id = attrs.get('product_id')
+
+        if category is None:
+            raise serializers.ValidationError("Category is required")
+        if product_id is None:
+            raise serializers.ValidationError("Product id is required")
+        if category not in ['secondhand', 'borrow', 'donation', 'lost', 'found']:
+            raise serializers.ValidationError("Category is not valid")
+
+        if category in ['secondhand', 'borrow', 'donation']:
+            if not Product.objects.filter(id=product_id).exists():
+                raise serializers.ValidationError("Product not found")
+            product = Product.objects.get(id=product_id)
+            if product.category != category:
+                raise serializers.ValidationError("Category is not valid")
+            if product.user.id not in [current_user_id, reciever_id]:
+                raise serializers.ValidationError("Unrelated product")
+        elif category in ['lost', 'found']:
+            if not LostAndFoundEntry.objects.filter(id=product_id).exists():
+                raise serializers.ValidationError("Entry not found")
+            entry = LostAndFoundEntry.objects.get(id=product_id)
+            if entry.category != category:
+                raise serializers.ValidationError("Category is not valid")
+            if entry.user.id not in [current_user_id, reciever_id]:
+                raise serializers.ValidationError("Unrelated entry")
+
+        return attrs
 
     def create(self, validated_data):
         current_user_id = self.context['request'].user.id
         participiants = validated_data.pop('participiants')
-        # validated_data.pop('messages')
 
-        if len(participiants) != 1:
-            raise serializers.ValidationError("Participant error")
-
-        if current_user_id is participiants[0].id:
-            raise serializers.ValidationError("User cannot create chat with himself")
-
-        if not get_user_model().objects.filter(id=participiants[0].id).exists():
-            raise serializers.ValidationError("User not found")
-
-        possible_chat = Chat.objects.filter(participiants=current_user_id).filter(participiants__in=participiants).distinct()
+        possible_chat = Chat.objects.filter(participiants=current_user_id).filter(participiants__in=participiants).filter(category=validated_data.get('category')).filter(product_id=validated_data.get('product_id')).filter(image_url=validated_data.get('image_url'))
 
         if possible_chat.exists():
             return possible_chat.first()

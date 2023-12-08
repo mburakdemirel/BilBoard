@@ -36,15 +36,15 @@ class ProductCreateSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError("Price is required for secondhand products.")
             if 'return_date' in data:
                 raise serializers.ValidationError("Return date should not be included for secondhand products.")
-            
+
         if category == 'borrow':
             if return_date is None:
                 raise serializers.ValidationError("Return date is required for borrow products.")
             if 'price' in data:
                 raise serializers.ValidationError("Price should not be included for borrow products.")
-            
+
         return data
-    
+
     def create(self, validated_data):
         product_photo = validated_data.pop("product_photo")
         product = Product.objects.create(**validated_data)
@@ -53,7 +53,7 @@ class ProductCreateSerializer(serializers.ModelSerializer):
             ProductImage.objects.create(product=product, image=image)
 
         return product
-    
+
 
 class ProductUserSerializer(serializers.ModelSerializer):
     images = ProductImageSerializer(many=True, read_only=True)
@@ -67,8 +67,8 @@ class ProductUserSerializer(serializers.ModelSerializer):
 class ProductUpdateSerializer(serializers.ModelSerializer):
     images = ProductImageSerializer(many=True, read_only=True)
     product_photo = serializers.ListField(
-        child=serializers.ImageField(), 
-        required=False, 
+        child=serializers.ImageField(),
+        required=False,
         write_only=True
     )
     class Meta:
@@ -87,17 +87,17 @@ class ProductUpdateSerializer(serializers.ModelSerializer):
         if category == 'borrow':
             if 'price' in data:
                 raise serializers.ValidationError("Price should not be included for borrow products.")
-            
+
         return data
-    
+
     def update(self, instance, validated_data):
         new_images_data = validated_data.pop('product_photo', [])
         for image_data in new_images_data:
             ProductImage.objects.create(product=instance, image=image_data)
 
         return super(ProductUpdateSerializer, self).update(instance, validated_data)
-    
-    
+
+
 class ProductSerializer(serializers.ModelSerializer):
     images = ProductImageSerializer(many=True, read_only=True)
     class Meta:

@@ -88,7 +88,7 @@ class LostAndFoundEntryAdmin(admin.ModelAdmin):
 
 
 class ChatAdmin(admin.ModelAdmin):
-    list_display = ('id', 'get_participiants')
+    list_display = ('id', 'get_participiants', 'category', 'product_id')
     readonly_fields = ['id', 'messages']
 
 

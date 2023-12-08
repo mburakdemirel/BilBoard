@@ -145,8 +145,20 @@ class Message(models.Model):
         return str(self.author.id) +  " - " + self.timestamp.strftime("%d/%m/%Y, %H:%M:%S")
 
 class Chat(models.Model):
+    CATEGORY_CHOICES = [
+        ('secondhand', 'Secondhand'),
+        ('borrow', 'Borrow'),
+        ('donation', 'Donation'),
+        ('lost', 'Lost'),
+        ('found', 'Found'),
+    ]
+
     participiants = models.ManyToManyField(get_user_model(), related_name="chats")
     messages = models.ManyToManyField(Message, blank=True)
+
+    product_id = models.IntegerField(blank=False, null=True)
+    category = models.CharField(max_length=10, choices=CATEGORY_CHOICES, null=True, blank=False)
+    image_url = models.CharField(max_length=200, blank=True, null=True)
 
     def __str__(self):
         return '{}'.format(self.id)
