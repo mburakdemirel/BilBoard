@@ -7,6 +7,7 @@ function Chat() {
     const [message, setMessage] = useState("");
     const [messages, setMessages] = useState([]);
 
+
     useEffect(() => {
         // Get the username from local storage or prompt the user to enter it
         const storedUsername = localStorage.getItem("username");

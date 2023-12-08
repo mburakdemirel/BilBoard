@@ -10,27 +10,16 @@ import {set} from "react-hook-form";
 // TODO: put all style attributes into a css file and think about the layout of this page
 // Should there be products next to the messages??
 function MessagePage() {
-    const [allMessages, setAllMessages] = useState("");
+    const [allMessages, setAllMessages] = useState([]);
+    const [messages, setMessages] = useState("");
     const [chatId, setChatId] = useState("");
+    const [loading, setLoading] = useState();
     const {newMessage} = useContext(ContextApi);
-    console.log(newMessage)
+    console.log("newmessage", newMessage)
 
     useEffect(()=>{
         // User messages will be uploaded when page first open
         uploadAllMessages();
-
-        var messages = [
-            { product_name: 'Deneme1', product_price: "33" },
-            { product_name: 'Deneme2', product_price: "12" },
-            { product_name: 'Deneme3', product_price: "222"  }
-        ];
-
-        if(newMessage){
-            setAllMessages([...messages, newMessage].reverse())
-        }
-        else{
-            setAllMessages(messages)
-        }
 
     },[])
 
@@ -40,10 +29,20 @@ function MessagePage() {
     // Get all messages of user
     const uploadAllMessages = async () => {
         try{
+            debugger;
             axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
             axios.get("http://127.0.0.1:8000/chat/").then(response => {
-                console.log(response.data.results);
-                setAllMessages(response.data.results);
+                console.log("chat",response.data.results);
+
+                if(newMessage){
+                    //chat create
+                    axios.post("http://127.0.0.1:8000/chat/create")
+                    setAllMessages([response.data.results,newMessage].reverse());
+                }
+                else{
+                    setAllMessages([response.data.results]);
+
+                }
             })
 
             //const {data} = await axios.get('http://127.0.0.1:8000/api/user/me/') ;
@@ -58,6 +57,8 @@ function MessagePage() {
                 console.log('An error occurred while setting up the request.');
             }
         }
+
+
     }
 
 
@@ -86,11 +87,8 @@ function Products({allMessages,pull_data}) {
 
     const [activeIndex, setActiveIndex] = useState(0);
 
-
-
-
     useEffect(()=>{
-        console.log(allMessages.participiants);
+
         // Messages in the selected index will be opened on the right side
         console.log(activeIndex);
     },[activeIndex,allMessages])
@@ -111,7 +109,7 @@ function Products({allMessages,pull_data}) {
                                 <div className="d-flex flex-row align-items-center " style={{ height: '20%', minHeight: '80px', paddingTop: '5px', paddingBottom: '5px', borderStyle: 'none', paddingLeft: '20px', paddingRight: '6px' }}>
                                     <div className="d-flex flex-column " style={{ width: '50%', height: '100%' }}>
                                         <h4 style={{width:'fit-content', fontSize: '20px', marginBottom: '5px', fontFamily: 'Inter, sans-serif' }}>{"Yatak"}</h4>
-                                        <h3 style={{width:'fit-content', paddingTop: '0px', margin: '0px', marginTop: '5px', fontSize: '20px', fontFamily:'Inter, sans-serif', fontWeight:'bold' }}>{allMessages[index].participiants && (allMessages[index].participiants.contact_name + " " + allMessages[index].participiants.contact_surname)}</h3>
+                                        <h3 style={{width:'fit-content', paddingTop: '0px', margin: '0px', marginTop: '5px', fontSize: '20px', fontFamily:'Inter, sans-serif', fontWeight:'bold' }}>{allMessages[index][0] && (allMessages[index][0].participiants.contact_name + " " + allMessages[index][0].participiants.contact_surname)}</h3>
                                     </div>
                                     <div className="d-flex justify-content-end align-items-center" style={{ width: '50%', height: '100%' }}>
                                         <button className="rounded-circle btn btn-primary d-flex justify-content-center align-items-center" style={{ width: '24px', fontWeight: 'bold', background: '#2d3648', borderStyle: 'none', borderColor: '#2d3648', height: '24px' }}>
@@ -133,8 +131,14 @@ function Products({allMessages,pull_data}) {
 function Messages({chatId}) {
     const [id, setId] = useState(chatId);
     const [messages, setMessages] = useState([]);
-    const [socket, setSocket] = useState();
+    const [chat, setChat] = useState([]);
 
+    const [socket, setSocket] = useState();
+    const [myProfile, setMyProfile] = useState(JSON.parse(localStorage.getItem('myProfile')));
+    const [newMessage, setNewMessage] = useState('');
+
+    console.log(myProfile);
+    console.log(myProfile.id);
     axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
     const newSocket = new ReconnectingWebSocket("ws://127.0.0.1:8000/ws/chat/26/");
 
@@ -142,8 +146,11 @@ function Messages({chatId}) {
         setId(chatId);
         axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
         axios.get("http://127.0.0.1:8000/chat/26/").then(response => {
-            //console.log(response.data.messages);
+            console.log(response.data.messages);
             setMessages(response.data.messages);
+            console.log(response.data);
+            setChat(response.data);
+
 
         })
     }, [chatId]);
@@ -165,7 +172,6 @@ function Messages({chatId}) {
                 setMessages((prevMessages) => [...prevMessages, data.message]);
             }
 
-
         };
 
         // Clean up the WebSocket connection when the component unmounts
@@ -175,6 +181,32 @@ function Messages({chatId}) {
     }, []);
 
 
+
+    const sendMessageWithEnter = (e) => {
+
+        if(e.key === "Enter") {
+            console.log("Enter Click")
+            newSocket.send(JSON.stringify({
+                'command': 'new_message',
+                'message': newMessage,
+                'author': chat.participiants[0],
+                'chat_id': 26
+            }));
+        }
+    };
+
+
+
+    const sendMessage = () => {
+
+
+        newSocket.send(JSON.stringify({
+            'command': 'new_message',
+            'message': newMessage,
+            'author': chat.participiants[0],
+            'chat_id': 26
+        }));
+    };
 
 
 
@@ -196,8 +228,9 @@ function Messages({chatId}) {
                              * backendden mesajları alıp kim tarafından gönderildiğine göre buna karar veririz
                             */}
                             {messages.map((message, index) => (
-                                <li key={index} className="list-group-item" style={{ padding: '0px', paddingBottom: '10px', borderStyle: 'none' }}>
-                                    <div className="card" style={{ borderStyle: 'none', background: '#A0ABC0', width: '70%' }}>
+
+                                <li key={index} className="list-group-item d-flex w-100 " style={{justifyContent: message.author === myProfile.id ? 'right' : 'left', padding: '0px', paddingBottom: '10px', borderStyle: 'none' }}>
+                                    <div className="card" style={{ borderStyle: 'none', background: message.author === myProfile.id ? '#717D96' : '#A0ABC0', width: '70%', borderRadius:'10px' }}>
                                         <div className="text-start" style={{ height: '100%', borderStyle: 'none', width: '100%', padding: '10px', fontSize: '20%' }}>
                                             <p style={{ marginBottom: '0px', width: '100%', fontFamily: 'Inter, sans-serif', fontSize: '600%' }}>{message && message.content}</p>
                                         </div>
@@ -207,12 +240,11 @@ function Messages({chatId}) {
                         </ul>
                     </div>
                     <div className="d-flex flex-row " style={{ minHeight:'32px', height: '7%', width: '90%', background: '#edf0f7', borderRadius: '10px', marginTop: '12px', border: '2px solid #CBD2E0' }}>
-                        <div className="d-flex align-items-center  justify-content-center" style={{ width: '10%', height: '100%', borderWidth: '2px', borderStyle: 'none' }}>
-                            <i className="bi bi-plus-lg" style={{ fontSize: '20px'}}></i>
-                        </div>
-                        <input className="form-control-sm" type="text" style={{  fontSize:'1em', width: '80%',  background: '#edf0f7', borderRadius: '0px', borderTopLeftRadius: '0px', borderBottomLeftRadius: '0px', borderBottomRightRadius: '0px', borderTopRightRadius: '0px', borderStyle: 'none', borderTopWidth: '2px', borderTopStyle: 'none', borderRight: '2px solid #CBD2E0', borderBottomWidth: '2px', borderBottomStyle: 'none', borderLeft: '2px solid #CBD2E0' }} />
-                        <div className="d-flex align-items-center justify-content-center" style={{ width: '10%', height: '100%', borderStyle: 'none' }}>
-                            <i className="bi bi-send-fill" style={{ fontSize: '20px' }}></i>
+
+                        <input className="form-control-sm" type="text" style={{  fontSize:'1em', width: '90%',  background: '#edf0f7', borderRadius: '0px', borderTopLeftRadius: '8px', borderBottomLeftRadius: '8px', borderBottomRightRadius: '0px', borderTopRightRadius: '0px', borderStyle: 'none', borderTopWidth: '2px', borderTopStyle: 'none', borderRight: '2px solid #CBD2E0', borderBottomWidth: '2px', borderBottomStyle: 'none', borderLeft: '2px solid #CBD2E0' }}
+                               onKeyDown={(e)=>{sendMessageWithEnter(e)}} onChange={(e)=> setNewMessage(e.target.value)}/>
+                        <div className="d-flex align-items-center justify-content-center" onClick={sendMessage} style={{ width: '10%', height: '100%', borderStyle: 'none' }}>
+                            <i className="bi bi-send-fill" style={{ fontSize: '20px' }} ></i>
                         </div>
                     </div>
                 </div>

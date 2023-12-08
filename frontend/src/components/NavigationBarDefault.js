@@ -14,6 +14,7 @@ import {Dropdown} from 'react-bootstrap';
 function NavigationBarDefault() {
     const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
     const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
+    const {sendNewMessage} = useContext(ContextApi);
     const [show, setShow] = useState(false);
     const [target, setTarget] = useState(null);
     const ref = React.useRef(null);
@@ -23,6 +24,7 @@ function NavigationBarDefault() {
     useEffect(() => {
         getProfile();
         getFavorites();
+
     }, [favoritesIdList,myProfile]);
 
 
@@ -88,7 +90,11 @@ function NavigationBarDefault() {
                 navigate('/main_page/' + pageType + '/' + searchInput);
             }
         }
+    }
 
+    const sendMessage = () => {
+        sendNewMessage();
+        navigate("/messages");
     }
 
     return (<div>
@@ -160,7 +166,7 @@ function NavigationBarDefault() {
                     </Overlay>
 
                     <i className="bi bi-envelope position-relative" type="button" style={{ fontSize: '28px', marginRight: '15px', marginTop: '5px', marginBottom: '5px' }}
-                       onClick={() => {navigate('/messages')}}>
+                       onClick={() => {sendMessage()}}>
                         <span className="d-flex justify-content-center position-absolute top-0 start-100 bg-danger translate-middle p-2 rounded-circle " style={{height:'20px', width:'20px'}}>
                             <h1 className="d-flex justify-content-center align-items-center" style={{fontSize:'14px', fontFamily:'Inter,sans-serif'}}>9</h1>
                       </span>

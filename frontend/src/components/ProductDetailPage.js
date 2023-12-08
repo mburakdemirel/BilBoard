@@ -129,7 +129,7 @@ function ProductDetailPage() {
         setIsViewerOpen(false);
     };
 
-    const goToProfile = () => {
+    const goToProfile =  () => {
        navigate('/profile/' + product.user.id,  {state:{user: product.user}});
 
     }
