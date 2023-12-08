@@ -11,13 +11,41 @@ export function ProductAddForm() {
     const [category, setCategory] = useState("donation");
     const [photo, setPhoto] = useState();
     const [returnDate, setReturnDate] = useState();
+    const [imgPreviews, setImgPreviews] = useState([]);
+    const [errMsg, setErrMsg] = useState("");
 
     useEffect(() => {
         setPrice(0);
     }, [category]);
 
+    
+
     function handleImage(e) {
+        //maybe we don't need this ???
+        setErrMsg("");
+        if(e.target.files.length > 5) {
+            setErrMsg("You should not upload more than 5 images.");
+            e.target.value = null;
+            return;
+        }
+        const files = Array.from(e.target.files);
+        if (files.length === 0) {
+            setImgPreviews([]);
+        }
+        const imageArr = [];
+        files.forEach((file) => {
+            const reader = new FileReader();
+            reader.onload = () => {
+                imageArr.push({ file, previewURL: reader.result });
+                if (imageArr.length === files.length) {
+                    setImgPreviews(imageArr);
+                }
+            }
+            reader.readAsDataURL(file);
+        })
         setPhoto(e.target.files);
+        console.log(e.target.files);
+        console.log("in handle image");
     }
 
     //after submitting the form clean each form area values.
@@ -41,7 +69,7 @@ export function ProductAddForm() {
             product.append('return_date', date_str);
             console.log(date_str);
         }
-        if(photo) {
+        if (photo) {
             console.log("trying to post a photo");
             for (let i = 0; i < photo.length; i++) {
                 const element = photo[i];
@@ -72,31 +100,32 @@ export function ProductAddForm() {
     }
 
     return (
-        <section className="d-flex d-xxl-flex flex-grow-1 justify-content-center align-items-start align-items-xl-start justify-content-xxl-center align-items-xxl-start py-4 py-xl-5" style={{ background: '#edf0f7', minHeight: '91vh' }}>
+        <section id="section" className="d-flex d-xxl-flex flex-grow-1 justify-content-center align-items-start align-items-xl-start justify-content-xxl-center align-items-xxl-start py-4 py-xl-5" style={{ background: '#edf0f7', display: 'inline-block' }}>
             <div className="container-fluid px-1 py-5 mx-auto">
-                <div className="row d-flex justify-content-center" style={{ margin: '0px', width: '100%', marginTop: '-21px' }}>
+                <div className="row d-flex justify-content-center" style={{ height: 'fit-content', margin: '0px', width: '100%', marginTop: '-21px' }}>
                     <div
                         className="col-xl-7 col-lg-8 col-md-9 col-11 text-center"
                         data-aos="fade-left"
                         data-aos-duration="600"
-                        style={{ width: '70%', height: '65vh', minHeight: '450px' }}
+                        style={{ width: 'fit-content', height: 'fit-content', minHeight: '450px', minWidth: "60%" }}
                     >
-                        <div
+                        <div id="formCard"
                             className="card"
                             style={{
-                                overflow: 'scroll',
+                                overflow: 'auto',
                                 background: '#ffffff',
                                 fontSize: '12px',
                                 borderRadius: '10px',
-                                height: '100%',
+                                height: 'fit-content',
                                 width: '100%',
                                 padding: '7%',
                             }}
                         >
                             <h3 className="text-center" style={{ fontFamily: 'Inter,sans-serif' }}>Add a New Product</h3>
-                            <form onSubmit={handleSubmit} method="post" className="form-card" style={{ width: '100%' }}>
-                                <div className="row justify-content-between text-left" style={{ paddingTop: '5px' }}>
-                                    <div className="form-group col-xl-6 flex-column d-flex">
+                            {errMsg && <div className="alert alert-danger" role="alert">{errMsg}</div>}
+                            <form onSubmit={handleSubmit} method="post" className="form-card" style={{height: 'fit-content', margin: 'auto', width: '60%' }}>
+                                <div className="form-group col-xl-6 flex-column d-flex" style={{ width: '100%', paddingTop: '5px' }}>
+                                    <div className="row justify-content-between text-left">
                                         <label className="form-control-label"><h5>Title</h5></label>
                                         <input value={title} onChange={(e) => { setTitle(e.target.value); }} required type="text" placeholder="Title"
                                             className="form-control"
@@ -113,7 +142,7 @@ export function ProductAddForm() {
                                         </input>
                                     </div>
                                     <div
-                                        className="form-group col-xl-6 flex-column d-flex">
+                                        className="row justify-content-between text-left">
                                         <label required className="form-control-label" htmlFor='postTypeSelect'><h5>Select a Product Type</h5></label>
                                         <select value={category} onChange={(e) => { setCategory(e.target.value); console.log(category) }} className="form-control"
                                             style={{
@@ -133,39 +162,25 @@ export function ProductAddForm() {
 
                                         </select>
                                     </div>
-                                </div>
-
-                                <div className="row justify-content-between text-left" style={{ paddingTop: '10px' }}>
-                                    <div
-                                        className="form-group col-xl-6 flex-column d-flex">
-                                        {/** should I make this areas readonly according to the category??? */}
-                                        <label className="form-control-label"><h5>Price</h5></label>
-                                        <input required={category === "secondhand"} readOnly={category !== "secondhand"} value={price} onChange={(e) => setPrice(e.target.value)} min={0} placeholder="Enter Price (in Turkish Liras)" type="number"
-                                            className="form-control"
-                                            style={{
-                                                width: '100%',
-                                                fontFamily: 'Inter, sans-serif',
-                                                marginBottom: '0px',
-                                                height: '50%',
-                                                background: '#a0abc0',
-                                                borderRadius: '10px',
-                                                paddingLeft: '15px',
-
-                                            }}
-                                        >
-
-                                        </input>
-                                    </div>
-                                    <div className="form-group col-xl-6 flex-column d-flex">
+                                   
+                                    <div className="row justify-content-between text-left">
                                         <h5 style={{ fontFamily: 'Inter, sans-serif' }}>Photos</h5>
                                         <label className="form-control-label" htmlFor="FormControl" style={{ fontFamily: 'Inter, sans-serif', textAlign: 'left' }}>Choose files to upload (at most 5)</label>
-                                        <input name="product_photos" onChange={(e) => {handleImage(e);}}
+                                        <input name="product_photos" onChange={(e) => { handleImage(e); }}
                                             id="FormControl" type="file" accept="image/*" multiple></input>
+                                        <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+                                            {imgPreviews.map((imagePreview, index) => (
+                                                <div key={index} style={{ margin: '10px', textAlign: 'center' }}>
+                                                    <img
+                                                        src={imagePreview.previewURL}
+                                                        alt={`Preview ${index}`}
+                                                        style={{ maxWidth: '100px', maxHeight: '100px', borderRadius: '5px' }}
+                                                    />
+                                                </div>
+                                            ))}
+                                        </div>
                                     </div>
-                                </div>
-
-                                <div className="row justify-content-between text-left" style={{ paddingTop: '10px' }}>
-                                    <div className="form-group col-xl-6 flex-column d-flex">
+                                    <div className="row justify-content-between text-left">
                                         <label className="form-control-label" htmlFor="description" style={{ fontFamily: 'Inter, sans-serif' }}><h5>Enter your Description</h5></label>
                                         <textarea value={description} onChange={(e) => setDescription(e.target.value)}
                                             id="description"
@@ -181,7 +196,26 @@ export function ProductAddForm() {
                                             }}
                                         />
                                     </div>
-                                    <div className="form-group col-sm-6 flex-column d-flex">
+                                    {(category === "secondhand") ? (<div
+                                        className="row justify-content-between text-left">
+                                        {/** should I make this areas readonly according to the category??? */}
+                                        <label className="form-control-label"><h5>Price</h5></label>
+                                        <input required={category === "secondhand"} readOnly={category !== "secondhand"} value={price} onChange={(e) => setPrice(e.target.value)} min={0} placeholder="Enter Price (in Turkish Liras)" type="number"
+                                            className="form-control"
+                                            style={{
+                                                width: '100%',
+                                                fontFamily: 'Inter, sans-serif',
+                                                marginBottom: '0px',
+                                                height: '50%',
+                                                background: '#a0abc0',
+                                                borderRadius: '10px',
+                                                paddingLeft: '15px',
+
+                                            }}
+                                        >
+                                        </input>
+                                    </div>) : <></>}
+                                    {(category === "borrow") ? (<div className="row justify-content-between text-left">
                                         <label htmlFor="date" className="form-control-label"><h5>Return Date</h5></label>
                                         <input readOnly={category !== "borrow"} required={category === "borrow"} onChange={(e) => { setReturnDate(e.target.value); console.log(e.target.value) }} id="date" className="form-control" style={{
                                             fontFamily: 'Inter, sans-serif',
@@ -192,15 +226,14 @@ export function ProductAddForm() {
                                         }} type="date">
 
                                         </input>
-                                    </div>
-
-                                </div>
-                                <div style={{ paddingTop: '20px' }} className="row justify-content-between text-left">
-                                    <div className="col-xl-6 flex-column d-flex">
-                                        <button onClick={() => { navigate("/main_page/secondhand"); }} className="btn btn-primary d-block w-100 mb-3" style={{ background: '#2d3648', border: 'none', fontFamily: 'Inter, sans-serif', height: '40px' }}>Cancel</button>
-                                    </div>
-                                    <div className="col-xl-6 flex-column d-flex">
-                                        <button className="btn btn-primary d-block w-100 mb-3" type="submit" style={{ background: '#2d3648', border: 'none', fontFamily: 'Inter, sans-serif', height: '40px' }}>Post</button>
+                                    </div>): <></>}
+                                    <div style={{ paddingTop: '20px' }} className="row justify-content-between text-left">
+                                        <div className="col-xl-6 flex-column d-flex">
+                                            <button onClick={() => { navigate("/main_page/secondhand") }} className="btn btn-primary d-block w-100 mb-3" style={{ background: '#2d3648', border: 'none', fontFamily: 'Inter, sans-serif', height: '40px' }}>Cancel</button>
+                                        </div>
+                                        <div className="col-xl-6 flex-column d-flex">
+                                            <button className="btn btn-primary d-block w-100 mb-3" type="submit" style={{ background: '#2d3648', border: 'none', fontFamily: 'Inter, sans-serif', height: '40px' }}>Post</button>
+                                        </div>
                                     </div>
                                 </div>
                             </form>

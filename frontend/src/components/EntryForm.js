@@ -43,19 +43,19 @@ export function EntryForm({ isComplaint }) {
     }
 
     return (
-        <section className="d-flex justify-content-center align-items-center py-4 py-xl-5" style={{ background: '#edf0f7', minHeight: '100vh' }}>
+        <section className="d-flex justify-content-center align-items-center py-4 py-xl-5" style={{ background: '#edf0f7', display: 'inline-block'}}>
             <div className="container-fluid px-1 py-5 mx-auto" style={{ overflow: 'scroll' }}>
                 <div className="row d-flex justify-content-center" style={{ margin: '0px', width: '100%', marginTop: '-21px' }}>
                     <div
                         className="col-xl-7 col-lg-8 col-md-9 col-11 text-center"
                         data-aos="fade-left"
                         data-aos-duration="600"
-                        style={{ width: '70%', height: '70vh', minHeight: '450px' }}
+                        style={{ width: 'fit-content', height: 'fit-content', minWidth: '60%', minHeight: '65vh'}}
                     >
                         <div
                             className="card"
                             style={{
-                                overflow: 'scroll',
+                                overflow: 'auto',
                                 background: '#ffffff',
                                 fontSize: '12px',
                                 borderRadius: '10px',
