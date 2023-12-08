@@ -89,7 +89,7 @@ class Product(models.Model):
         return self.title
 
 
-class ProductImage(models.Model):                     
+class ProductImage(models.Model):
     product = models.ForeignKey(Product, related_name='images', on_delete=models.CASCADE)
     image = models.ImageField(upload_to='product_photos/', blank=True, null=True)
 
@@ -153,6 +153,9 @@ class Chat(models.Model):
 
     def get_messages(self):
         return self.messages.all()
+
+    def get_last_message_timestamp(self):
+        return self.messages.order_by('-timestamp').first().timestamp
 
     def get_participiants(self):
         return "\n".join([str(p) for p in self.participiants.all()])

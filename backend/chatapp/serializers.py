@@ -10,6 +10,7 @@ class MessageSerializer(serializers.ModelSerializer):
         fields = ('id', 'author', 'content', 'timestamp')
         read_only_fields = ('id', 'author', 'content', 'timestamp')
 
+
 class ChatListSerializer(serializers.ModelSerializer):
     participiants = serializers.StringRelatedField(many=True)
     class Meta:
@@ -29,11 +30,16 @@ class ChatListSerializer(serializers.ModelSerializer):
         return representation
 
 class ChatSerializer(serializers.ModelSerializer):
-    messages = MessageSerializer(many=True, read_only=True)
+    messages = serializers.SerializerMethodField(read_only=True)
     class Meta:
         model = Chat
         fields = ('id', 'participiants', 'messages')
         read_only_fields = ('id',)
+
+    def get_messages(self, instance):
+        messages = instance.messages.order_by('-timestamp').all()
+        serializer = MessageSerializer(messages, many=True, read_only=True)
+        return serializer.data
 
 
     def create(self, validated_data):

@@ -39,6 +39,25 @@ class ChatListView(ListAPIView):
         if user_id is not None:
             actual_user = get_user_or_404(user_id)
             queryset = actual_user.chats.all()
+            last_message_timestamps = []
+
+
+
+            for i in queryset:
+                if i.get_messages().count() > 0:
+                    last_message_timestamps.append((i.get_messages().order_by('-timestamp').first().timestamp, i))
+                else:
+                    last_message_timestamps.append((None, i))
+
+            # order by timestamp and if timestamp is None, put it to the end
+            last_message_timestamps.sort(key=lambda x: (x[0] is None, x[0]), reverse=True)
+
+            # last_message_timestamps.sort(key=lambda x: x[0], reverse=True)
+            print(last_message_timestamps)
+            # order queryset by last message timestamp
+            queryset = [i[1] for i in last_message_timestamps]
+            # reverse queryset to get descending order
+            queryset.reverse()
         return queryset
 
 class ChatDetailView(RetrieveAPIView):
