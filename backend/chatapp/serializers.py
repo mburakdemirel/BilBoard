@@ -39,7 +39,7 @@ class ChatSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         current_user_id = self.context['request'].user.id
         participiants = validated_data.pop('participiants')
-        validated_data.pop('messages')
+        # validated_data.pop('messages')
 
         if len(participiants) != 1:
             raise serializers.ValidationError("Participant error")
