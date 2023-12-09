@@ -1,3 +1,4 @@
+import enum
 from django.contrib.postgres.search import TrigramSimilarity
 from mainapp.models import LostAndFoundEntry, ComplaintEntry 
 from entryapp import serializers
@@ -6,6 +7,35 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
+
+
+class EntryType(enum.Enum):
+    LOSTANDFOUND = 1
+    COMPLAINT = 2
+
+class ActionType(enum.Enum):
+    CREATE = 1
+    RETRIEVE = 2
+    DEFAULT = 3
+
+class SerializerFactory:
+    def get_serializer(entry_type, action):
+        if entry_type == EntryType.LOSTANDFOUND:
+            if action == ActionType.CREATE:
+                return serializers.CreateLostAndFoundEntrySerializer
+            elif action == ActionType.RETRIEVE:
+                return serializers.UserLostAndFoundEntrySerializer
+            else: #default
+                return serializers.DefaultLostAndFoundEntrySerializer
+        elif entry_type == EntryType.COMPLAINT:
+            # Assuming you have similar serializers for complaints
+            if action == ActionType.CREATE:
+                return serializers.CreateComplaintEntrySerializer
+            else:
+                return serializers.DefaultComplaintEntrySerializer
+        else:
+            raise ValueError("Invalid Entry Type")
+
 
 #Şu an lost ve found hepsini getiriyor conflict
 class UserLostAndFoundEntryViewSet(viewsets.ModelViewSet):
@@ -17,10 +47,10 @@ class UserLostAndFoundEntryViewSet(viewsets.ModelViewSet):
 
     def get_serializer_class(self):
         if self.action in ['create']:
-            return serializers.CreateLostAndFoundEntrySerializer 
+            return SerializerFactory.get_serializer(entry_type=EntryType.LOSTANDFOUND,action=ActionType.CREATE) 
         elif self.action in ['retrieve']:
-            return serializers.UserLostAndFoundEntrySerializer
-        return serializers.DefaultLostAndFoundEntrySerializer
+            return SerializerFactory.get_serializer(entry_type=EntryType.LOSTANDFOUND,action=ActionType.RETRIEVE) 
+        return SerializerFactory.get_serializer(entry_type=EntryType.LOSTANDFOUND,action=ActionType.DEFAULT) 
 
     def get_queryset(self):
         """Retrieve Lost and Found Entries for authenticated user."""
@@ -40,8 +70,8 @@ class LostAndFoundEntryViewSet(viewsets.ReadOnlyModelViewSet):
 
     def get_serializer_class(self):
         if self.action in ['retrieve']:
-            return serializers.UserLostAndFoundEntrySerializer
-        return serializers.DefaultLostAndFoundEntrySerializer
+            return SerializerFactory.get_serializer(entry_type=EntryType.LOSTANDFOUND,action=ActionType.RETRIEVE) 
+        return SerializerFactory.get_serializer(entry_type=EntryType.LOSTANDFOUND,action=ActionType.DEFAULT) 
 
     def get_queryset(self):
         """Retrieve all LaF entries or filter based on title using trigram similarity for fuzzy search."""
@@ -64,8 +94,8 @@ class UserComplaintEntryViewSet(viewsets.ModelViewSet):
 
     def get_serializer_class(self):
         if self.action in ['create']:
-            return serializers.CreateComplaintEntrySerializer
-        return serializers.DefaultComplaintEntrySerializer
+            return SerializerFactory.get_serializer(entry_type=EntryType.COMPLAINT,action=ActionType.CREATE) 
+        return SerializerFactory.get_serializer(entry_type=EntryType.COMPLAINT,action=ActionType.DEFAULT) 
 
     def get_queryset(self):
         """Retrieve Lost and Found Entries for authenticated user."""
