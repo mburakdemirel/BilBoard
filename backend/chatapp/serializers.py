@@ -13,9 +13,10 @@ class MessageSerializer(serializers.ModelSerializer):
 
 class ChatListSerializer(serializers.ModelSerializer):
     participiants = serializers.StringRelatedField(many=True)
+    product_name = serializers.StringRelatedField(read_only=True)
     class Meta:
         model = Chat
-        fields = ('id', 'participiants', 'category', 'product_id', 'image_url')
+        fields = ('id', 'participiants', 'category', 'product_id', 'image_url', 'product_name')
         read_only_fields = ('id', 'participiants')
 
     def to_representation(self, instance):
@@ -26,7 +27,15 @@ class ChatListSerializer(serializers.ModelSerializer):
         representation['participiants'] = {
             "contact_name": contact.first().name,
             "contact_surname": contact.first().surname,
-            }
+        }
+        category = instance.category
+        product_id = instance.product_id
+        if category in ['secondhand', 'borrow', 'donation']:
+            product = Product.objects.get(id=product_id)
+            representation['product_name'] = product.title
+        elif category in ['lost', 'found']:
+            entry = LostAndFoundEntry.objects.get(id=product_id)
+            representation['product_name'] = entry.topic
         return representation
 
 class ChatSerializer(serializers.ModelSerializer):
@@ -39,9 +48,11 @@ class ChatSerializer(serializers.ModelSerializer):
     ]
 
     messages = serializers.SerializerMethodField(read_only=True)
+    product_name = serializers.StringRelatedField(read_only=True)
+
     class Meta:
         model = Chat
-        fields = ('id', 'participiants', 'messages', 'category', 'product_id', 'image_url')
+        fields = ('id', 'participiants', 'messages', 'category', 'product_id', 'image_url', 'product_name')
         read_only_fields = ('id',)
 
     def get_messages(self, instance):
@@ -87,6 +98,19 @@ class ChatSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError("Unrelated entry")
 
         return attrs
+
+    def to_representation(self, instance):
+        category = instance.category
+        product_id = instance.product_id
+        representation = super().to_representation(instance)
+        if category in ['secondhand', 'borrow', 'donation']:
+            product = Product.objects.get(id=product_id)
+            representation['product_name'] = product.title
+        elif category in ['lost', 'found']:
+            entry = LostAndFoundEntry.objects.get(id=product_id)
+            representation['product_name'] = entry.topic
+        return representation
+
 
     def create(self, validated_data):
         current_user_id = self.context['request'].user.id
