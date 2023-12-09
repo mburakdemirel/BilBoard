@@ -50,9 +50,9 @@ function ProductMainPage() {
                     const {data} = await axios.get('http://127.0.0.1:8000/api/product/' + pageType + `?search=${searchText}`);
                     console.log(data);
                     console.log(hasMore);
-                    setProducts(prevProducts => [...prevProducts, ...data]);
+                    setProducts(prevProducts => [...prevProducts, ...data.results]);
                     setPage(prevPage => prevPage + 1);
-                    setHasMore(data.length >= 16);
+                    setHasMore(data.results.length >= 16);
                 }
                 else{
                     debugger;
@@ -77,6 +77,7 @@ function ProductMainPage() {
             } else if (error.request) {
                 console.log('No response received from the server.');
             } else {
+                console.log(error);
                 console.log('An error occurred while setting up the request.');
             }
         }
