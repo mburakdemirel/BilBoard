@@ -46,22 +46,23 @@ function ProductMainPage() {
             if(pageType){
 
                 if(searchText){
-
+                    debugger;
                     const {data} = await axios.get('http://127.0.0.1:8000/api/product/' + pageType + `?search=${searchText}`);
-                    console.log(data.results);
+                    console.log(data);
                     console.log(hasMore);
-                    setProducts(prevProducts => [...prevProducts, ...data.results]);
+                    setProducts(prevProducts => [...prevProducts, ...data]);
                     setPage(prevPage => prevPage + 1);
-                    setHasMore(data.results.length >= 16);
+                    setHasMore(data.length >= 16);
                 }
                 else{
-
+                    debugger;
                     const {data} = await axios.get('http://127.0.0.1:8000/api/product/' + pageType + `?page=${page}`);
-                    console.log(data.results);
+                    console.log(data);
+                    console.log(data);
                     console.log(hasMore);
-                    setProducts(prevProducts => [...prevProducts, ...data.results]);
+                    setProducts(prevProducts => [...prevProducts, ...data]);
                     setPage(prevPage => prevPage + 1);
-                    setHasMore(data.results.length >= 16);
+                    setHasMore(data.length >= 16);
 
 
                 }

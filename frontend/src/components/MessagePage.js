@@ -1,18 +1,14 @@
 import PlaceHolder from './assets/img/WF Image Placeholder.png';
 import axios from "axios";
-import React, {useEffect, useState} from "react";
-import { w3cwebsocket as W3CWebSocket } from "websocket";
-import {useContext} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import ContextApi from "../context/ContextApi";
-import chat from "./Chat";
 import ReconnectingWebSocket from "reconnecting-websocket";
-import {set} from "react-hook-form";
 // TODO: put all style attributes into a css file and think about the layout of this page
 // Should there be products next to the messages??
 function MessagePage() {
     const [allMessages, setAllMessages] = useState([]);
     const [messages, setMessages] = useState("");
-    const [chatId, setChatId] = useState("");
+    const [chatId, setChatId] = useState();
     const [loading, setLoading] = useState();
     const {newMessage} = useContext(ContextApi);
     console.log("newmessage", newMessage)
@@ -29,21 +25,24 @@ function MessagePage() {
     // Get all messages of user
     const uploadAllMessages = async () => {
         try{
-            debugger;
+
+            if(newMessage) {
+                debugger;
+                axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
+                axios.post("http://127.0.0.1:8000/chat/create/", {participiants: [3]}).then(response => {
+                    console.log("new Chat", response.data);
+
+
+                });
+
+            }
+
             axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
             axios.get("http://127.0.0.1:8000/chat/").then(response => {
-                console.log("chat",response.data.results);
+                console.log("chat", response.data.results);
+                setAllMessages(response.data.results);
 
-                if(newMessage){
-                    //chat create
-                    axios.post("http://127.0.0.1:8000/chat/create")
-                    setAllMessages([response.data.results,newMessage].reverse());
-                }
-                else{
-                    setAllMessages([response.data.results]);
-
-                }
-            })
+            });
 
             //const {data} = await axios.get('http://127.0.0.1:8000/api/user/me/') ;
             //console.log(data);
@@ -85,16 +84,17 @@ function MessagePage() {
 
 function Products({allMessages,pull_data}) {
 
-    const [activeIndex, setActiveIndex] = useState(0);
+    const [activeIndex, setActiveIndex] = useState(-1);
 
     useEffect(()=>{
-
+        console.log("all messages", allMessages.length);
         // Messages in the selected index will be opened on the right side
         console.log(activeIndex);
     },[activeIndex,allMessages])
 
 
     const messageClick = (index) => {
+        console.log("message index", index);
         pull_data(index);
     };
 
@@ -109,7 +109,7 @@ function Products({allMessages,pull_data}) {
                                 <div className="d-flex flex-row align-items-center " style={{ height: '20%', minHeight: '80px', paddingTop: '5px', paddingBottom: '5px', borderStyle: 'none', paddingLeft: '20px', paddingRight: '6px' }}>
                                     <div className="d-flex flex-column " style={{ width: '50%', height: '100%' }}>
                                         <h4 style={{width:'fit-content', fontSize: '20px', marginBottom: '5px', fontFamily: 'Inter, sans-serif' }}>{"Yatak"}</h4>
-                                        <h3 style={{width:'fit-content', paddingTop: '0px', margin: '0px', marginTop: '5px', fontSize: '20px', fontFamily:'Inter, sans-serif', fontWeight:'bold' }}>{allMessages[index][0] && (allMessages[index][0].participiants.contact_name + " " + allMessages[index][0].participiants.contact_surname)}</h3>
+                                        <h3 style={{width:'fit-content', paddingTop: '0px', margin: '0px', marginTop: '5px', fontSize: '20px', fontFamily:'Inter, sans-serif', fontWeight:'bold' }}>{allMessages[index] && (allMessages[index].participiants.contact_name + " " + allMessages[index].participiants.contact_surname)}</h3>
                                     </div>
                                     <div className="d-flex justify-content-end align-items-center" style={{ width: '50%', height: '100%' }}>
                                         <button className="rounded-circle btn btn-primary d-flex justify-content-center align-items-center" style={{ width: '24px', fontWeight: 'bold', background: '#2d3648', borderStyle: 'none', borderColor: '#2d3648', height: '24px' }}>
@@ -143,16 +143,18 @@ function Messages({chatId}) {
     const newSocket = new ReconnectingWebSocket("ws://127.0.0.1:8000/ws/chat/26/");
 
     useEffect(() => {
-        setId(chatId);
-        axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
-        axios.get("http://127.0.0.1:8000/chat/26/").then(response => {
-            console.log(response.data.messages);
-            setMessages(response.data.messages);
-            console.log(response.data);
-            setChat(response.data);
 
+        if(chatId){
+            axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
+            axios.get("http://127.0.0.1:8000/chat/" + chatId + "/").then(response => {
+                console.log(response.data.messages);
+                setMessages(response.data.messages);
+                console.log(response.data);
+                setChat(response.data);
 
-        })
+            })
+        }
+
     }, [chatId]);
 
     useEffect(() => {
@@ -189,24 +191,44 @@ function Messages({chatId}) {
             newSocket.send(JSON.stringify({
                 'command': 'new_message',
                 'message': newMessage,
-                'author': chat.participiants[0],
-                'chat_id': 26
+                'author': myProfile.id,
+                'chat_id': chat.id
             }));
+            setNewMessage("");
         }
+
     };
 
 
 
-    const sendMessage = () => {
+    const sendMessage = (e) => {
 
 
         newSocket.send(JSON.stringify({
             'command': 'new_message',
             'message': newMessage,
-            'author': chat.participiants[0],
-            'chat_id': 26
+            'author': myProfile.id,
+            'chat_id': chat.id
         }));
+        setNewMessage("");
     };
+
+
+    const getHourAndMinuteFromTime = (timestamp) => {
+        //let timestamp = "2023-12-04T13:03:48";
+        let date = new Date(timestamp);
+
+        let hours = date.getHours();
+        let minutes = date.getMinutes();
+
+
+        hours = hours < 10 ? '0' + hours : hours;
+        minutes = minutes < 10 ? '0' + minutes : minutes;
+
+        return hours + ':' + minutes;
+    };
+
+
 
 
 
@@ -242,8 +264,8 @@ function Messages({chatId}) {
                     <div className="d-flex flex-row " style={{ minHeight:'32px', height: '7%', width: '90%', background: '#edf0f7', borderRadius: '10px', marginTop: '12px', border: '2px solid #CBD2E0' }}>
 
                         <input className="form-control-sm" type="text" style={{  fontSize:'1em', width: '90%',  background: '#edf0f7', borderRadius: '0px', borderTopLeftRadius: '8px', borderBottomLeftRadius: '8px', borderBottomRightRadius: '0px', borderTopRightRadius: '0px', borderStyle: 'none', borderTopWidth: '2px', borderTopStyle: 'none', borderRight: '2px solid #CBD2E0', borderBottomWidth: '2px', borderBottomStyle: 'none', borderLeft: '2px solid #CBD2E0' }}
-                               onKeyDown={(e)=>{sendMessageWithEnter(e)}} onChange={(e)=> setNewMessage(e.target.value)}/>
-                        <div className="d-flex align-items-center justify-content-center" onClick={sendMessage} style={{ width: '10%', height: '100%', borderStyle: 'none' }}>
+                              value={newMessage} onKeyDown={(e)=>{sendMessageWithEnter(e)}} onChange={(e)=> setNewMessage(e.target.value)}/>
+                        <div className="d-flex align-items-center justify-content-center" onClick={(e)=>{sendMessage(e)}} style={{ width: '10%', height: '100%', borderStyle: 'none' }}>
                             <i className="bi bi-send-fill" style={{ fontSize: '20px' }} ></i>
                         </div>
                     </div>

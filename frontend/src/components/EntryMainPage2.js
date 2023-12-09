@@ -78,14 +78,6 @@ function EntryMainPage2(){
 
     return (
         <div  className="d-flex flex-column">
-        <section className="d-flex  justify-content-center" style={{ backgroundColor:'', width: '100%' }}>
-            <div className="d-xl-flex justify-content-between " style={{ height: '100%', width: '1265px', marginTop: '5px', marginBottom: '5px' }}>
-                <div className="d-flex justify-content-center" style={{ maxWidth: '100%', marginTop: '5px', marginBottom: '5px' }}>
-                    <a className="btn btn-primary fw-semibold" role="button" style={{ background:  '#717D96', borderStyle: 'none', fontFamily: 'Inter, sans-serif', fontSize: '14px', textAlign: 'center', maxWidth: '150px', width: 'inherit', marginRight: '5px', marginLeft: '5px' }} href="index.html">Lost</a>
-                    <a className="btn btn-primary fw-semibold" role="button" style={{ background: '#717D96', borderStyle: 'none', fontFamily: 'Inter, sans-serif', fontSize: '14px', textAlign: 'center', maxWidth: '140px', width: 'inherit', marginRight: '5px', marginLeft: '5px' }} href="index.html">Found</a>
-                </div>
-            </div>
-        </section>
 
 
 
