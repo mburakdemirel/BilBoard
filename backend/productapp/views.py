@@ -87,6 +87,8 @@ class UserProductViewSet(ProductViewSet):
         elif product_category == 'donation':
             cache.delete_pattern("donation_products_*")
 
+
+#MİN MAX CACHE, VE ENTRY'LERE DE CACHE EKLENECEK
 class SecondhandProductViewSet(ProductViewSet):
     """View for managing all secondhand products in the system."""
 
@@ -119,10 +121,20 @@ class SecondhandProductViewSet(ProductViewSet):
         return Response(cached_data)
     
     def get_queryset(self):
-        """Retrieve all secondhand products or filter based on title using trigram similarity for fuzzy search."""
+        """
+        Retrieve all secondhand products or filter based on title and price.
+        """
         search_query = self.request.query_params.get('search', None)
+        min_price = self.request.query_params.get('min_price', None)
+        max_price = self.request.query_params.get('max_price', None)
 
         queryset = Product.objects.filter(category='secondhand')
+        if min_price:
+            queryset = queryset.filter(price__gte=min_price)
+        if max_price:
+            queryset = queryset.filter(price__lte=max_price)
+
+        # Arama sorgusu varsa, trigram benzerliğine göre filtrele
         if search_query:
             queryset = queryset.annotate(
                 similarity=TrigramSimilarity('title', search_query)
@@ -219,6 +231,8 @@ class DonationProductViewSet(ProductViewSet):
             ).filter(similarity__gt=0.15).order_by('-similarity', '-id')
 
         return queryset
+    
+
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -285,3 +299,21 @@ def delete_product_photo(request):
         cache.delete_pattern("donation_products_*")
 
     return Response({"message": "Image deleted"}, status=200)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def filter_products_by_price(request):
+    min_price = request.query_params.get('min_price', None)
+    max_price = request.query_params.get('max_price', None)
+
+    # İkinci el ürünler için filtreleme yapın
+    queryset = Product.objects.filter(category='secondhand')
+
+    # Fiyat filtrelerini uygula
+    if min_price:
+        queryset = queryset.filter(price__gte=min_price)
+    if max_price:
+        queryset = queryset.filter(price__lte=max_price)
+
+    serializer = serializers.ProductSerializer(queryset, many=True)
+    return Response(serializer.data)

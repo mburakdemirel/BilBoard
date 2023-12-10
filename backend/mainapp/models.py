@@ -60,6 +60,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     def __str__(self) -> str:
         return self.email
 
+
 class Product(models.Model):
     CATEGORY_CHOICES = [
         ('secondhand', 'Secondhand'),

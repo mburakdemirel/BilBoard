@@ -53,26 +53,27 @@ class CreateComplaintEntrySerializer(serializers.ModelSerializer):
         fields = ['id', 'topic', 'description', 'upload_date', 'target_mail']
 
     def validate_description(self, description):
-        if check_for_toxicity(description):
-            raise serializers.ValidationError("Description includes inappropriate content.")
-        detectlanguage.configuration.api_key = "ccb2449f11adf19c28cf8807d854b658"
-        result = detectlanguage.detect(description)
-        if result[0].get('language') != 'en': 
-            raise serializers.ValidationError('Description must be in English.')
+
+        endpoint = "https://bilboard-contentmoderator.cognitiveservices.azure.com/"
+        headers = {
+            "Content-Type": "text/plain",
+            "Ocp-Apim-Subscription-Key": "4042096c1951481d9859da0516043a96"
+        }
+        data = description.encode("utf-8")
+
+        response = requests.post(endpoint + "contentmoderator/moderate/v1.0/ProcessText/Screen", headers=headers, data=data)
+        
+        if response.status_code == 200:
+            result = response.json()
+            if "Terms" in result:
+                # Raise an error for inappropriate content
+                raise serializers.ValidationError("Description contains inappropriate content.")
+        else:
+            raise serializers.ValidationError("Error while connecting to the content moderator service.")
+
         return description
 
 
 
-def check_for_toxicity(description):
-    url = 'https://commentanalyzer.googleapis.com/v1alpha1/comments:analyze?key=AIzaSyBx_JtJ4B1AxpRoIU0PUU_X6eXRcV7_gNM'
-    data = {
-        'comment': {'text': description},
-        'languages': ['en'],
-        'requestedAttributes': {'TOXICITY': {}}
-    }
-    response = requests.post(url, json=data)
-    response_data = response.json()
-    # Assuming a threshold of 0.7 for toxicity
-    toxicity_score = response_data['attributeScores']['TOXICITY']['summaryScore']['value']
-    return toxicity_score > 0.5
+
 
