@@ -73,7 +73,7 @@ function ProductDetailPage() {
     }
 
     const sendMessage = () => {
-        const newMessage = { product_name: product.title, product_price: product.price};
+        const newMessage = { product_category: product.category, product_id: product.id, product_owner_id: product.user.id, product_image: product.images[0]};
         sendNewMessage(newMessage);
         navigate("/messages");
     }

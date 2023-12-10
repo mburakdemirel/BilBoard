@@ -15,6 +15,17 @@ function MessagePage() {
 
     useEffect(()=>{
         // User messages will be uploaded when page first open
+
+        if(newMessage) {
+            debugger;
+            axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
+            axios.post("http://127.0.0.1:8000/chat/create/",
+                {participiants: [newMessage.product_owner_id], category: newMessage.product_category, product_id: newMessage.product_id, image_url: newMessage.image_url}).then(response => {
+                console.log("new Chat", response.data);
+            });
+
+        }
+
         uploadAllMessages();
 
     },[])
@@ -25,17 +36,6 @@ function MessagePage() {
     // Get all messages of user
     const uploadAllMessages = async () => {
         try{
-
-            if(newMessage) {
-                debugger;
-                axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
-                axios.post("http://127.0.0.1:8000/chat/create/", {participiants: [3]}).then(response => {
-                    console.log("new Chat", response.data);
-
-
-                });
-
-            }
 
             axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
             axios.get("http://127.0.0.1:8000/chat/").then(response => {
@@ -108,7 +108,7 @@ function Products({allMessages,pull_data}) {
                             <div className="card" style={{ borderStyle: 'none',  background: index===activeIndex? '#A0ABC0' : '#EDF0F7'}} onClick={()=>{messageClick(allMessages[index].id)}}>
                                 <div className="d-flex flex-row align-items-center " style={{ height: '20%', minHeight: '80px', paddingTop: '5px', paddingBottom: '5px', borderStyle: 'none', paddingLeft: '20px', paddingRight: '6px' }}>
                                     <div className="d-flex flex-column " style={{ width: '50%', height: '100%' }}>
-                                        <h4 style={{width:'fit-content', fontSize: '20px', marginBottom: '5px', fontFamily: 'Inter, sans-serif' }}>{"Yatak"}</h4>
+                                        <h4 style={{width:'fit-content', fontSize: '20px', marginBottom: '5px', fontFamily: 'Inter, sans-serif' }}>{"yatak"}</h4>
                                         <h3 style={{width:'fit-content', paddingTop: '0px', margin: '0px', marginTop: '5px', fontSize: '20px', fontFamily:'Inter, sans-serif', fontWeight:'bold' }}>{allMessages[index] && (allMessages[index].participiants.contact_name + " " + allMessages[index].participiants.contact_surname)}</h3>
                                     </div>
                                     <div className="d-flex justify-content-end align-items-center" style={{ width: '50%', height: '100%' }}>
@@ -140,7 +140,7 @@ function Messages({chatId}) {
     console.log(myProfile);
     console.log(myProfile.id);
     axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
-    const newSocket = new ReconnectingWebSocket("ws://127.0.0.1:8000/ws/chat/26/");
+    //const newSocket = new ReconnectingWebSocket("ws://127.0.0.1:8000/ws/chat/" + chatId + "/");
 
     useEffect(() => {
 
@@ -159,19 +159,21 @@ function Messages({chatId}) {
 
     useEffect(() => {
         // Setting up the WebSocket connection
-        const newSocket = new ReconnectingWebSocket("ws://127.0.0.1:8000/ws/chat/26/");
+        const newSocket = new ReconnectingWebSocket("ws://127.0.0.1:8000/ws/chat/"+ chatId + "/");
         setSocket(newSocket);
 
         newSocket.onopen = function (e) {
             console.log("WebSocket is connected");
         };
 
+        debugger;
         newSocket.onmessage = (event) => {
             const data = JSON.parse(event.data);
 
             if(data["command"]==='new_message'){
+                debugger;
                 console.log("message", data);
-                setMessages((prevMessages) => [...prevMessages, data.message]);
+                setMessages((prevMessages) => [data.message, ...prevMessages]);
             }
 
         };
@@ -188,7 +190,8 @@ function Messages({chatId}) {
 
         if(e.key === "Enter") {
             console.log("Enter Click")
-            newSocket.send(JSON.stringify({
+
+            socket.send(JSON.stringify({
                 'command': 'new_message',
                 'message': newMessage,
                 'author': myProfile.id,
@@ -204,7 +207,7 @@ function Messages({chatId}) {
     const sendMessage = (e) => {
 
 
-        newSocket.send(JSON.stringify({
+        socket.send(JSON.stringify({
             'command': 'new_message',
             'message': newMessage,
             'author': myProfile.id,
