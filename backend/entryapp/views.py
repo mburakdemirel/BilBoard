@@ -123,7 +123,8 @@ class ComplaintEntryViewSet(viewsets.ReadOnlyModelViewSet):
             ).filter(similarity__gt=0.15).order_by('-similarity', '-vote')
 
         return queryset
-    
+
+#states : state1 only downvote, state2 no vote, state3 only upvote
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -134,9 +135,34 @@ def vote_up_complaint(request):
 
     try:
         complaint = ComplaintEntry.objects.get(id=complaint_id)
-        complaint.vote = complaint.vote + 1
-        complaint.save()
-        return Response({'success': 'successfull'}, status=200)
+        user = request.user
+
+        # down vote a basiliyken upvote a bastim
+        if user in complaint.downvoted_by.all():
+            complaint.downvoted_by.remove(user)
+            complaint.upvoted_by.add(user)
+            complaint.vote = complaint.vote + 2
+            complaint.save()
+            return Response({'success': 'Successfully upvoted and withdrawn from downvote','state' : 3}, status=200)
+
+        # daha onceden up oyladiysam ama butona yine bastiysam geri cek.
+        elif user in complaint.upvoted_by.all():
+            complaint.upvoted_by.remove(user)
+            complaint.vote = complaint.vote - 1
+            print('geri cektim',complaint.vote )
+            complaint.save()
+            return Response({'success': 'Successfully withdrawn from upvote','state' : 2}, status=200)
+
+
+        # hic oy vermediysem buraya gir. 
+        elif user not in complaint.upvoted_by.all():
+            complaint.upvoted_by.add(user)
+            complaint.vote = complaint.vote + 1
+            print('I upvoted',complaint.vote )
+            complaint.save()
+
+
+        return Response({'success': 'Successfully upvoted','state' : 3}, status=200)
     except ComplaintEntry.DoesNotExist:
         return Response({'error': 'Complaint with specified id not found'}, status=404)
     
@@ -150,9 +176,30 @@ def vote_down_complaint(request):
 
     try:
         complaint = ComplaintEntry.objects.get(id=complaint_id)
-        complaint.vote = complaint.vote - 1
-        complaint.save()
-        return Response({'success': 'successfull'}, status=200)
+        user = request.user
+
+        #oyumu upvotedan cekip downvote a attim
+        if user in complaint.upvoted_by.all():
+            complaint.upvoted_by.remove(user)
+            complaint.downvoted_by.add(user)
+            complaint.vote = complaint.vote - 2
+            complaint.save()
+            return Response({'success': 'Successfully downvoted and withdrawn from upvote','state' : 1}, status=200)
+
+        #daha onceden downvote oyu attigim halde tekrar downvote dedim oyumu geri cek = iki kere tiklamak
+        elif user in complaint.downvoted_by.all():
+            complaint.downvoted_by.remove(user)
+            complaint.vote = complaint.vote + 1
+            complaint.save()
+            return Response({'success': 'Successfully withdrawn from downvote','state' : 2}, status=200)
+
+        # ilk kez down vote verdim
+        elif user not in complaint.downvoted_by.all():
+            complaint.downvoted_by.add(user)
+            complaint.vote = complaint.vote - 1
+            complaint.save()
+
+        return Response({'success': 'Successfully downvoted','state' : 1}, status=200)
     except ComplaintEntry.DoesNotExist:
         return Response({'error': 'Complaint with specified id not found'}, status=404)
     

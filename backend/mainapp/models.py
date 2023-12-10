@@ -131,6 +131,16 @@ class ComplaintEntry(EntryBase):
     """
     vote = models.DecimalField(max_digits=6, decimal_places=0,null=True, blank=True, default=0)
     target_mail = models.EmailField(verbose_name="target mail", max_length=100, blank=True, null=True)
+    upvoted_by = models.ManyToManyField(
+        settings.AUTH_USER_MODEL,
+        related_name='upvoted_complaints',
+        blank=True
+    )
+    downvoted_by = models.ManyToManyField(
+        settings.AUTH_USER_MODEL,
+        related_name='downvoted_complaints',
+        blank=True
+    )
 
     def _str_(self):
         return super()._str_()
