@@ -234,7 +234,7 @@ def get_products_by_user_id(request):
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
-def add_favorites(request):
+def clicked_favorites(request):
     product_id = request.data.get('product_id')
     if not product_id:
         return Response({'error': 'Product ID should be sent'}, status=400)
@@ -248,33 +248,11 @@ def add_favorites(request):
 
     # Check if the product is already favorited
     if product in user.favorited_products.all():
-        return Response({'status': 'Product is already in favorites'}, status=400)
+        user.favorited_products.remove(product)
+        return Response({'status': 'Product removed from favorites', 'state':0}, status=200)
 
     user.favorited_products.add(product)
-    return Response({'status': 'Product added to favorites'})
-
-
-@api_view(['POST'])
-@permission_classes([IsAuthenticated])
-def remove_favorites(request):
-    product_id = request.data.get('product_id')
-    if not product_id:
-        return Response({'error': 'Product ID should be sent'}, status=400)
-
-    try:
-        product = Product.objects.get(id=product_id)
-    except Product.DoesNotExist:
-        return Response({'error': 'Product with specified id not found'}, status=404)
-    
-    user = request.user
-
-    # Check if the product favorited the product
-    if product in user.favorited_products.all():
-        user.favorited_products.remove(product)
-        return Response({'status': 'Product is removed from favorites'}, status=200)
-
-    
-    return Response({'status': 'User didnt favorited this product. '})
+    return Response({'status': 'Product added to favorites','state':1}, status=200)
 
 
 @api_view(['DELETE'])

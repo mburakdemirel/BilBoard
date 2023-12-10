@@ -9,7 +9,7 @@ from django.urls import (
 
 from rest_framework.routers import DefaultRouter
 from productapp import views
-from productapp.views import get_products_by_user_id, add_favorites, remove_favorites
+from productapp.views import get_products_by_user_id, clicked_favorites
 
 router = DefaultRouter()
 # /user/product/ diyip giderse daha güzel olur çünkü user özelinde göstercek ürünleri
@@ -36,7 +36,6 @@ urlpatterns = [
     #api/product/remove-favorites/             !!!!!   product_id will be sent from body
     path('', include(router.urls)),
     path('products/by-id/', get_products_by_user_id, name='get-products-by-user-id'),
-    path('product/add-favorites/', add_favorites, name='add-favorites'),
-    path('product/remove-favorites/', remove_favorites, name='remove-favorites'),
+    path('product/add-favorites/', clicked_favorites, name='add-favorites'),
     path('product/delete-product-photo/', views.delete_product_photo, name='delete_product_photo')
 ]
