@@ -9,7 +9,7 @@ from django.urls import (
 
 from rest_framework.routers import DefaultRouter
 from entryapp import views
-from entryapp.views import vote_up_complaint, vote_down_complaint
+from entryapp.views import vote_up_complaint, vote_down_complaint, list_voted_complaints
 
 router = DefaultRouter()
 # /user/product/ diyip giderse daha güzel olur çünkü user özelinde göstercek ürünleri
@@ -41,5 +41,6 @@ urlpatterns = [
 
     path('', include(router.urls)),
     path('complaint/vote-up/', vote_up_complaint, name='vote-up'),
-    path('complaint/vote-down/',vote_down_complaint , name='vote-down')
+    path('complaint/vote-down/',vote_down_complaint , name='vote-down'),
+    path('user/list-my-voted-complaints/', list_voted_complaints, name='list-my-voted-complaints')
 ]

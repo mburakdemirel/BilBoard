@@ -37,14 +37,10 @@ class DefaultComplaintEntrySerializer(serializers.ModelSerializer):
         fields = ['id', 'topic', 'description', 'user', 'upload_date', 'vote', 'target_mail']
 
 
-"""class ComplaintEntrySerializer(serializers.ModelSerializer):
-    
-    üzerinde tiklayinca description gösteren serializer
-    
-    # user döndürmedik, çünkü sikayetler anonim olsun. Complaint checker check edicek.
+class ComplaintEntrySerializer(serializers.ModelSerializer):
     class Meta:
         model = ComplaintEntry
-        fields = ['id', 'topic', 'description', 'upload_date', 'vote', 'target_mail']"""
+        fields = ['id', 'topic', 'description', 'upload_date', 'vote', 'target_mail']
 
 
 class CreateComplaintEntrySerializer(serializers.ModelSerializer):

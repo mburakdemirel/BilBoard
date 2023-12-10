@@ -1,6 +1,6 @@
 import enum
 from django.contrib.postgres.search import TrigramSimilarity
-from mainapp.models import LostAndFoundEntry, ComplaintEntry 
+from mainapp.models import LostAndFoundEntry, ComplaintEntry, CustomUser
 from entryapp import serializers
 from rest_framework import viewsets 
 from rest_framework.permissions import IsAuthenticated
@@ -149,7 +149,6 @@ def vote_up_complaint(request):
         elif user in complaint.upvoted_by.all():
             complaint.upvoted_by.remove(user)
             complaint.vote = complaint.vote - 1
-            print('geri cektim',complaint.vote )
             complaint.save()
             return Response({'success': 'Successfully withdrawn from upvote','state' : 2}, status=200)
 
@@ -158,7 +157,6 @@ def vote_up_complaint(request):
         elif user not in complaint.upvoted_by.all():
             complaint.upvoted_by.add(user)
             complaint.vote = complaint.vote + 1
-            print('I upvoted',complaint.vote )
             complaint.save()
 
 
@@ -203,4 +201,15 @@ def vote_down_complaint(request):
     except ComplaintEntry.DoesNotExist:
         return Response({'error': 'Complaint with specified id not found'}, status=404)
     
-    
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def list_voted_complaints(request):
+    user = CustomUser.objects.get(email=request.user)
+    count = user.upvoted_complaints.count() + user.downvoted_complaints.count()
+    upvoted_complaints = serializers.ComplaintEntrySerializer(user.upvoted_complaints, many=True)
+    downvoted_complaints = serializers.ComplaintEntrySerializer(user.downvoted_complaints, many=True)
+
+    if count == 0:
+        return Response({"message": "There are no voted complaint of the user", })
+    else:
+        return Response({"upvoted_complaints": upvoted_complaints.data, "downvoted_complaints": downvoted_complaints.data}) 
