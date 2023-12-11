@@ -22,7 +22,7 @@ const WelcomeSection = () => (
                             <strong>WELCOME TO BILBOARD</strong>
                         </h2>
                         <p className="mb-4" style={{ fontFamily: 'Inter' }}>
-                            A place where Bilkent students can buy or sell secondhand goods, borrow or donate stuff,
+                            A place where Bilkent University members can buy or sell secondhand goods, borrow or donate stuff,
                             post about the lost items they found, and write their complaints.
                         </p>
                         {/** should we remove these?? */}
@@ -40,7 +40,7 @@ const ServicesSection = () => (
         <div className="row mb-5" style={{ width: '100%' }}>
             <div className="col-md-8 col-xl-6 text-center mx-auto">
                 <h2 style={{ color: '#eef0f7' }}>About our services</h2>
-                <p className="w-lg-50" style={{ color: '#eef0f7' }}>BilBoard is a web application created only for Bilkent students.</p>
+                <p className="w-lg-50" style={{ color: '#eef0f7' }}>BilBoard is a web application created only for Bilkent members.</p>
             </div>
         </div>
         <div className="row gy-4 row-cols-2 row-cols-md-4 d-flex justify-content-center" style={{ padding: '0', width: '100%' }}>
@@ -116,7 +116,7 @@ const WhyUseSection = () => (
                             there is no official media for Bilkent students to exchange stuff or write their complaints. Students use
                             other social media platforms for these purposes. With BilBoard, we created a secure place for those exchanges
                             and added a complaint system so the students' complaints could be heard. We believe BilBoard will benefit most
-                            of the Bilkent students.
+                            of the Bilkent members.
                         </p>
                     </div>
                 </div>
