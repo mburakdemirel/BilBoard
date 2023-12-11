@@ -1,4 +1,7 @@
 /*used this website for this code: https://www.viget.com/articles/styling-native-file-upload-input-field/ */
+input[type = "file"]{
+  color: transparent;
+}
 input[type="file"]::file-selector-button {
     border-radius: 5px;
     padding: 0 16px;

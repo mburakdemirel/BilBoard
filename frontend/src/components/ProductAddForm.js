@@ -9,43 +9,33 @@ export function ProductAddForm() {
     const [price, setPrice] = useState(0);
     const [description, setDescription] = useState("");
     const [category, setCategory] = useState("donation");
-    const [photo, setPhoto] = useState();
+    const [photo, setPhoto] = useState([]);
     const [returnDate, setReturnDate] = useState();
-    const [imgPreviews, setImgPreviews] = useState([]);
     const [errMsg, setErrMsg] = useState("");
+    const [count, setCount] = useState(0);
 
     useEffect(() => {
         setPrice(0);
     }, [category]);
 
-    
+
 
     function handleImage(e) {
-        //maybe we don't need this ???
+        console.log(count);
         setErrMsg("");
-        if(e.target.files.length > 5) {
-            setErrMsg("You should not upload more than 5 images.");
-            e.target.value = null;
+        if (e.target.files.length > 5 || count > 5 || e.target.files.length + count > 5) {
+            setErrMsg("You cannot upload more than 5 images.");
             return;
         }
         const files = Array.from(e.target.files);
-        if (files.length === 0) {
-            setImgPreviews([]);
-        }
-        const imageArr = [];
         files.forEach((file) => {
-            const reader = new FileReader();
-            reader.onload = () => {
-                imageArr.push({ file, previewURL: reader.result });
-                if (imageArr.length === files.length) {
-                    setImgPreviews(imageArr);
-                }
+            if (file.type.startsWith("image/")) {
+                setCount(prevCount => prevCount + 1);
+                setPhoto(prevFiles => [...prevFiles, file]);
             }
-            reader.readAsDataURL(file);
-        })
-        setPhoto(e.target.files);
-        console.log(e.target.files);
-        console.log("in handle image");
+        });
+        console.log(photo);
+
     }
 
     //after submitting the form clean each form area values.
@@ -123,7 +113,7 @@ export function ProductAddForm() {
                         >
                             <h3 className="text-center" style={{ fontFamily: 'Inter,sans-serif' }}>Add a New Product</h3>
                             {errMsg && <div className="alert alert-danger" role="alert">{errMsg}</div>}
-                            <form onSubmit={handleSubmit} method="post" className="form-card" style={{height: 'fit-content', margin: 'auto', width: '60%' }}>
+                            <form onSubmit={handleSubmit} method="post" className="form-card" style={{ height: 'fit-content', margin: 'auto', width: '60%' }}>
                                 <div className="form-group col-xl-6 flex-column d-flex" style={{ width: '100%', paddingTop: '5px' }}>
                                     <div className="row justify-content-between text-left">
                                         <label className="form-control-label"><h5>Title</h5></label>
@@ -162,19 +152,19 @@ export function ProductAddForm() {
 
                                         </select>
                                     </div>
-                                   
+
                                     <div className="row justify-content-between text-left">
                                         <h5 style={{ fontFamily: 'Inter, sans-serif' }}>Photos</h5>
                                         <label className="form-control-label" htmlFor="FormControl" style={{ fontFamily: 'Inter, sans-serif', textAlign: 'left' }}>Choose files to upload (at most 5)</label>
                                         <input name="product_photos" onChange={(e) => { handleImage(e); }}
                                             id="FormControl" type="file" accept="image/*" multiple></input>
                                         <div style={{ display: 'flex', flexWrap: 'wrap' }}>
-                                            {imgPreviews.map((imagePreview, index) => (
+                                            {photo.map((imagePreview, index) => (
                                                 <div key={index} style={{ margin: '10px', textAlign: 'center' }}>
                                                     <img
-                                                        src={imagePreview.previewURL}
+                                                        src={URL.createObjectURL(imagePreview)}
                                                         alt={`Preview ${index}`}
-                                                        style={{ maxWidth: '100px', maxHeight: '100px', borderRadius: '5px' }}
+                                                        style={{ border: 'solid grey 1px', maxWidth: '100px', maxHeight: '100px', borderRadius: '5px' }}
                                                     />
                                                 </div>
                                             ))}
@@ -198,7 +188,6 @@ export function ProductAddForm() {
                                     </div>
                                     {(category === "secondhand") ? (<div
                                         className="row justify-content-between text-left">
-                                        {/** should I make this areas readonly according to the category??? */}
                                         <label className="form-control-label"><h5>Price</h5></label>
                                         <input required={category === "secondhand"} readOnly={category !== "secondhand"} value={price} onChange={(e) => setPrice(e.target.value)} min={0} placeholder="Enter Price (in Turkish Liras)" type="number"
                                             className="form-control"
@@ -226,7 +215,7 @@ export function ProductAddForm() {
                                         }} type="date">
 
                                         </input>
-                                    </div>): <></>}
+                                    </div>) : <></>}
                                     <div style={{ paddingTop: '20px' }} className="row justify-content-between text-left">
                                         <div className="col-xl-6 flex-column d-flex">
                                             <button onClick={() => { navigate("/main_page/secondhand") }} className="btn btn-primary d-block w-100 mb-3" style={{ background: '#2d3648', border: 'none', fontFamily: 'Inter, sans-serif', height: '40px' }}>Cancel</button>

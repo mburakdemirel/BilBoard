@@ -269,7 +269,6 @@ function Products({myProfile, func, editMode}) {
     );
 }
 
-{/** according to the value of myProfile boolean either the user's own profile will be shown (true) or other person's profile will be shown (false) */ }
 function ProfileArea({myProfile,func} ) {
     const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
     const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
@@ -285,6 +284,8 @@ function ProfileArea({myProfile,func} ) {
     const [newPassword, setNewPassword] = useState();
     const [newPasswordConfirm, setNewPasswordConfirm] = useState();
     const [oldPassword, setOldPassword] = useState();
+    const [chosenImg, setChosenImg] = useState();
+    const [profileImg, setProfileImg] = useState(myProfile.profile_photo);
 
 
 
@@ -293,7 +294,7 @@ function ProfileArea({myProfile,func} ) {
         setLoading(true);
         try{
             // do update operations
-            const {data} = await axios.patch('http://127.0.0.1:8000/api/user/me/', user);
+            const {data} = await axios.patch('http://127.0.0.1:8000/api/user/me/', user, { headers: { 'Content-Type': 'multipart/form-data' } });
             localStorage.setItem('myProfile', JSON.stringify(data));
             console.log(data);
             myProfile = data;
@@ -302,8 +303,10 @@ function ProfileArea({myProfile,func} ) {
             setEditMode(false);
             func(false);
             setLoading(false);
+            setProfileImg(data.profile_photo);
         }
         catch (error){
+            console.log(error);
             console.log(error.response.data.error);
             window.alert(error.response.data.error)
             setLoading(false);
@@ -315,17 +318,26 @@ function ProfileArea({myProfile,func} ) {
         setNewPasswordConfirm("");
         setNewPassword("");
         setOldPassword("");
+        let user = new FormData();
 
         if(editMode){
             if(oldPassword) {
                 if(newPassword && newPasswordConfirm){
                     if (newPassword === newPasswordConfirm) {
-                        const user = {
-                            name: newName,
-                            surname: newSurname,
-                            old_password: oldPassword,
-                            new_password: newPassword,
-                        };
+                        
+                        if(profileImg) {
+                            user = {...user, profile_photo: profileImg};
+                            console.log(user);
+                        }
+                        user.append('name', newName);
+                        user.append('surname', newSurname);
+                        user.append("old_password", oldPassword);
+                        user.append("new_password", newPassword);
+                        if(chosenImg) {
+                            user.append("profile_photo", chosenImg, chosenImg.name);
+                        }
+                        console.log("in change password");
+                        console.log(user);
                         updateUser(user);
                     } else {
                         window.alert("Passwords are not same!")
@@ -339,11 +351,17 @@ function ProfileArea({myProfile,func} ) {
             else if(newPassword || newPasswordConfirm ){
                 window.alert("You need to enter old password")
             }
+            else if(chosenImg) {
+                    user.append("profile_photo", chosenImg, chosenImg.name);
+                    user.append("name", newName);
+                    user.append("surname", newSurname);
+                    console.log("changing the profile photo");
+                    console.log(...user);
+                    updateUser(user);  
+            }
             else{
-                const user = {
-                    name: newName,
-                    surname: newSurname,
-                };
+                user.append("name", newName);
+                user.append("surname", newSurname);
                 updateUser(user);
 
             }
@@ -358,6 +376,7 @@ function ProfileArea({myProfile,func} ) {
         if(editMode){
             setEditMode(false);
             func(false);
+            setChosenImg(null);
         }
 
     };
@@ -391,9 +410,6 @@ function ProfileArea({myProfile,func} ) {
 
     };
 
-
-
-
     return (
         <div
             className=" d-flex  flex-grow-1 justify-content-center align-items-center order-last"  data-aos="fade-left" data-aos-duration="600" style={{width: '600px', height: '40vw', minHeight: '554px', maxWidth:'93vw', paddingTop:'10px',}}>
@@ -419,8 +435,8 @@ function ProfileArea({myProfile,func} ) {
                 </div>
 
                 <div className="d-flex d-xxl-flex flex-column justify-content-center align-items-center align-items-xxl-center" style={{ height: 'initial', width: '100%' }}>
-                    <img className="rounded-circle" src={Placeholder} style={{ height: '150px', width: '150px', marginBottom: '15px' }} alt="User Profile" />
-
+                    <img className="rounded-circle" src={editMode && chosenImg ? URL.createObjectURL(chosenImg):profileImg} style={{ height: '150px', width: '150px', marginBottom: '15px' }} alt="User Profile" />
+                    {editMode ? <input type='file' style={{paddingBottom: "3px", marginLeft:"30%"}} accept='image/*' onChange={(e) => {setChosenImg(e.target.files[0]);console.log(e.target.files);}}></input> :<></>}
                     {editMode
                         ?
                         <div className="d-flex flex-row justify-content-center" style={{width:'100%', padding:'0px', height:'37px'}}>
