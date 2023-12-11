@@ -11,10 +11,10 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.response import Response
-from django.core.cache import cache
-import time
-import redis
-redis_instance = redis.StrictRedis(host='127.0.0.1', port=6379, db=1)
+
+from bilboard_backend.redis_config import get_redis_instance
+from bilboard_backend.redis_config import cache
+redis_instance = get_redis_instance()
 
 class ProductViewSet(viewsets.ModelViewSet, ABC):
     serializer_class = serializers.ProductSerializer
@@ -99,8 +99,29 @@ class SecondhandProductViewSet(ProductViewSet):
 
     def list(self, request, *args, **kwargs):
         search_query = request.query_params.get('search', None)
+        min_price = self.request.query_params.get('min_price', None)
+        max_price = self.request.query_params.get('max_price', None)
         page_number = request.query_params.get('page', 1)  # Default to page 1 if no page is specified
-        cache_key = f"secondhand_products_{search_query or 'all'}_page_{page_number}"
+        # 3 params birden varsa
+        if search_query and min_price and max_price:
+            cache_key = f"secondhand_products_{search_query}_{min_price}_{max_price}_page_{page_number}"
+        # Sadece search ve min_price varsa
+        elif search_query and min_price:
+            cache_key = f"secondhand_products_{search_query}_{min_price}_page_{page_number}"
+        # Sadece search ve max_price varsa
+        elif search_query and max_price:
+            cache_key = f"secondhand_products_{search_query}_{max_price}_page_{page_number}"
+        elif search_query:
+            cache_key = f"secondhand_products_{search_query}_page_{page_number}"
+        elif min_price and max_price:
+            cache_key = f"secondhand_products_{min_price}_{max_price}_page_{page_number}"
+        elif min_price:
+            cache_key = f"secondhand_products_{min_price}_page_{page_number}"
+        elif max_price:
+            cache_key = f"secondhand_products_{max_price}_page_{page_number}"
+        else:
+            cache_key = f"secondhand_products_all_page_{page_number}"
+
         cached_data = cache.get(cache_key)
 
         if cached_data is not None:

@@ -7,7 +7,9 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
-
+from bilboard_backend.redis_config import get_redis_instance
+from bilboard_backend.redis_config import cache
+redis_instance = get_redis_instance()
 
 class EntryType(enum.Enum):
     LOSTANDFOUND = 1
@@ -57,8 +59,15 @@ class UserLostAndFoundEntryViewSet(viewsets.ModelViewSet):
         return self.queryset.filter(user=self.request.user).order_by('-id')
 
     def perform_create(self, serializer):
-        """Create a new Lost and Found Entry."""
+        """Create a new product."""
         serializer.save(user=self.request.user)
+        cache.delete_pattern("laf_entries_*")
+        
+    #Update yok, complaint ve laf update edilemez
+
+    def perform_destroy(self, instance):
+        super().perform_destroy(instance)
+        cache.delete_pattern("laf_entries_*")
 
 
 class LostAndFoundEntryViewSet(viewsets.ReadOnlyModelViewSet):
@@ -72,6 +81,29 @@ class LostAndFoundEntryViewSet(viewsets.ReadOnlyModelViewSet):
         if self.action in ['retrieve']:
             return SerializerFactory.get_serializer(entry_type=EntryType.LOSTANDFOUND,action=ActionType.RETRIEVE) 
         return SerializerFactory.get_serializer(entry_type=EntryType.LOSTANDFOUND,action=ActionType.DEFAULT) 
+    
+    def list(self, request, *args, **kwargs):
+        search_query = request.query_params.get('search', None)
+        page_number = request.query_params.get('page', 1)  # Default to page 1 if no page is specified
+        cache_key = f"laf_entries_{search_query or 'all'}_page_{page_number}"
+        cached_data = cache.get(cache_key)
+
+        if cached_data is not None:
+            # Return the cached data for the specific page
+            return Response(cached_data)
+
+        queryset = self.get_queryset()
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            cached_data = serializer.data
+            cache.set(cache_key, cached_data, timeout=60*60)  # Cache for 1 hour
+            return self.get_paginated_response(cached_data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        cached_data = serializer.data
+        cache.set(cache_key, cached_data, timeout=60*60) 
+        return Response(cached_data)
 
     def get_queryset(self):
         """Retrieve all LaF entries or filter based on title using trigram similarity for fuzzy search."""
@@ -104,17 +136,45 @@ class UserComplaintEntryViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         """Create a new Lost and Found Entry."""
         serializer.save(user=self.request.user)
+        cache.delete_pattern("complaint_entries_*")
+
+    def perform_destroy(self, instance):
+        super().perform_destroy(instance)
+        cache.delete_pattern("complaint_entries_*")
 
 
 class ComplaintEntryViewSet(viewsets.ReadOnlyModelViewSet):
-    """View for managing all L&F entries in the system."""
+    """View for managing all complaint entries in the system."""
     serializer_class = serializers.DefaultComplaintEntrySerializer
     queryset = ComplaintEntry.objects.all()
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
+    def list(self, request, *args, **kwargs):
+        search_query = request.query_params.get('search', None)
+        page_number = request.query_params.get('page', 1)  # Default to page 1 if no page is specified
+        cache_key = f"complaint_entries_{search_query or 'all'}_page_{page_number}"
+        cached_data = cache.get(cache_key)
+
+        if cached_data is not None:
+            # Return the cached data for the specific page
+            return Response(cached_data)
+
+        queryset = self.get_queryset()
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            cached_data = serializer.data
+            cache.set(cache_key, cached_data, timeout=60*60)  # Cache for 1 hour
+            return self.get_paginated_response(cached_data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        cached_data = serializer.data
+        cache.set(cache_key, cached_data, timeout=60*60) 
+        return Response(cached_data)
+
     def get_queryset(self):
-        """Retrieve all LaF entries or filter based on title using trigram similarity for fuzzy search."""
+        """Retrieve all complaint entries or filter based on title using trigram similarity for fuzzy search."""
         queryset = ComplaintEntry.objects.all().order_by('-vote', '-id')
         search_query = self.request.query_params.get('search', None)
         if search_query:
