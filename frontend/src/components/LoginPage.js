@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import axios from "axios";
 import './assets/bootstrap/css/bootstrap.min.css';
 import {Link, NavLink, useNavigate} from 'react-router-dom';
@@ -19,6 +19,14 @@ function LoginPage(){
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
     const [isForgotPassword, setIsForgotPassword] = useState(false);
+
+
+    useEffect(() => {
+        if(localStorage.getItem('access_token')){
+            navigate("/main_page/secondhand");
+        }
+    }, []);
+
     // Submit method
     const submit = async (e) => {
         e.preventDefault();

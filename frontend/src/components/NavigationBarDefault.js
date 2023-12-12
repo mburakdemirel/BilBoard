@@ -7,9 +7,10 @@ import * as bootstrap from 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Popover from 'react-bootstrap/Popover';
 import Overlay from 'react-bootstrap/Overlay';
-import PlaceHolder from "./assets/img/WF Image Placeholder.png";
+import ProfilePlaceholder from "./assets/img/default_profile.webp";
 import axios from "axios";
 import {Dropdown} from 'react-bootstrap';
+import Profile from "./Profile";
 
 function NavigationBarDefault() {
     const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
@@ -52,8 +53,9 @@ function NavigationBarDefault() {
 
     const getFavorites = async () => {
         try{
+            debugger;
             axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
-            const {data} = await axios.get('http://127.0.0.1:8000/api/user/my-favorites/') ;
+            const {data} = await axios.get('http://127.0.0.1:8000/api/user/my-favorites/');
             console.log("favorites from backend " , data.message);
             data.message.forEach((product) => favoritesIdList.push(product.id));
             localStorage.setItem('favoritesObjects', JSON.stringify(data.message));
@@ -173,7 +175,10 @@ function NavigationBarDefault() {
 
                     </i>
 
-                    <div><img onClick={(e)=>navigate('/profile')} className="rounded-circle" style={{ width: '50px', height: '50px' }} src={Burak} alt="Profile" /></div>
+                    <div >
+                        <img
+                            onClick={(e)=>navigate('/profile')} className="rounded-circle" style={{ width: '50px', height: '50px' }} src={myProfile.profile_photo ? myProfile.profile_photo : ProfilePlaceholder} alt="Profile" />
+                    </div>
                 </div>
             </div>
         </nav>}

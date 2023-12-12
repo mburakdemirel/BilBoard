@@ -5,6 +5,7 @@ import NavigationBarLanding from "./NavigationBarLanding";
 import ImageViewer from 'react-simple-image-viewer';
 import './assets/bootstrap/css/bootstrap.min.css'; // Import Bootstrap CSS
 import "bootstrap-icons/font/bootstrap-icons.css";
+import { RWebShare } from "react-web-share";
 import Burak2 from './assets/img/burak2.jpeg';
 import {useEffect, useState, useCallback } from 'react';
 import {useNavigate, useParams} from 'react-router-dom';
@@ -91,29 +92,51 @@ function ProductDetailPage() {
     const addFavourites = async (index) => {
 
         setFavoritesAdded(true);
+        axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization')
+        const {data} = await axios.post('http://127.0.0.1:8000/api/product/clicked-favorites/', {product_id: index}) ;
+        console.log(data);
+        console.log("index " + index);
 
-        if (favorites && checkContains(index)) {
-            removeFavourites(index);
+        if(checkContains(index)){
+            setFavoritesAdded(false);
+            console.log("removed");
+            setFavorites((current) =>
+                current.filter((favorite) => favorite.id !== index)
+            );
         }
         else{
-            debugger;
-            axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization')
-            const {data} = await axios.post('http://127.0.0.1:8000/api/product/add-favorites/', {product_id: index}) ;
-            console.log(data);
-            console.log("index " + index);
-            setFavorites([...favorites,product]);
+            if(favorites){
+                setFavorites([...favorites,product]);
+            }
+            else {
+                setFavorites([product]);
+            }
         }
 
     }
-    const removeFavourites = async (index) => {
-        setFavoritesAdded(false);
-        console.log("removed");
-        const {data} = await axios.post('http://127.0.0.1:8000/api/product/remove-favorites/', {product_id: index}) ;
-        console.log(data)
-        setFavorites((current) =>
-            current.filter((favorite) => favorite.id !== index)
-        );
-    }
+
+
+    const deleteProduct = async (product) => {
+        setLoading(true);
+        let confirmed;
+        if (window.confirm("Do you confirm deleting the product?")) {
+            confirmed = true;
+        } else {
+            confirmed = false;
+        }
+
+        if(confirmed){
+            try{
+                // do update operations
+                await axios.delete('http://127.0.0.1:8000/api/product/' +  product.category + '/' + product.id);
+                navigate("/main_page/secondhand");
+            }
+            catch (error){
+
+            }
+        }
+
+    };
 
 
     const openImageViewer = useCallback((index) => {
@@ -176,9 +199,13 @@ function ProductDetailPage() {
 
                 <div className="d-flex flex-grow-1 justify-content-center align-items-center" data-aos="fade-left" data-aos-duration="600" style={containerStyle}>
                     <div className="d-flex flex-column " style={cardStyle}>
-                        <h1 className="placeholder-glow" style={headingStyle}>{product.title}
-                            {loading && <span className="placeholder col-7"></span>}
-                        </h1>
+                        {loading ?
+                            <span className="placeholder col-7"></span>
+                            :
+                            <h1 className="placeholder-glow" style={headingStyle}>{product.title}</h1>
+                        }
+
+
                         <hr style={hrStyle} />
                         {(() => {
                             if(product.category==="borrow"){
@@ -205,7 +232,7 @@ function ProductDetailPage() {
                              onClick={goToProfile}>
                             <div className="d-flex flex-column justify-content-evenly" style={{ height: '100%', width: '100%'}}>
                                 {loading ? <span className="placeholder col-5 h-50"></span> : <h1 style={sellerNameStyle}>{product.user.name + " " + product.user.surname}</h1>}
-                                {loading ? <span className="placeholder col-5 h-25"></span> : <h1 style={sellerPhoneStyle}>123123213</h1>}
+                                {loading ? <span className="placeholder col-5 h-25"></span> : <h1 style={sellerPhoneStyle}>{product.user.phone_number}</h1>}
                             </div>
                             <img className="rounded-circle mb-3 fit-cover" data-bss-hover-animate="pulse" src={loading? Burak2 :product.user.profile_photo} style={imageStyle} />
                         </div>
@@ -220,7 +247,9 @@ function ProductDetailPage() {
                             <div className="d-flex flex-row justify-content-around align-items-center" style={{ height: '100%', minWidth: '90px' }}>
                                 {product.user && product.user.id === myProfile.id ?
                                     <button disabled={loading} className="btn btn-primary" type="button" style={{ width: '40px', fontWeight: 'bold', background: '#2d3648', borderStyle: 'none', borderColor: '#2d3648', height: '90%' }}>
-                                        {!loading && <i className="bi bi-trash"></i>}
+                                        {!loading &&
+                                            <i className="bi bi-trash"
+                                               onClick={()=>deleteProduct(product)}></i>}
                                     </button>
                                     :
                                     <button onClick={ ()=>  {addFavourites(product.id)}} disabled={loading} className="btn btn-primary" type="button" style={{ width: '40px', fontWeight: 'bold', background: '#2d3648', borderStyle: 'none', borderColor: '#2d3648', height: '90%' }}>
@@ -229,9 +258,20 @@ function ProductDetailPage() {
                                     </button>
 
                                 }
-                                <button disabled={loading} className="btn btn-primary" type="button" style={{ width: '40px', fontWeight: 'bold', background: '#2d3648', borderStyle: 'none', borderColor: '#2d3648', height: '90%' }}>
-                                    {!loading && <i className="bi bi-share-fill" ></i>}
-                                </button>
+
+                                <RWebShare data={{text: "Web Share - GfG", url: window.location.href, title: "Share",
+                                    }}
+                                           sites={["facebook", "twitter", "whatsapp", "telegram", "linkedin", "mail", "copy"]}
+                                    onClick={() =>
+                                        console.log("shared successfully!")
+                                    }
+                                >
+                                    <button disabled={loading} className="btn btn-primary" type="button" style={{ width: '40px', fontWeight: 'bold', background: '#2d3648', borderStyle: 'none', borderColor: '#2d3648', height: '90%' }}>
+                                        {!loading && <i className="bi bi-share-fill" ></i>}
+
+
+                                    </button>
+                                </RWebShare>
                             </div>
                         </div>
                         <hr style={hrStyle} />
@@ -242,14 +282,15 @@ function ProductDetailPage() {
                                     <span className="d-flex" style={{ fontSize: '12px', fontFamily: 'Inter, sans-serif', fontWeight: 'bold', textAlign: 'center', marginRight: '-' }}>{product.category}</span>
                                 </button>
                             </div>
-                            {loading &&<div className="d-flex flex-column placeholder-glow" style={{width:'100%'}}>
+                            {loading ?<div className="d-flex flex-column placeholder-glow" style={{width:'100%'}}>
                                 <span className="placeholder col-9"  style={{height:'17px', marginTop:'10px', marginBottom:'10px'}}></span>
                                 <span className="placeholder col-7"  style={{height:'17px', marginBottom:'10px'}}></span>
                                 <span className="placeholder col-5"  style={{height:'17px', marginBottom:'10px'}}></span>
+                                </div>
+                                :
+                                <p style={{height: '100%', width: '100%', fontSize: '14px', textAlign: 'left'}}>{product.description}</p>
+                            }
 
-                            </div>
-                                }
-                            <p style={{height: '100%', width: '100%', fontSize: '14px', textAlign: 'left'}}>{product.description}</p>
                         </div>
                     </div>
                 </div>

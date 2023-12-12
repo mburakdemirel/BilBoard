@@ -18,14 +18,19 @@ function ProductMainPage() {
     console.log("pageType in mainpage" + pageType);
     const [loading, setLoading] = useState(true);
     const [productCategory, setProductCategory] = useState();
-    const [page, setPage] = useState();
+    const [page, setPage] = useState(1);
     const [products, setProducts] = useState([]);
     const [hasMore, setHasMore] = useState(true);
 
+
+
+
     useEffect(()=>{
+        debugger;
         console.log("In use effect" + searchText);
         setProducts([]);
         setPage(1);
+        setHasMore(true);
         // Messages in the selected index will be opened on the right side
     },[pageType,searchText])
 
@@ -33,7 +38,6 @@ function ProductMainPage() {
         console.log("page use effect" + page);
         if (page === 1) {
             setLoading(true);
-
             uploadProducts();
         }
 
@@ -52,7 +56,7 @@ function ProductMainPage() {
                     if(productData) {
                         setProducts(prevProducts => [...prevProducts, ...productData]);
                         setPage(prevPage => prevPage + 1);
-                        setHasMore(data.length >= 16);
+                        setHasMore(productData.length >= 16);
                     }
                 }
                 else{
@@ -62,7 +66,7 @@ function ProductMainPage() {
                     if(productData) {
                         setProducts(prevProducts => [...prevProducts, ...productData]);
                         setPage(prevPage => prevPage + 1);
-                        setHasMore(data.length >= 16);
+                        setHasMore(productData.length >= 16);
                     } 
                 }
 
@@ -121,7 +125,9 @@ function ProductMainPage() {
                                                                 <h1 className="text-center text-truncate d-flex d-xxl-flex justify-content-start align-items-start justify-content-xxl-start"
                                                                     style={{ width: '100%', fontSize: '16px', fontFamily: 'Inter, sans-serif', marginBottom: '0px', color:'#EDF0F7' }}>{products[index].title}</h1>
                                                                 <h1 className="text-center text-truncate d-flex d-xxl-flex justify-content-start align-items-start justify-content-xxl-start"
-                                                                    style={{ width: '100%', fontSize: '14px', fontFamily: 'Inter, sans-serif', marginBottom: '0px', color: '#EDF0F7' }}>{products[index].price}</h1>
+                                                                    style={{ width: '100%', fontSize: '14px', fontFamily: 'Inter, sans-serif', marginBottom: '0px', color: '#EDF0F7' }}>
+
+                                                                    {products[index].price && products[index].price + "₺"}</h1>
                                                             </div>
                                                         </div>
                                                     </div>

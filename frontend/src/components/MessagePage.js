@@ -36,7 +36,7 @@ function MessagePage() {
     // Get all messages of user
     const uploadAllMessages = async () => {
         try{
-
+            debugger;
             axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
             axios.get("http://127.0.0.1:8000/chat/").then(response => {
                 console.log("chat", response.data.results);
@@ -166,7 +166,7 @@ function Messages({chatId}) {
             console.log("WebSocket is connected");
         };
 
-        debugger;
+
         newSocket.onmessage = (event) => {
             const data = JSON.parse(event.data);
 

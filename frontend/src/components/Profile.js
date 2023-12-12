@@ -244,12 +244,12 @@ function Products({myProfile, func, editMode}) {
                                             }
                                             <div className="card-body" style={{ width: '100%', height: '100%', padding: '3px' }}
                                                  onClick={()=>sendProductDetailPage(showedProducts[index].id,showedProducts[index].category)}>
-                                                <img style={{ width: '100%', height: '100%' }} src={PlaceHolder} alt={`Product ${index}`}/>
+                                                <img style={{ width: '100%', height: '100%', borderRadius:'10px' }} src={showedProducts[index].images && showedProducts[index].images.length > 0 ? showedProducts[index].images[0].image : Placeholder} alt={`Product ${index}`}/>
                                                 <div style={{height: '40px', width: '100%', marginTop: '-40px', background: '#21252955', position: 'relative', borderBottomRightRadius: '10px', borderBottomLeftRadius: '10px', paddingTop: '3px', paddingBottom: '3px', paddingRight: '5px', paddingLeft: '5px'}}>
                                                     <h1 className="text-center d-flex justify-content-start align-items-start text-truncate"
                                                         style={{width: '100%', fontSize: '14px', fontFamily: 'Inter, sans-serif', marginBottom: '0px',color:'white'}}>{showedProducts[index].title}</h1>
                                                     <h1 className="text-center d-flex d-xxl-flex justify-content-start justify-content-xxl-start text-truncate"
-                                                        style={{width: '100%', fontSize: '10px', fontFamily: 'Inter, sans-serif', marginBottom: '0px',color:'white'}}>{showedProducts[index].price}</h1>
+                                                        style={{width: '100%', fontSize: '10px', fontFamily: 'Inter, sans-serif', marginBottom: '0px',color:'white'}}>{showedProducts[index].price + "₺"}</h1>
                                                 </div>
 
                                             </div>
@@ -274,13 +274,17 @@ function ProfileArea({myProfile,func} ) {
     const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
     const navigate = useNavigate();
     const location = useLocation();
-
+    console.log(myProfile);
 
     const [loading, setLoading] = useState(false);
     const [nameSurname, setNameSurname] = useState(myProfile.name + " " + myProfile.surname);
     const [email, setEmail] = useState(myProfile.email);
+    const [phone, setPhone] = useState(myProfile.phone_number);
+    const [description, setDescription] = useState(myProfile.description);
     const [newName, setNewName] = useState(myProfile.name);
     const [newSurname, setNewSurname] = useState(myProfile.surname);
+    const [newPhone, setNewPhone] = useState(myProfile.phone_number);
+    const [newDescription, setNewDescription] = useState(myProfile.description);
     const [newPassword, setNewPassword] = useState();
     const [newPasswordConfirm, setNewPasswordConfirm] = useState();
     const [oldPassword, setOldPassword] = useState();
@@ -300,6 +304,8 @@ function ProfileArea({myProfile,func} ) {
             myProfile = data;
             setNameSurname(data.name + " " + data.surname)
             setEmail(data.email);
+            setPhone(data.phone_number);
+            setDescription(data.description);
             setEditMode(false);
             func(false);
             setLoading(false);
@@ -362,6 +368,8 @@ function ProfileArea({myProfile,func} ) {
             else{
                 user.append("name", newName);
                 user.append("surname", newSurname);
+                user.append("phone_number", newPhone);
+                user.append("description", newDescription);
                 updateUser(user);
 
             }
@@ -459,14 +467,34 @@ function ProfileArea({myProfile,func} ) {
                     }
                 </div>
                 <hr className="d-xxl-flex justify-content-xxl-center align-items-xxl-center" style={{ width: '100%', margin: '0px', marginTop: '10px', marginBottom: '10px' }} />
-                <div className="d-flex flex-row justify-content-between align-items-center align-content-around" style={{ height: 'initial', width: '100%', padding: '2%' }}>
-                    <p style={{ marginBottom: '0px', fontFamily: 'Inter, sans-serif', fontSize: '17px' }}>+90 546 877 39 27</p>
+                <div className="d-flex flex-row justify-content-between  " style={{ height: 'initial', width: '100%', padding: '2%' }}>
+                    {editMode
+                        ?
+                        <div className="d-flex flex-row " style={{width:'50%', padding:'0px', height:'37px'}}>
+                            <input className="form-control mb-3" value={newPhone} onChange={e=>setNewPhone(e.target.value)} type="text" name="surname" placeholder="Phone" style={inputStyles} required />
+                        </div>
+                        :
+                        <p style={{ marginBottom: '0px', fontFamily: 'Inter, sans-serif', fontSize: '17px' }}>{phone}</p>
+                    }
                     <p style={{ marginBottom: '0px', fontFamily: 'Inter, sans-serif', fontSize: '17px' }}>{email}</p>
                 </div>
                 <hr className="d-xxl-flex justify-content-xxl-center align-items-xxl-center" style={{ width: '100%', margin: '0px', marginTop: '10px', marginBottom: '10px' }} />
-                <div className="d-flex flex-column justify-content-between align-items-center align-content-around align-items-xxl-start" style={{ height: '30%', width: '100%', minHeight: '100px', background: '#edf0f7', borderRadius: '10px', paddingRight: '5px', paddingLeft: '10px', paddingTop: '3px', maxHeight: '200px' }}>
-                    <div className="d-flex flex-row justify-content-between align-items-center align-content-around" style={{ height: '30%', width: '100%', minHeight: '40px' }}>
-                        <h1 style={{fontSize: '1.6em', fontFamily: 'Inter, sans-serif', marginLeft: '0px', justifyContent:'start' }}>About</h1>
+                <div className="d-flex flex-column justify-content-between align-items-center align-content-around align-items-xxl-start" style={{ height: '30%', width: '100%', minHeight: '100px', background: '#edf0f7', borderRadius: '10px', maxHeight: '200px' }}>
+                    <div className="d-flex flex-column justify-content-between align-items-start align-content-around" style={{ height: '30%', width: '100%', minHeight: '40px', margin:'0px' }}>
+                        <h1 style={{fontSize: '1.6em', fontFamily: 'Inter, sans-serif', marginTop: '10px', marginLeft:'10px', justifyContent:'start' }}>About</h1>
+
+                        {editMode
+                            ?
+                            <div className="d-flex flex-row w-100 " style={{width:'100%'}}>
+                                <textarea className="form-control" value={newDescription} onChange={e=>setNewDescription(e.target.value)} type="text" name="surname" placeholder="Description" required
+                                    style={{margin:'0px', width:'100%', resize:'none', fontSize: '13px', background: '#edf0f7'}}
+                                />
+                            </div>
+
+                            :
+                            <p style={{  marginLeft:'10px', fontFamily: 'Inter, sans-serif', fontSize: '13px' }}>{description}</p>
+                        }
+
                     </div>
                 </div>
                 <hr className="d-xxl-flex justify-content-xxl-center align-items-xxl-center" style={{ width: '100%', margin: '0px', marginTop: '10px', marginBottom: '10px' }} />
@@ -555,7 +583,7 @@ const inputStyles = {
     background: '#a0abc0',
     height: '100%',
     border: 'none',
-    width: '150px',
+    width:'150px',
     marginRight: '10px',
     marginLeft: '10px',
     paddingBottom: '5px',
