@@ -183,7 +183,7 @@ function NavigationBarDefault() {
 
                     <div >
                         <img
-                            onClick={(e)=>navigate('/profile')} className="rounded-circle" style={{ width: '50px', height: '50px' }} src={myProfile.profile_photo ? myProfile.profile_photo : ProfilePlaceholder} alt="Profile" />
+                            onClick={(e)=>navigate('/profile')} className="rounded-circle" style={{ width: '50px', height: '50px' }} src={myProfile && myProfile.profile_photo ? myProfile.profile_photo : ProfilePlaceholder} alt="Profile" />
                     </div>
                 </div>
             </div>

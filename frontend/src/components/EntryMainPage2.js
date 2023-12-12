@@ -5,6 +5,7 @@ import './assets/bootstrap/css/bootstrap.min.css'; // Import Bootstrap CSS
 import "bootstrap-icons/font/bootstrap-icons.css";
 import axios from "axios";
 import InfiniteScroll from 'react-infinite-scroll-component';
+import ProfilePlaceholder from "./assets/img/default_profile.webp";
 
 
 
@@ -122,8 +123,8 @@ function EntryMainPage2(){
                                                         </div>
                                                     </div>
                                                     <div className="d-flex flex-column justify-content-start align-items-center " style={{ height: '90%', margin: '1.5%', width: '30%', minWidth: '60px', background: '#EDF0F7', borderRadius: '10px' }}>
-                                                        <img className="rounded-circle" src={Burak} style={{ height: '70%', width: '70%', marginTop: '5%', marginBottom: '5%' }} alt="User" />
-                                                        <h1 className="text-center d-flex justify-content-center align-items-center " style={{height:'25%', fontFamily: 'Inter, sans-serif', fontSize: '13px', width: '95%' }}>{" fedafd "}</h1>
+                                                        <img className="rounded-circle" src={item.user.profile_photo ? item.user.profile_photo : ProfilePlaceholder} style={{ height: '70%', width: '70%', marginTop: '5%', marginBottom: '5%' }} alt="User" />
+                                                        <h1 className="text-center d-flex justify-content-center align-items-center " style={{height:'25%', fontFamily: 'Inter, sans-serif', fontSize: '13px', width: '95%' }}>{item.user.name + " " + item.user.surname}</h1>
                                                     </div>
                                                 </div>
                                             </div>
@@ -162,8 +163,8 @@ function EntryMainPage2(){
                                                         </div>
                                                     </div>
                                                     <div className="d-flex flex-column justify-content-start align-items-center " style={{ height: '90%', margin: '1.5%', width: '30%', minWidth: '60px', background: '#EDF0F7', borderRadius: '10px' }}>
-                                                        <img className="rounded-circle" src={Burak} style={{ height: '70%', width: '70%', marginTop: '5%', marginBottom: '5%' }} alt="User" />
-                                                        <h1 className="text-center d-flex justify-content-center align-items-center " style={{height:'25%', fontFamily: 'Inter, sans-serif', fontSize: '13px', width: '95%' }}>{" fedafd "}</h1>
+                                                        <img className="rounded-circle" src={item.user.profile_photo ? item.user.profile_photo : ProfilePlaceholder} style={{ height: '70%', width: '70%', marginTop: '5%', marginBottom: '5%' }} alt="User" />
+                                                        <h1 className="text-center d-flex justify-content-center align-items-center " style={{height:'25%', fontFamily: 'Inter, sans-serif', fontSize: '13px', width: '95%' }}>{item.user.name + " " + item.user.surname}</h1>
                                                     </div>
                                                 </div>
                                             </div>
