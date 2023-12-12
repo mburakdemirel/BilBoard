@@ -2,6 +2,8 @@ from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.contrib.auth import get_user_model
+from django.db.models.signals import pre_delete
+from django.dispatch import receiver
 
 # Create your models here.
 class CustomUserManager(BaseUserManager):
@@ -153,7 +155,7 @@ class Message(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return str(self.author.id) +  " - " + self.timestamp.strftime("%d/%m/%Y, %H:%M:%S")
+        return str(self.author.id) +  " - " + self.timestamp.strftime("%d/%m/%Y, %H:%M:%S") + "-" + self.content + "\n"
 
 class Chat(models.Model):
     CATEGORY_CHOICES = [
@@ -166,10 +168,10 @@ class Chat(models.Model):
 
     participiants = models.ManyToManyField(get_user_model(), related_name="chats")
     messages = models.ManyToManyField(Message, blank=True)
-
     product_id = models.IntegerField(blank=False, null=True)
     category = models.CharField(max_length=10, choices=CATEGORY_CHOICES, null=True, blank=False)
-    image_url = models.CharField(max_length=200, blank=True, null=True)
+
+    REQUIRED_FIELDS = ['participiants', 'product_id', 'category']
 
     def __str__(self):
         return '{}'.format(self.id)

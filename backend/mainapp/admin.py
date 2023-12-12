@@ -9,7 +9,7 @@ from mainapp import models
 class UserAdmin(BaseUserAdmin):
     """Define the admin pages for users."""
     ordering = ['id']
-    list_display = ['email', 'name', 'surname', 'id']
+    list_display = ['email', 'name', 'surname', 'id', 'is_verified']
     #Specify the fields in our model that we want to be shown in the admin page
     fieldsets = (
         #None is title section
@@ -39,7 +39,7 @@ class ProductImageInline(admin.TabularInline):
 class ProductAdmin(admin.ModelAdmin):
     """Define the admin pages for products."""
 
-    list_display = ('title', 'category', 'user')
+    list_display = ('title','id', 'category', 'user')
     ordering = ['id']
     search_fields = ('title', 'category',)
     inlines = [ProductImageInline]
@@ -66,31 +66,30 @@ class ProductAdmin(admin.ModelAdmin):
 class LostAndFoundEntryAdmin(admin.ModelAdmin):
     """Define the admin pages for LAF entries."""
 
-    list_display = ('topic', 'upload_date' , 'user')
+    list_display = ('topic', 'id', 'upload_date' , 'user', 'category')
     ordering = ['id']
     search_fields = ('topic', 'upload_date',)
 
     # Specify the list of fields to be used as filters in the admin list view
     list_filter = ('topic', 'user')
     fieldsets = (
-        (None, {'fields': ('topic', 'description', 'user')}),
+        (None, {'fields': ('topic', 'description', 'user', 'category')}),
         (_('Dates'), {'fields': ('upload_date',)}),
     )
     readonly_fields = ['upload_date']
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('topic', 'description', 'user'),
+            'fields': ('topic', 'description', 'user', 'category'),
         }),
     )
 
-
-
-
 class ChatAdmin(admin.ModelAdmin):
-    list_display = ('id', 'get_participiants', 'category', 'product_id')
-    readonly_fields = ['id', 'messages']
-
+    list_display = ('id', 'get_participiants', 'category', 'product_id',)
+    readonly_fields = ['id', 'category', 'product_id', 'participiants'] # add messages
+    fieldsets = (
+        (None, {'fields': ('id', 'participiants', 'category', 'product_id', 'messages')}),
+    )
 
 admin.site.register(models.CustomUser, UserAdmin)
 admin.site.register(models.Product, ProductAdmin)

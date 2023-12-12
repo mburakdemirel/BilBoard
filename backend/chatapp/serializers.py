@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from mainapp.models import Chat, Message
 from django.contrib.auth import get_user_model
-from mainapp.models import Product, LostAndFoundEntry
+from mainapp.models import Product, LostAndFoundEntry, ProductImage
 
 class MessageSerializer(serializers.ModelSerializer):
     timestamp = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only=True)
@@ -14,9 +14,10 @@ class MessageSerializer(serializers.ModelSerializer):
 class ChatListSerializer(serializers.ModelSerializer):
     participiants = serializers.StringRelatedField(many=True)
     product_name = serializers.StringRelatedField(read_only=True)
+    image_url = serializers.StringRelatedField(read_only=True)
     class Meta:
         model = Chat
-        fields = ('id', 'participiants', 'category', 'product_id', 'image_url', 'product_name')
+        fields = ('id', 'participiants', 'category', 'product_id', 'product_name', 'image_url')
         read_only_fields = ('id', 'participiants')
 
     def to_representation(self, instance):
@@ -33,9 +34,16 @@ class ChatListSerializer(serializers.ModelSerializer):
         if category in ['secondhand', 'borrow', 'donation']:
             product = Product.objects.get(id=product_id)
             representation['product_name'] = product.title
+            product_images = ProductImage.objects.filter(product=product)
+            if product_images.exists():
+                representation['image_url'] = product_images.first().image.url
+            else:
+                representation['image_url'] = "null"
+            print(f'\033[1;34;40m{product_images}\033[0;0m') #test
         elif category in ['lost', 'found']:
             entry = LostAndFoundEntry.objects.get(id=product_id)
             representation['product_name'] = entry.topic
+            representation['image_url'] = "null"
         return representation
 
 class ChatSerializer(serializers.ModelSerializer):
@@ -52,7 +60,7 @@ class ChatSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Chat
-        fields = ('id', 'participiants', 'messages', 'category', 'product_id', 'image_url', 'product_name')
+        fields = ('id', 'participiants', 'messages', 'category', 'product_id', 'product_name')
         read_only_fields = ('id',)
 
     def get_messages(self, instance):
@@ -116,7 +124,7 @@ class ChatSerializer(serializers.ModelSerializer):
         current_user_id = self.context['request'].user.id
         participiants = validated_data.pop('participiants')
 
-        possible_chat = Chat.objects.filter(participiants=current_user_id).filter(participiants__in=participiants).filter(category=validated_data.get('category')).filter(product_id=validated_data.get('product_id')).filter(image_url=validated_data.get('image_url'))
+        possible_chat = Chat.objects.filter(participiants=current_user_id).filter(participiants__in=participiants).filter(category=validated_data.get('category')).filter(product_id=validated_data.get('product_id'))
 
         if possible_chat.exists():
             return possible_chat.first()
