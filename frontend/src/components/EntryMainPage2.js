@@ -87,7 +87,7 @@ function EntryMainPage2(){
 
 
 
-            <section className="d-flex flex-grow-1 justify-content-center align-items-start  py-4 py-x-5" style={{ background: '#edf0f7', minHeight: '91vh' }}>
+            <section className="d-flex flex-grow-1 justify-content-center align-items-start  py-5 py-x-5" style={{ background: '#edf0f7', minHeight: '91vh' }}>
                 {loading ? <div style={{height:'50px'}}><span className="spinner-border spinner-border" aria-hidden="true" ></span></div>
                     :
 

@@ -89,7 +89,7 @@ function EntryMainPage(){
     return (
         <div className="d-flex flex-column">
 
-        <section className="d-flex flex-grow-1 py-4 justify-content-center" style={{ background: '#edf0f7', minHeight: '91vh' }}>
+        <section className="d-flex flex-grow-1 py-5 justify-content-center" style={{ background: '#edf0f7', minHeight: '91vh' }}>
             {loading ? <div style={{height:'50px'}}><span className="spinner-border spinner-border" aria-hidden="true" ></span></div>
                 :
             <div className="container d-flex h-100">

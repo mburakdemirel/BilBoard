@@ -15,7 +15,7 @@ import Profile from "./Profile";
 function NavigationBarDefault() {
     const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
     const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
-    const {sendNewMessage} = useContext(ContextApi);
+    const {sendNewMessage, isProfileChanged, changeProfile} = useContext(ContextApi);
     const [show, setShow] = useState(false);
     const [target, setTarget] = useState(null);
     const ref = React.useRef(null);
@@ -23,20 +23,26 @@ function NavigationBarDefault() {
     const [myProfile, setMyProfile] = useState(JSON.parse(localStorage.getItem('myProfile')));
 
     useEffect(() => {
+        debugger;
         getProfile();
         getFavorites();
+        if(isProfileChanged){
+            changeProfile(false);
+        }
 
-    }, [favoritesIdList,myProfile]);
+    }, [favoritesIdList,myProfile,isProfileChanged]);
 
 
     const getProfile = async () =>{
-        if(!myProfile){
+        debugger;
+        if(!myProfile || isProfileChanged){
             try{
                 axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
 
                 const {data} = await axios.get('http://127.0.0.1:8000/api/user/me/') ;
                 console.log(data);
                 localStorage.setItem('myProfile', JSON.stringify(data));
+                setMyProfile(JSON.parse(localStorage.getItem('myProfile')));
             }
             catch (error){
                 if (error.response) {

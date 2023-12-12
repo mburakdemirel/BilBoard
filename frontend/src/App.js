@@ -28,6 +28,7 @@ function App() {
     const [type, setType] = useState('');
     const [category, setCategory] = useState('');
     const [message, setMessage] = useState('');
+    const [isProfileChanged, setIsProfileChanged] = useState('');
     const sendMessage = (nMessage) => {
         setMessage(nMessage);
 
@@ -40,9 +41,14 @@ function App() {
         setType(newCategory);
     }
 
+    const changeIsProfile = (isChanged) => {
+        setIsProfileChanged(isChanged);
+    }
+
 
     return (
-      <ContextApi.Provider value={{isImageViewerOpen: type, changeIsImageViewerOpen:changeType, newMessage: message, sendNewMessage: sendMessage, productCategory:category, changeCategory:changeProductCategory}}>
+      <ContextApi.Provider value={{isImageViewerOpen: type, changeIsImageViewerOpen:changeType, newMessage: message, sendNewMessage: sendMessage, productCategory:category, changeCategory:changeProductCategory,
+                                    isProfileChanged: isProfileChanged, changeProfile:changeIsProfile}}>
           <div className="App">
 
               <Routes>

@@ -1,6 +1,6 @@
 import 'bootstrap/dist/css/bootstrap.css';
 import PlaceHolder from './assets/img/WF Image Placeholder.png';
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import axios from "axios";
 import * as bootstrap from 'bootstrap';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
@@ -11,6 +11,7 @@ import {useNavigate, useParams, useLocation} from "react-router-dom";
 import Placeholder from "./assets/img/WF Image Placeholder2.png"
 import {set} from "react-hook-form";
 import {json} from "react-router";
+import ContextApi from "../context/ContextApi";
 
 //There are two kinds of profiles and they are rendered according to the value of myProfile boolean.
 //Probably myProfile will take its value from a context. Or we might directly pass is as props.
@@ -275,6 +276,7 @@ function ProfileArea({myProfile,func} ) {
     const navigate = useNavigate();
     const location = useLocation();
     console.log(myProfile);
+    const {isProfileChanged, changeProfile} = useContext(ContextApi);
 
     const [loading, setLoading] = useState(false);
     const [nameSurname, setNameSurname] = useState(myProfile.name + " " + myProfile.surname);
@@ -310,6 +312,7 @@ function ProfileArea({myProfile,func} ) {
             func(false);
             setLoading(false);
             setProfileImg(data.profile_photo);
+            changeProfile(true);
         }
         catch (error){
             console.log(error);
