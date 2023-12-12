@@ -22,13 +22,16 @@ function ProfileOther() {
     const navigate = useNavigate();
 
     const {id} = useParams();
+    console.log("id", id);
     const [error, setError] = useState(null);
     const [myProfile, setMyProfile] = useState();
 
 
     useEffect(()=>{
         const profile = JSON.parse(localStorage.getItem('myProfile'));
-        if(!location.state || id === profile.id){
+        console.log("profil",profile.id);
+
+        if(!location.state || id == profile.id){
             navigate('/profile')
         }
     },[])
@@ -122,7 +125,7 @@ function Products({myProfile, func}) {
                         <>
                             {Array(products.length).fill().map((_, index) => {
                                 if (products[index] && products[index].category === filteredProductsType) {
-                                    return(<div className="card" key={index} id="product" style={{width: '170px', height: '170px', borderRadius: '10px', borderStyle: 'none', borderBottomStyle: 'none', padding: '5px', minWidth: '170px', maxWidth: '170px',}}>
+                                    return(<div className="card" key={index} id="product" style={{width: '168px', height: '168px', borderRadius: '10px', borderStyle: 'none', borderBottomStyle: 'none', padding: '5px',maxHeight:'168px',minHeight:'168px' ,minWidth: '168px', maxWidth: '168px',}}>
                                         <div className="card-body" style={{ width: '100%', height: '100%', padding: '0' }}
                                              onClick={()=>sendProductDetailPage(products[index].id,products[index].category)}>
                                             <img style={{ width: '100%', height: '100%' }} src={PlaceHolder} alt={`Product ${index}`}/>

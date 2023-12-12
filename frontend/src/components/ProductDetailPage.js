@@ -200,30 +200,35 @@ function ProductDetailPage() {
                 <div className="d-flex flex-grow-1 justify-content-center align-items-center" data-aos="fade-left" data-aos-duration="600" style={containerStyle}>
                     <div className="d-flex flex-column " style={cardStyle}>
                         {loading ?
-                            <span className="placeholder col-7"></span>
+                            <span className="placeholder col-7" style={{height:'30px'}}></span>
                             :
-                            <h1 className="placeholder-glow" style={headingStyle}>{product.title}</h1>
+                            <h1 style={headingStyle}>{product.title}</h1>
                         }
 
 
                         <hr style={hrStyle} />
                         {(() => {
-                            if(product.category==="borrow"){
-                            return <h1 className="placeholder-glow d-flex align-items-center" style={{ ...headingStyle, fontWeight: 'bold' }}>{"Return Date: " + product.return_date}
-                                    {loading && <span className="placeholder col-3"></span>}
-                                </h1>
+                            if(product.category==="borrow") {
+                                return (
+                                    loading ? <span className="placeholder col-3 "></span> :
+                                        <h1 className="placeholder-glow d-flex align-items-center" style={{
+                                            ...headingStyle,
+                                            fontWeight: 'bold'
+                                        }}>{"Return Date: " + product.return_date} </h1>
+                                )
                             }
                             else if(product.category==="donation"){
-                                return <h1 className="placeholder-glow d-flex align-items-center" style={{ ...headingStyle, fontSize: '2.4em', fontWeight: 'bold' }}>
-                                        {loading && <span className="placeholder col-3"></span>}
-                                    </h1>
+                                return(
+                                        loading ? <span className="placeholder col-3"></span> :
+                                            <h1 className="placeholder-glow d-flex align-items-center" style={{ ...headingStyle, fontSize: '2.4em', fontWeight: 'bold' }}></h1>
+                                )
                             }
 
                             else{
-                                return <h1 className="placeholder-glow d-flex align-items-center" style={{ ...headingStyle, fontSize: '2.4em', fontWeight: 'bold' }}>{(!loading && (product.price + " ₺"))}
-                                        {loading && <span className="placeholder col-3"></span>}
-                                    </h1>
-
+                                return(
+                                        loading ? <span className="placeholder col-3"></span>
+                                        :<h1 className="placeholder-glow d-flex align-items-center" style={{ ...headingStyle, fontSize: '2.4em', fontWeight: 'bold' }}>{(!loading && (product.price + " ₺"))}</h1>
+                                )
                             }
                         })()}
                         <hr style={hrStyle} />

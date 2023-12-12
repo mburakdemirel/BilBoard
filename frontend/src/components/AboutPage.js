@@ -7,12 +7,7 @@ const AboutPage = () => {
             <div className="d-flex flex-column w-100 align-items-center">
                 <img src={Logo} width="489" />
                 <h1 style={{fontWeight:'bold'}}>BilBoard: A Web Application for Bilkent University Students</h1>
-
             </div>
-
-
-
-
 
 
             <section style={{marginTop:'3%'}} >

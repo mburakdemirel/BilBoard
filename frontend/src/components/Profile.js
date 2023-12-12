@@ -233,7 +233,7 @@ function Products({myProfile, func, editMode}) {
                             {showedProducts && Array(showedProducts.length).fill().map((_, index) => {
                                 if (showedProducts[index] && showedProducts[index].category === filteredProductsType) {
                                     return(
-                                        <div className="card d-flex align-items-end" key={index} id="product" style={{width: '170px', height: '170px', borderRadius: '10px', borderStyle: 'none', borderBottomStyle: 'none', padding: '5px',maxHeight:'170px',minHeight:'170px' ,minWidth: '170px', maxWidth: '170px',}}>
+                                        <div className="card d-flex align-items-center" key={index} id="product" style={{width: '168px', height: '168px', borderRadius: '10px', borderStyle: 'none', borderBottomStyle: 'none', padding: '5px',maxHeight:'168px',minHeight:'168px' ,minWidth: '168px', maxWidth: '168px',}}>
                                             {editMode &&
                                                 <button
                                                     className="btn btn-primary position-relative d-flex align-items-center justify-content-center rounded-circle"
