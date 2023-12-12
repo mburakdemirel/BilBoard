@@ -112,8 +112,8 @@ class ManageUserView(generics.RetrieveUpdateDestroyAPIView):
             if file:
                 user.profile_photo = file
 
-            old_password = serializer.validated_data.get('old_password', None)
-            new_password = serializer.validated_data.get('new_password', None)
+            old_password = request.data.get('old_password', None)
+            new_password = request.data.get('new_password', None)
             if old_password and new_password:
                 if user.check_password(old_password):
                     try:
