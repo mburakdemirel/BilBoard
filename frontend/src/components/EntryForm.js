@@ -1,6 +1,9 @@
 import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+
+const text_field_background = "#d9e9fa";
+
 export function EntryForm({ isComplaint }) {
     const [topic, setTopic] = useState("");
     const [description, setDescription] = useState("");
@@ -66,19 +69,19 @@ export function EntryForm({ isComplaint }) {
                         >
                             <form onSubmit={handleSubmit} method="post" className="form-card justify-content-center align-items-center" style={{ margin: 'auto', width: '60%' }}>
 
-                            {isComplaint ? <h3 className="text-center" style={{ fontFamily: 'Inter,sans-serif' }}>Post a New Complaint</h3> : <h3 className="text-center" style={{ fontFamily: 'Inter,sans-serif' }}>Post a Lost/Found Notice</h3>}
+                            {isComplaint ? <h3 className="text-center" style={{ fontFamily: 'Inter,sans-serif',marginBottom: '30px' }}>Post a New Complaint</h3> : <h3 className="text-center" style={{ fontFamily: 'Inter,sans-serif',marginBottom: '30px' }}>Post a Lost/Found Notice</h3>}
 
                                 <div className="col-xl-6 flex-column d-flex " style={{ width: '100%' }}>
                                     <div className="form-group row justify-content-between text-center">
-                                        <label className="form-control-label"><h5>Topic/Title</h5></label>
+                                        <label className="form-control-label"style={{ textAlign: 'left',fontFamily: 'Inter, sans-serif' }}><h5>Topic/Title</h5></label>
                                         <input onChange={(e) => setTopic(e.target.value)} required type="text" placeholder="Title"
                                             className="form-control"
                                             style={{
                                                 width: '100%',
                                                 fontFamily: 'Inter, sans-serif',
-                                                marginBottom: '0px',
+                                                marginBottom: '10px',
                                                 height: '100%',
-                                                background: '#a0abc0',
+                                                background: text_field_background,
                                                 borderRadius: '10px',
                                                 paddingLeft: '15px',
                                                 borderStyle: 'none',
@@ -106,16 +109,16 @@ export function EntryForm({ isComplaint }) {
                                     </div> */}
 
                                     {!isComplaint ? <div className="form-group row justify-content-between text-center">
-                                        <label className="form-control-label" htmlFor="Category" style={{ fontFamily: 'Inter, sans-serif' }} ><h5>Choose Category</h5></label>
+                                        <label className="form-control-label" htmlFor="Category" style={{ textAlign: 'left',fontFamily: 'Inter, sans-serif' }} ><h5>Choose Category</h5></label>
                                         <select required onChange={(e) => {setCategory(e.target.value); console.log(e.target.value);}}
                                             id="Category"
                                             className="form-control"
                                             style={{
                                                 width: '100%',
                                                 fontFamily: 'Inter, sans-serif',
-                                                marginBottom: '0px',
+                                                marginBottom: '10px',
                                                 height: '100%',
-                                                background: '#a0abc0',
+                                                background: text_field_background,
                                                 borderRadius: '10px',
                                                 paddingLeft: '15px',
 
@@ -126,7 +129,7 @@ export function EntryForm({ isComplaint }) {
                                         </select>
                                     </div> : <></>}
                                     <div className="form-group row justify-content-between text-center">
-                                        <label className="form-control-label" htmlFor="description" style={{ fontFamily: 'Inter, sans-serif' }}><h5>Enter Description</h5></label>
+                                        <label className="form-control-label" htmlFor="description" style={{ textAlign: 'left',fontFamily: 'Inter, sans-serif' }}><h5>Enter Description</h5></label>
                                         <textarea required onChange={(e) => { setDescription(e.target.value) }}
                                             id="description"
                                             placeholder="Description"
@@ -134,7 +137,7 @@ export function EntryForm({ isComplaint }) {
                                             className="form-control"
                                             style={{
                                                 fontFamily: 'Inter, sans-serif',
-                                                background: '#a0abc0',
+                                                background: text_field_background,
                                                 borderRadius: '10px',
                                                 paddingLeft: '15px',
                                                 paddingTop: '15px',
@@ -146,7 +149,7 @@ export function EntryForm({ isComplaint }) {
                                             <button onClick={() => { navigate("/main_page/secondhand") }} className="btn btn-primary d-block w-100 mb-3" style={{ background: '#2d3648', border: 'none', fontFamily: 'Inter, sans-serif', height: '40px' }}>Cancel</button>
                                         </div>
                                         <div className="col-xl-6 flex-column d-flex">
-                                            <button className="btn btn-primary d-block w-100 mb-3" type="submit" style={{ background: '#2d3648', border: 'none', fontFamily: 'Inter, sans-serif', height: '40px' }}>Post</button>
+                                            <button className="btn btn-primary d-block w-100 mb-3" type="submit" style={{ background: '#0558b0', border: 'none', fontFamily: 'Inter, sans-serif', height: '40px' }}>Post</button>
                                         </div>
                                     </div>
                                 </div>
