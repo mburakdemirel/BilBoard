@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import Burak from './assets/img/burak.png';
+import PlaceHolder from './assets/img/WF Image Placeholder.png'
 import {useNavigate, useParams} from "react-router-dom";
 import axios from "axios";
 import InfiniteScroll from 'react-infinite-scroll-component';
@@ -16,6 +17,7 @@ function EntryMainPage(){
     const [page, setPage] = useState();
     const [products, setProducts] = useState([]);
     const [hasMore, setHasMore] = useState(true);
+    const [user,setUser] = useState();
 
     useEffect(()=>{
         console.log("pageType in entry page " + pageType);
@@ -44,17 +46,26 @@ function EntryMainPage(){
                     const {data} = await axios.get('http://127.0.0.1:8000/api/entry/complaint-entry/' + `?search=${searchText}`)
                     console.log(data.results);
                     console.log(hasMore);
-                    setProducts(prevProducts => [...prevProducts, ...data.results]);
-                    setPage(prevPage => prevPage + 1);
-                    setHasMore(data.results.length >= 16);
+                    const entryData = data.results ? data.results : data;
+                    console.log("entry data: ", entryData);
+                    if(entryData) {
+                        setProducts(prevProducts => [...prevProducts, ...entryData]);
+                        setPage(prevPage => prevPage + 1);
+                        setHasMore(entryData.length >= 16);
+                    }
                 }
                 else{
                     const {data} = await axios.get('http://127.0.0.1:8000/api/entry/complaint-entry/' + `?page=${page}`);
+                    console.log(data);
                     console.log(data.results);
                     console.log(hasMore);
-                    setProducts(prevProducts => [...prevProducts, ...data.results]);
-                    setPage(prevPage => prevPage + 1);
-                    setHasMore(data.results.length >= 16);
+                    const entryData = data.results ? data.results : data;
+                    console.log("entry data: ", entryData);
+                    if(entryData) {
+                        setProducts(prevProducts => [...prevProducts, ...entryData]);
+                        setPage(prevPage => prevPage + 1);
+                        setHasMore(entryData.length >= 16);
+                    }
                 }
                 setLoading(false);
 
@@ -62,6 +73,7 @@ function EntryMainPage(){
 
         }
         catch (error){
+            console.log(error);
             if (error.response) {
                 console.log(error.response.data);
             } else if (error.request) {
@@ -102,7 +114,7 @@ function EntryMainPage(){
                                                                     <div className="d-flex r">
                                                                         <h1 className="d-flex align-items-center" style={{ fontFamily: 'Inter, sans-serif', fontWeight: 'bold', margin: '0px', fontSize: '20px', width: '70%' }}>{products[index].topic}</h1>
                                                                         <button className="btn btn-primary d-flex justify-content-center align-items-center " type="button" style={{ width: '30%', height: '100%', fontWeight: 'bold', background: '#717D96', borderStyle: 'none', borderColor: '#2d3648', marginRight: '0px', minWidth: '120px' }}>
-                                                                            <span className="d-flex" style={{ fontSize: '12px', fontFamily: 'Inter, sans-serif', fontWeight: 'bold', textAlign: 'center', marginRight: '-' }}>hayrettin.arim@ug.bilkent.edu.tr</span>
+                                                                            <span className="d-flex" style={{ fontSize: '12px', fontFamily: 'Inter, sans-serif', fontWeight: 'bold', textAlign: 'center', marginRight: '-' }}>{products[index].user.mail}</span>
                                                                         </button>
                                                                     </div>
                                                                     <h4 className="d-flex text-truncate text-start" style={{ fontFamily: 'Inter, sans-serif',fontSize: '13px', marginTop: '0px', paddingTop: '5px', whiteSpace: 'normal', height: '68.5938px' }}>{products[index].description}<br /><br /></h4>
@@ -128,8 +140,8 @@ function EntryMainPage(){
                                                                 </button>
                                                             </div>
                                                             <div className="d-flex flex-column justify-content-center align-items-center" style={{ height: '90%', margin: '0.7%', width: '13%', minWidth: '60px', background: '#EDF0F7', borderRadius: '10px' }}>
-                                                                <img className="rounded-circle" src={Burak} style={{ height: '70%', width: '70%', marginTop: '5%', marginBottom: '5%' }} />
-                                                                <h1 className="d-flex justify-content-center" style={{ fontFamily: 'Inter, sans-serif', fontSize: '16px', width: '95%' }}>Burak Demirel</h1>
+                                                                <img className="rounded-circle" src={products[index].user.profile_photo ? products[index].user.profile_photo : PlaceHolder} style={{ height: '70%', width: '70%', marginTop: '5%', marginBottom: '5%' }} />
+                                                                <h1 className="d-flex justify-content-center" style={{ fontFamily: 'Inter, sans-serif', fontSize: '16px', width: '95%' }}>{`${products[index].user.name} ${products[index].user.surname}`}</h1>
                                                             </div>
                                                         </div>
                                                     </div>

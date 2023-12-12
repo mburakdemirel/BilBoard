@@ -9,7 +9,7 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 
 
 function EntryMainPage2(){
-    const navigate = useNavigate();
+    //const navigate = useNavigate();
     const imageUrl = "http://127.0.0.1:8000/media/pphotos/Activity_Diagram1.jpg";
     const {pageType,searchText} = useParams();
 
@@ -44,19 +44,25 @@ function EntryMainPage2(){
                     const {data} = await axios.get('http://127.0.0.1:8000/api/entry/laf-entry/' + `?search=${searchText}`)
                     console.log(data.results);
                     console.log(hasMore);
-                    setProducts(prevProducts => [...prevProducts, ...data.results]);
-                    console.log("search products", products);
-                    setPage(prevPage => prevPage + 1);
-                    setHasMore(data.results.length >= 16);
+                    const lafEntries = data.results ? data.results : data;
+                    if(lafEntries) {
+                        setProducts(prevProducts => [...prevProducts, ...lafEntries]);
+                        console.log("search products", products);
+                        setPage(prevPage => prevPage + 1);
+                        setHasMore(lafEntries.length >= 16);
+                    }
                 }
                 else{
                     const {data} = await axios.get('http://127.0.0.1:8000/api/entry/laf-entry/' + `?page=${page}`);
+                    console.log("laf data is heree ",  data);
                     console.log("products", data.results);
                     console.log(hasMore);
-                    setProducts(prevProducts => [...prevProducts, ...data.results]);
-                    console.log("products", products);
-                    setPage(prevPage => prevPage + 1);
-                    setHasMore(data.results.length >= 16);
+                    const lafEntries = data.results ? data.results : data;
+                    if(lafEntries) {
+                        setProducts(prevProducts => [...prevProducts, ...lafEntries]);
+                        setPage(prevPage => prevPage + 1);
+                        setHasMore(lafEntries.length >= 16);
+                    }
                 }
                 setLoading(false);
 
@@ -153,7 +159,6 @@ function EntryMainPage2(){
                                                                 <span className="d-flex" style={{ fontSize: '11px', fontFamily: 'Inter, sans-serif', fontWeight: 'bold', textAlign: 'center' }}>Send Message</span>
 
                                                             </button>
-                                                            {/* ...other buttons... */}
                                                         </div>
                                                     </div>
                                                     <div className="d-flex flex-column justify-content-start align-items-center " style={{ height: '90%', margin: '1.5%', width: '30%', minWidth: '60px', background: '#EDF0F7', borderRadius: '10px' }}>
