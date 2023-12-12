@@ -62,6 +62,7 @@ function ProductMainPage() {
                 else{
                     debugger;
                     const {data} = await axios.get('http://127.0.0.1:8000/api/product/' + pageType + `?page=${page}`);
+                    console.log(data);
                     const productData = data.results ? data.results : data;
                     if(productData) {
                         setProducts(prevProducts => [...prevProducts, ...productData]);

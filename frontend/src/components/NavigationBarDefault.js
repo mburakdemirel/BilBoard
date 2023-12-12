@@ -23,7 +23,7 @@ function NavigationBarDefault() {
     const [myProfile, setMyProfile] = useState(JSON.parse(localStorage.getItem('myProfile')));
 
     useEffect(() => {
-        debugger;
+
         getProfile();
         getFavorites();
         if(isProfileChanged){
@@ -34,7 +34,7 @@ function NavigationBarDefault() {
 
 
     const getProfile = async () =>{
-        debugger;
+
         if(!myProfile || isProfileChanged){
             try{
                 axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
@@ -59,7 +59,7 @@ function NavigationBarDefault() {
 
     const getFavorites = async () => {
         try{
-            debugger;
+
             axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
             const {data} = await axios.get('http://127.0.0.1:8000/api/user/my-favorites/');
             console.log("favorites from backend " , data.message);

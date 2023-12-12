@@ -5,12 +5,19 @@ import Dilara from './assets/img/dilara.png'
 import Yusuf from './assets/img/yusuf.png'
 import Burak from './assets/img/burak.png'
 import Eren from './assets/img/eren.png'
+import Secondhand from './assets/landingPage/secondhand.jpeg'
+import Borrow from './assets/landingPage/borrow.jpeg'
+import LostFound from './assets/landingPage/lost&found.jpeg'
+import Donation from './assets/landingPage/donation.jpeg'
+import Complaint from './assets/landingPage/compliant.jpeg'
+
 import { NavLink } from 'react-router-dom';
 
-//import './assets/css/aos.min.css'
+//import  './assets/css/aos.min.css'
 //import './assets/css/animate.min.css'
 
 import Footer from "./Footer";
+import LostFoundPage from "./LostFoundPage";
 
 const WelcomeSection = () => (
     <section className="py-4 py-xl-5" style={{ background: '#edf0f7'}}>
@@ -59,46 +66,66 @@ const ServicesSection = () => (
                 className="col d-sm-flex justify-content-center align-items-center justify-content-sm-end justify-content-md-center
                         justify-content-lg-center justify-content-xl-center justify-content-xxl-center"
                         style={{padding: '0px', paddingLeft: '20px', paddingRight: '20px', maxWidth: '200px',}}>
-                <div className="card" style={{borderRadius: '10px', background: '#A0ABC0', maxWidth: '200px', height: '168px', minHeight: '100px',}}>
-                    <div className="card-body flex-grow-0 flex-shrink-1 flex-fill justify-content-xl-center align-items-xl-center"
-                        style={{fontSize: '10px', transform: 'rotate(0deg)', padding: '0px', width: '148px', paddingTop: '25px', paddingBottom: '0px',}}>
+                <div className="card" style={{ borderRadius: '10px', background: '#A0ABC0', maxWidth: '200px', height: '190px' }}>
+                    <div className="card-body" style={{ padding: '0px', width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                        <img className="d-block" src={Secondhand} style={{ borderRadius:'8px', width: '100%', height: '100%', objectFit: 'cover' }}></img>
                     </div>
+                    <h1 style={{marginTop:'5px', fontFamily:'Inter, sans-serif', fontSize:'16px'}}>Second-hand</h1>
                 </div>
+
             </div>
 
             <div
                 className="col d-sm-flex justify-content-center align-items-center justify-content-sm-end justify-content-md-center
                         justify-content-lg-center justify-content-xl-center justify-content-xxl-center"
                 style={{padding: '0px', paddingLeft: '20px', paddingRight: '20px', maxWidth: '200px',}}>
-                <div className="card" style={{borderRadius: '10px', background: '#A0ABC0', maxWidth: '200px', height: '168px', minHeight: '100px',}}>
-                    <div className="card-body flex-grow-0 flex-shrink-1 flex-fill justify-content-xl-center align-items-xl-center"
-                         style={{fontSize: '10px', transform: 'rotate(0deg)', padding: '0px', width: '148px', paddingTop: '25px', paddingBottom: '0px',}}>
+                <div className="card" style={{ borderRadius: '10px', background: '#A0ABC0', maxWidth: '200px', height: '190px' }}>
+                    <div className="card-body" style={{ padding: '0px', width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                        <img className="d-block" src={Borrow} style={{ borderRadius:'8px', width: '100%', height: '100%', objectFit: 'cover' }}></img>
                     </div>
+                    <h1 style={{marginTop:'5px', fontFamily:'Inter, sans-serif', fontSize:'16px'}}>Borrow</h1>
                 </div>
+
+            </div>
+
+
+            <div
+                className="col d-sm-flex justify-content-center align-items-center justify-content-sm-end justify-content-md-center
+                        justify-content-lg-center justify-content-xl-center justify-content-xxl-center"
+                style={{padding: '0px', paddingLeft: '20px', paddingRight: '20px', maxWidth: '200px',}}>
+                <div className="card" style={{ borderRadius: '10px', background: '#A0ABC0', maxWidth: '200px', height: '190px' }}>
+                    <div className="card-body" style={{ padding: '0px', width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                        <img className="d-block" src={Donation} style={{ borderRadius:'8px', width: '100%', height: '100%', objectFit: 'cover' }}></img>
+                    </div>
+                    <h1 style={{marginTop:'5px', fontFamily:'Inter, sans-serif', fontSize:'16px'}}>Donation</h1>
+                </div>
+
+            </div>
+            <div
+                className="col d-sm-flex justify-content-center align-items-center justify-content-sm-end justify-content-md-center
+                        justify-content-lg-center justify-content-xl-center justify-content-xxl-center"
+                style={{padding: '0px', paddingLeft: '20px', paddingRight: '20px', maxWidth: '200px',}}>
+                <div className="card" style={{ borderRadius: '10px', background: '#A0ABC0', maxWidth: '200px', height: '190px' }}>
+                    <div className="card-body" style={{ padding: '0px', width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                        <img className="d-block" src={LostFound} style={{ borderRadius:'8px', width: '100%', height: '100%', objectFit: 'cover' }}></img>
+                    </div>
+                    <h1 style={{marginTop:'5px', fontFamily:'Inter, sans-serif', fontSize:'16px'}}>Lost & Found</h1>
+                </div>
+
             </div>
 
             <div
                 className="col d-sm-flex justify-content-center align-items-center justify-content-sm-end justify-content-md-center
                         justify-content-lg-center justify-content-xl-center justify-content-xxl-center"
                 style={{padding: '0px', paddingLeft: '20px', paddingRight: '20px', maxWidth: '200px',}}>
-                <div className="card" style={{borderRadius: '10px', background: '#A0ABC0', maxWidth: '200px', height: '168px', minHeight: '100px',}}>
-                    <div className="card-body flex-grow-0 flex-shrink-1 flex-fill justify-content-xl-center align-items-xl-center"
-                         style={{fontSize: '10px', transform: 'rotate(0deg)', padding: '0px', width: '148px', paddingTop: '25px', paddingBottom: '0px',}}>
+                <div className="card" style={{ borderRadius: '10px', background: '#A0ABC0', maxWidth: '200px', height: '190px' }}>
+                    <div className="card-body" style={{ padding: '0px', width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                        <img className="d-block" src={Complaint} style={{ borderRadius:'8px', width: '100%', height: '100%', objectFit: 'cover' }}></img>
                     </div>
+                    <h1 style={{marginTop:'5px', fontFamily:'Inter, sans-serif', fontSize:'16px'}}>Complaint</h1>
                 </div>
-            </div>
 
-            <div
-                className="col d-sm-flex justify-content-center align-items-center justify-content-sm-end justify-content-md-center
-                        justify-content-lg-center justify-content-xl-center justify-content-xxl-center"
-                style={{padding: '0px', paddingLeft: '20px', paddingRight: '20px', maxWidth: '200px',}}>
-                <div className="card" style={{borderRadius: '10px', background: '#A0ABC0', maxWidth: '200px', height: '168px', minHeight: '100px',}}>
-                    <div className="card-body flex-grow-0 flex-shrink-1 flex-fill justify-content-xl-center align-items-xl-center"
-                         style={{fontSize: '10px', transform: 'rotate(0deg)', padding: '0px', width: '148px', paddingTop: '25px', paddingBottom: '0px',}}>
-                    </div>
-                </div>
             </div>
-
 
         </div>
     </section>

@@ -21,6 +21,7 @@ import EntryMainPage from "./components/EntryMainPage";
 import Chat from "./components/Chat";
 import MainPage from "./components/MainPage";
 import ProfileOther from "./components/ProfileOther";
+import AboutPage from "./components/AboutPage";
 
 // we don't need to add NavigationBar and Footer to each page because they are added here only the Routes part of the app will differ.
 function App() {
@@ -56,6 +57,7 @@ function App() {
                   <Route path='/login' element={<><NavigationBarLanding/><LoginPage/></>}></Route>
                   <Route path='/register' element={<><NavigationBarLanding/><RegisterPage/></>}></Route>
                   <Route path='/change_password' element={<><NavigationBarLanding/><ForgotPasswordPage/></>}></Route>
+                  <Route path='/about' element={<><NavigationBarLanding/><AboutPage/></>}></Route>
                   {/** We will probably add a new component called <ProtectedRoute> or something for pages that should be seen after authentication */}
                   <Route path='/profile' element={<><NavigationBarDefault/><Profile/></>}></Route>
                   <Route path='/profile/:id' element={<><NavigationBarDefault/><ProfileOther/></>}></Route>
