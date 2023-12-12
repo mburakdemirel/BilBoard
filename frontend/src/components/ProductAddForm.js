@@ -3,6 +3,8 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import "../ChooseFileInput.css"
 
+const text_field_background = "#d9e9fa";
+
 export function ProductAddForm() {
     const navigate = useNavigate();
     const [title, setTitle] = useState("");
@@ -114,17 +116,17 @@ export function ProductAddForm() {
                             <h3 className="text-center" style={{ fontFamily: 'Inter,sans-serif' }}>Add a New Product</h3>
                             {errMsg && <div className="alert alert-danger" role="alert">{errMsg}</div>}
                             <form onSubmit={handleSubmit} method="post" className="form-card" style={{ height: 'fit-content', margin: 'auto', width: '60%' }}>
-                                <div className="form-group col-xl-6 flex-column d-flex" style={{ width: '100%', paddingTop: '5px' }}>
+                                <div className="form-group col-xl-6 flex-column d-flex" style={{ width: '100%', paddingTop: '30px' }}>
                                     <div className="row justify-content-between text-left">
-                                        <label className="form-control-label"><h5>Title</h5></label>
+                                    <label className="form-control-label" style={{ textAlign: 'left',fontFamily: 'Inter, sans-serif' }}><h5>Title</h5></label>
                                         <input value={title} onChange={(e) => { setTitle(e.target.value); }} required type="text" placeholder="Title"
                                             className="form-control"
                                             style={{
                                                 width: '100%',
                                                 fontFamily: 'Inter, sans-serif',
-                                                marginBottom: '0px',
+                                                marginBottom: '10px',
                                                 height: '100%',
-                                                background: '#a0abc0',
+                                                background: text_field_background,
                                                 borderRadius: '10px',
                                                 paddingLeft: '15px',
                                             }}
@@ -133,14 +135,14 @@ export function ProductAddForm() {
                                     </div>
                                     <div
                                         className="row justify-content-between text-left">
-                                        <label required className="form-control-label" htmlFor='postTypeSelect'><h5>Select a Product Type</h5></label>
+                                        <label required className="form-control-label" htmlFor='postTypeSelect'style={{ textAlign: 'left' ,fontFamily: 'Inter, sans-serif'}}><h5>Select a Product Type</h5></label>
                                         <select value={category} onChange={(e) => { setCategory(e.target.value); console.log(category) }} className="form-control"
                                             style={{
                                                 width: '100%',
                                                 fontFamily: 'Inter, sans-serif',
-                                                marginBottom: '0px',
+                                                marginBottom: '15px',
                                                 height: '100%',
-                                                background: '#a0abc0',
+                                                background: text_field_background,
                                                 borderRadius: '10px',
                                                 paddingLeft: '15px',
 
@@ -154,11 +156,11 @@ export function ProductAddForm() {
                                     </div>
 
                                     <div className="row justify-content-between text-left">
-                                        <h5 style={{ fontFamily: 'Inter, sans-serif' }}>Photos</h5>
+                                        <h5 style={{ textAlign: 'left' , fontFamily: 'Inter, sans-serif', }}>Photos</h5>
                                         <label className="form-control-label" htmlFor="FormControl" style={{ fontFamily: 'Inter, sans-serif', textAlign: 'left' }}>Choose files to upload (at most 5)</label>
                                         <input name="product_photos" onChange={(e) => { handleImage(e); }}
                                             id="FormControl" type="file" accept="image/*" multiple></input>
-                                        <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+                                        <div style={{ display: 'flex', flexWrap: 'wrap' , marginBottom: '20px',}}>
                                             {photo.map((imagePreview, index) => (
                                                 <div key={index} style={{ margin: '10px', textAlign: 'center' }}>
                                                     <img
@@ -171,7 +173,7 @@ export function ProductAddForm() {
                                         </div>
                                     </div>
                                     <div className="row justify-content-between text-left">
-                                        <label className="form-control-label" htmlFor="description" style={{ fontFamily: 'Inter, sans-serif' }}><h5>Enter your Description</h5></label>
+                                        <label className="form-control-label" htmlFor="description" style={{ textAlign : 'left',fontFamily: 'Inter, sans-serif' }}><h5>Enter your Description</h5></label>
                                         <textarea value={description} onChange={(e) => setDescription(e.target.value)}
                                             id="description"
                                             placeholder="Description"
@@ -179,7 +181,8 @@ export function ProductAddForm() {
                                             className="form-control"
                                             style={{
                                                 fontFamily: 'Inter, sans-serif',
-                                                background: '#a0abc0',
+                                                marginBottom: '10px',
+                                                background: text_field_background,
                                                 borderRadius: '10px',
                                                 paddingLeft: '15px',
                                                 paddingTop: '15px',
@@ -188,7 +191,7 @@ export function ProductAddForm() {
                                     </div>
                                     {(category === "secondhand") ? (<div
                                         className="row justify-content-between text-left">
-                                        <label className="form-control-label"><h5>Price</h5></label>
+                                        <label className="form-control-label"style={{ textAlign : 'left',fontFamily: 'Inter, sans-serif'}}><h5>Price</h5></label>
                                         <input required={category === "secondhand"} readOnly={category !== "secondhand"} value={price} onChange={(e) => setPrice(e.target.value)} min={0} placeholder="Enter Price (in Turkish Liras)" type="number"
                                             className="form-control"
                                             style={{
@@ -196,7 +199,7 @@ export function ProductAddForm() {
                                                 fontFamily: 'Inter, sans-serif',
                                                 marginBottom: '0px',
                                                 height: '50%',
-                                                background: '#a0abc0',
+                                                background: text_field_background,
                                                 borderRadius: '10px',
                                                 paddingLeft: '15px',
 
@@ -208,7 +211,7 @@ export function ProductAddForm() {
                                         <label htmlFor="date" className="form-control-label"><h5>Return Date</h5></label>
                                         <input readOnly={category !== "borrow"} required={category === "borrow"} onChange={(e) => { setReturnDate(e.target.value); console.log(e.target.value) }} id="date" className="form-control" style={{
                                             fontFamily: 'Inter, sans-serif',
-                                            background: '#a0abc0',
+                                            background: text_field_background,
                                             borderRadius: '10px',
                                             paddingLeft: '15px',
                                             paddingTop: '15px',
@@ -221,7 +224,7 @@ export function ProductAddForm() {
                                             <button onClick={() => { navigate("/main_page/secondhand") }} className="btn btn-primary d-block w-100 mb-3" style={{ background: '#2d3648', border: 'none', fontFamily: 'Inter, sans-serif', height: '40px' }}>Cancel</button>
                                         </div>
                                         <div className="col-xl-6 flex-column d-flex">
-                                            <button className="btn btn-primary d-block w-100 mb-3" type="submit" style={{ background: '#2d3648', border: 'none', fontFamily: 'Inter, sans-serif', height: '40px' }}>Post</button>
+                                            <button className="btn btn-primary d-block w-100 mb-3" type="submit" style={{ background:'#0558b0', border: 'none', fontFamily: 'Inter, sans-serif', height: '40px' }}>Post</button>
                                         </div>
                                     </div>
                                 </div>
