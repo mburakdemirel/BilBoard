@@ -11,7 +11,6 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.response import Response
-
 from bilboard_backend.redis_config import get_redis_instance
 from bilboard_backend.redis_config import cache
 redis_instance = get_redis_instance()

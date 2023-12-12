@@ -24,6 +24,9 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 from productapp import serializers
+from bilboard_backend.redis_config import get_redis_instance
+from bilboard_backend.redis_config import cache
+redis_instance = get_redis_instance()
 
 
 class CreateUserView(generics.CreateAPIView):
@@ -103,6 +106,8 @@ class ManageUserView(generics.RetrieveUpdateDestroyAPIView):
         return self.request.user
     
     def update(self, request, *args, **kwargs):
+        cache.delete_pattern("laf_entries_*")
+        cache.delete_pattern("complaint_entries_*")
         user = self.request.user
         serializer = self.get_serializer(user, data=request.data, partial=True)
 
@@ -217,6 +222,8 @@ def delete_profile_photo(request):
         user.profile_photo.delete()
         user.profile_photo = None
         user.save()
+        cache.delete_pattern("laf_entries_*")
+        cache.delete_pattern("complaint_entries_*")
         return Response({"message": "Profile photo deleted"}, status=status.HTTP_200_OK)
     else:
         return Response({"error": "Profile photo does not exist"}, status=status.HTTP_404_NOT_FOUND)

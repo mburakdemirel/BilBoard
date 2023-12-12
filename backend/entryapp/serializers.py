@@ -1,8 +1,6 @@
 from rest_framework import serializers
 from mainapp.models import LostAndFoundEntry, CustomUser, ComplaintEntry
 import requests
-import detectlanguage
-
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
