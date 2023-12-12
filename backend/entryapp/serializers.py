@@ -59,7 +59,7 @@ class CreateComplaintEntrySerializer(serializers.ModelSerializer):
         
         if response.status_code == 200:
             result = response.json()
-            if "Terms" in result:
+            if result.get('Terms'):
                 # Raise an error for inappropriate content
                 raise serializers.ValidationError("Description contains inappropriate content.")
         else:
