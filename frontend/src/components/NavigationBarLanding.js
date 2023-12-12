@@ -1,17 +1,18 @@
 import React from 'react';
 import Logo from './assets/img/logo_bugbunny-removebg-preview.png'
-import { NavLink } from 'react-router-dom';
+import {NavLink, useNavigate} from 'react-router-dom';
 
 function NavigationBarLanding(){
+    const navigate = useNavigate();
     return (
 
             <nav className="navbar navbar-expand-sm sticky-top d-lg-flex align-items-start py-3 navbar-light"
                 style={{background: '#ffffff',height: '75px', width:'100%' }}>
 
                 <div className="container">
-                    <a className="navbar-brand d-flex align-items-center" href="#">
+                    <a className="navbar-brand d-flex align-items-center" onClick={()=>{navigate('/')}}>
                     <span className="bs-icon-sm bs-icon-rounded bs-icon-primary d-flex justify-content-center align-items-center me-2 bs-icon" style={{ width: '36px' }}>
-                        <img className="img-thumbnail" src={Logo} alt="Logo" />
+                        <img className="img-thumbnail" src={Logo} alt="Logo"  />
                     </span>
                         <span className="fw-semibold" style={{ fontFamily: 'Inter, sans-serif'}}>Bilboard</span>
                     </a>

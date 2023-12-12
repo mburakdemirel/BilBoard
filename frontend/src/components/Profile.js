@@ -36,7 +36,6 @@ function Profile() {
 
     const onLoad = async () => {
         setMyProfile(JSON.parse(localStorage.getItem('myProfile')));
-            if(!myProfile){
                 try{
                     // Create the GET request
                     axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
@@ -59,7 +58,7 @@ function Profile() {
                         setError('An error occurred while setting up the request.');
                     }
                 }
-            }
+
         }
 
 

@@ -21,7 +21,6 @@ function EntryMainPage(){
 
     useEffect(()=>{
         console.log("pageType in entry page " + pageType);
-
         setProducts([]);
         setPage(1)
         // Messages in the selected index will be opened on the right side

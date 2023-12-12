@@ -26,7 +26,7 @@ function ProductMainPage() {
 
 
     useEffect(()=>{
-        debugger;
+
         console.log("In use effect" + searchText);
         setProducts([]);
         setPage(1);
@@ -50,7 +50,7 @@ function ProductMainPage() {
             if(pageType){
 
                 if(searchText){
-                    debugger;
+
                     const {data} = await axios.get('http://127.0.0.1:8000/api/product/' + pageType + `?search=${searchText}`);
                     const productData = data.results ? data.results : data;
                     if(productData) {
@@ -60,7 +60,7 @@ function ProductMainPage() {
                     }
                 }
                 else{
-                    debugger;
+
                     const {data} = await axios.get('http://127.0.0.1:8000/api/product/' + pageType + `?page=${page}`);
                     console.log(data);
                     const productData = data.results ? data.results : data;
