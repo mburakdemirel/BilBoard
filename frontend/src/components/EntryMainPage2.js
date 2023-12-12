@@ -140,17 +140,17 @@ function EntryMainPage2(){
                                 <ul className="list-group" style={{ width: '100%', height: '100%', overflow: 'scroll' }} data-bs-smooth-scroll="true">
                                     {products.map((item) => (item.category==="found" &&
                                         <li className="list-group-item" key={item.id} style={{ padding: '0px', paddingBottom: '10px', borderStyle: 'none', margin: '1%' }}>
-                                            <div className="card" style={{ borderStyle: 'none', background: '#A0ABC0' }}>
+                                            <div className="card" style={{ borderStyle: 'none', background: '#d9e9fa' }}>
                                                 <div className="card-body d-flex align-items-center" style={{ borderStyle: 'none', height: '11vw', minHeight: '80px', paddingLeft: '5px', paddingBottom: '5px', paddingRight: '5px', paddingTop: '5px' }}>
                                                     <div className="d-flex flex-column justify-content-between" style={{ width: '90%', height: '90%', margin: '0.7%', minWidth: '200px' }}>
                                                         <div>
                                                             <div className="d-flex">
                                                                 <h1 className="d-flex text-start" style={{ fontFamily: 'Inter, sans-serif', fontWeight: 'bold', margin: '0px', fontSize: '16px', width: '80%' }}>{item.topic}</h1>
-                                                                <div className="d-flex justify-content-center align-items-center" style={{ height: '28px', width: '20%', background: '#717D96', borderRadius: '10px' }}>
+                                                                <div className="d-flex justify-content-center align-items-center" style={{ height: '28px', width: '20%', background: '#0558b0', borderRadius: '10px' }}>
                                                                     <span className="d-flex" style={{ fontSize: '12px', fontFamily: 'Inter, sans-serif', fontWeight: 'bold', textAlign: 'center', color: 'rgb(255,255,255)' }}>Found</span>
                                                                 </div>
                                                             </div>
-                                                            <h4 className="d-flex text-truncate text-start " style={{ fontSize: '13px', marginTop: '0px', paddingTop: '5px', whiteSpace: 'normal', height: '68.5938px' }}>
+                                                            <h4 className="d-flex text-truncate text-start " style={{ fontSize: '13px', marginTop: '0px', paddingTop: '5px', whiteSpace: 'normal', height: '68.5938px'}}>
                                                                 {item.description}
                                                             </h4>
                                                         </div>
@@ -162,7 +162,7 @@ function EntryMainPage2(){
                                                             </button>
                                                         </div>
                                                     </div>
-                                                    <div className="d-flex flex-column justify-content-start align-items-center " style={{ height: '90%', margin: '1.5%', width: '30%', minWidth: '60px', background: '#EDF0F7', borderRadius: '10px' }}>
+                                                    <div className="d-flex flex-column justify-content-start align-items-center " style={{ height: '90%', margin: '1.5%', width: '30%', minWidth: '60px', background: '#9ebcdb', borderRadius: '10px' }}>
                                                         <img className="rounded-circle" src={item.user.profile_photo ? item.user.profile_photo : ProfilePlaceholder} style={{ height: '70%', width: '70%', marginTop: '5%', marginBottom: '5%' }} alt="User" />
                                                         <h1 className="text-center d-flex justify-content-center align-items-center " style={{height:'25%', fontFamily: 'Inter, sans-serif', fontSize: '13px', width: '95%' }}>{item.user.name + " " + item.user.surname}</h1>
                                                     </div>
