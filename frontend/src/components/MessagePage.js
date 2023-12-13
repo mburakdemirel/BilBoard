@@ -6,6 +6,7 @@ import ReconnectingWebSocket from "reconnecting-websocket";
 import InfiniteScroll from 'react-infinite-scroll-component';
 import Placeholder from "./assets/img/WF Image Placeholder2.png"
 import AOS from "aos";
+import {useNavigate} from "react-router-dom";
 // TODO: put all style attributes into a css file and think about the layout of this page
 // Should there be products next to the messages??
 function MessagePage() {
@@ -107,7 +108,7 @@ function MessagePage() {
 
 
 function Products({allMessages, pull_data, deleteMessage, loading}) {
-
+    const navigate = useNavigate();
     const [activeIndex, setActiveIndex] = useState(-1);
     const {newMessage} = useContext(ContextApi);
     console.log("newmessage", newMessage)
@@ -164,7 +165,8 @@ function Products({allMessages, pull_data, deleteMessage, loading}) {
                                             </button>
                                             <span style={{ width: '12px' }}></span>
                                             <div className="d-flex justify-content-center align-items-center" style={{ height:'90px', width: '35%', margin: '0px', padding: '0px' }}>
-                                                <img className="d-block w-100" style={{ borderRadius: '8px', height: '95%', objectFit: 'cover' }} src={allMessages[index].image_url ? allMessages[index].image_url : Placeholder} />
+                                                <img className="d-block w-100" style={{ borderRadius: '8px', height: '95%', objectFit: 'cover' }} src={allMessages[index].image_url ? allMessages[index].image_url : Placeholder}
+                                                    onClick={(e)=>navigate("/product_detail/" + allMessages[index].category + "/" + allMessages[index].product_id)}/>
                                             </div>
 
                                         </div>

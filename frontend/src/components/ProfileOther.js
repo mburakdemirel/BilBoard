@@ -29,14 +29,44 @@ function ProfileOther() {
 
 
     useEffect(()=>{
-        const profile = JSON.parse(localStorage.getItem('myProfile'));
-        console.log("profil",profile.id);
+
         AOS.init();
         if(!location.state){
             navigate('/profile')
         }
 
     },[])
+
+    const onLoad = async () => {
+
+        console.log("user on load", myProfile);
+        try{
+            // Create the GET request
+            axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
+            const {data} = await axios.get('http://127.0.0.1:8000/api/user/me/') ;
+            //console.log(data);
+            setMyProfile(data);
+        }
+        catch (error){
+            if (error.response) {
+                if(error.response.status===401){
+                    setError(`Your email or password is wrong`);
+                }
+                else{
+                    setError(`Server responded with status code ${error.response.status}`);
+                }
+
+            } else if (error.request) {
+                setError('No response received from the server.');
+            } else {
+                setError('An error occurred while setting up the request.');
+            }
+        }
+
+    }
+
+
+
 
     return (
         <section  className="d-flex d-xxl-flex flex-grow-1 justify-content-center align-items-start align-items-xl-start justify-content-xxl-center align-items-xxl-start  py-4 py-x-5" style={{ background: '#edf0f7', minHeight: '91vh'}}>
