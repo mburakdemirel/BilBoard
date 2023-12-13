@@ -77,10 +77,23 @@ class UserProductViewSet(ProductViewSet):
     def perform_destroy(self, instance):
         print("perform_destroy\n\n", instance.id)
         product_category = instance.category
-        print("product_category", product_category)
+
+        # delete photos of product from the system before destroying the product
+        try:
+            images = instance.images.all()
+        except ProductImage.DoesNotExist:
+            return Response({"error": "There is no product image found to delete"}, status=404)
+        for image in images:
+            if image.image:
+                if os.path.isfile(image.image.path):
+                    os.remove(image.image.path)
+
+            image.delete()
+
+        # destroy the object
         super().perform_destroy(instance)
-        print("product_category", product_category)
-        # Kategoriye göre cache'i geçersiz kıl
+
+        # According to category delete cache, since instances are changed.
         if product_category == 'secondhand':
             print("Invalidating cache", instance.id)
             cache.delete_pattern("secondhand_products_*")
