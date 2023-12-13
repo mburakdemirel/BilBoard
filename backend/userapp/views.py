@@ -227,3 +227,15 @@ def delete_profile_photo(request):
         return Response({"message": "Profile photo deleted"}, status=status.HTTP_200_OK)
     else:
         return Response({"error": "Profile photo does not exist"}, status=status.HTTP_404_NOT_FOUND)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def get_user_by_id(request):
+    user_id = request.data.get('user_id')
+    user = CustomUser.objects.get(id=user_id)
+    if user:
+        serializer = UserSerializer(user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    else:
+        return Response({"error": "User with specified id is not found."}, status=status.HTTP_404_NOT_FOUND)
