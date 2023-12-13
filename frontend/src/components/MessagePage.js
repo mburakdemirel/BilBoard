@@ -151,11 +151,11 @@ function Products({allMessages, pull_data, deleteMessage, loading}) {
                         <ul className="list-group" style={{ width: '100%', height: '100%', overflow: 'scroll' }}>
                             {Array(allMessages.length).fill().map((_,index) => (
                                 <li key={index} className="list-group-item" onClick={()=>setActiveIndex(index)} style={{ padding: '0px', paddingBottom: '10px', borderStyle: 'none'}}  data-aos="fade-right" data-aos-duration="600" data-aos-delay={index*100}>
-                                <div className="card d-flex justify-content-center" style={{ minHeight:'100px', maxHeight:'100px', borderStyle: 'none',  background: index===activeIndex? '#A0ABC0' : '#EDF0F7'}} onClick={()=>{messageClick(allMessages[index].id, allMessages[index].participiants)}}>
+                                <div className="card d-flex justify-content-center" style={{ minHeight:'100px', maxHeight:'100px', borderStyle: 'none',  background: index===activeIndex? '#346fad' : '#EDF0F7'}} onClick={()=>{messageClick(allMessages[index].id, allMessages[index].participiants)}}>
                                     <div className="d-flex flex-row align-items-center " style={{ height: '20%', minHeight: '80px', paddingTop: '5px', paddingBottom: '5px', borderStyle: 'none', paddingLeft: '20px', paddingRight: '6px' }}>
                                         <div className="d-flex flex-column " style={{ width: '50%', height: '100%' }}>
-                                            <h4 className="text-truncate" style={{width:'fit-content', fontSize: '18px', marginBottom: '5px', fontFamily: 'Inter, sans-serif' }}>{allMessages[index].product_name}</h4>
-                                            <h3 className="text-truncate" style={{width:'fit-content', paddingTop: '0px', margin: '0px', marginTop: '5px', fontSize: '18px', fontFamily:'Inter, sans-serif', fontWeight:'bold' }}>{allMessages[index] && (allMessages[index].participiants.contact_name + " " + allMessages[index].participiants.contact_surname)}</h3>
+                                            <h4 className="text-truncate" style={{width:'fit-content', fontSize: '18px', marginBottom: '5px', fontFamily: 'Inter, sans-serif', color: index===activeIndex? '#ffffff' : '#000000' }}>{allMessages[index].product_name}</h4>
+                                            <h3 className="text-truncate" style={{width:'fit-content', paddingTop: '0px', margin: '0px', marginTop: '5px', fontSize: '18px', fontFamily:'Inter, sans-serif', fontWeight:'bold' ,color: index===activeIndex? '#ffffff' : '#000000' }}>{allMessages[index] && (allMessages[index].participiants.contact_name + " " + allMessages[index].participiants.contact_surname)}</h3>
                                         </div>
                                         <div className="d-flex justify-content-end align-items-center" style={{ width: '50%', height: '100%' }}>
                                             <button className="rounded-circle btn btn-primary d-flex justify-content-center align-items-center" style={{ width: '32px', fontWeight: 'bold', background: '#2d3648', borderStyle: 'none', borderColor: '#2d3648', height: '32px' }}
@@ -324,7 +324,7 @@ function Messages({chatId,participiant, loadingDelete}) {
                             {messages.map((message, index) => (
 
                                 <li key={index} className="list-group-item d-flex w-100 " style={{justifyContent: message.author === myProfile.id ? 'right' : 'left', padding: '0px', paddingBottom: '10px', borderStyle: 'none' }}>
-                                    <div className="card" style={{ borderStyle: 'none', background: message.author === myProfile.id ? '#717D96' : '#A0ABC0', width: '70%', borderRadius:'10px' }}>
+                                    <div className="card" style={{ borderStyle: 'none', background: message.author === myProfile.id ? '#9ebcdb' : '#d9e9fa', width: '70%', borderRadius:'10px' }}>
                                         <div className="d-flex text-start" style={{ height: '100%', borderStyle: 'none', width: '100%', padding: '10px', fontSize: '20%' }}>
                                             <p style={{ marginBottom: '0px', width: '100%', fontFamily: 'Inter, sans-serif', fontSize: '600%' }}>{message && message.content}</p>
                                             <p className="d-flex align-items-end justify-content-end" style={{ textAlign:'end', padding:'0px', margin: '0px', fontFamily: 'Inter, sans-serif', fontSize: '8px' }}>{message && getHourAndMinuteFromTime(message.timestamp)}</p>
