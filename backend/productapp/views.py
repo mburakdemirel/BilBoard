@@ -75,11 +75,14 @@ class UserProductViewSet(ProductViewSet):
             cache.delete_pattern("donation_products_*")
         
     def perform_destroy(self, instance):
+        print("perform_destroy\n\n", instance.id)
         product_category = instance.category
+        print("product_category", product_category)
         super().perform_destroy(instance)
-
+        print("product_category", product_category)
         # Kategoriye göre cache'i geçersiz kıl
         if product_category == 'secondhand':
+            print("Invalidating cache", instance.id)
             cache.delete_pattern("secondhand_products_*")
         elif product_category == 'borrow':
             cache.delete_pattern("borrow_products_*")
@@ -87,7 +90,6 @@ class UserProductViewSet(ProductViewSet):
             cache.delete_pattern("donation_products_*")
 
 
-#MİN MAX CACHE, VE ENTRY'LERE DE CACHE EKLENECEK
 class SecondhandProductViewSet(ProductViewSet):
     """View for managing all secondhand products in the system."""
 
@@ -124,6 +126,7 @@ class SecondhandProductViewSet(ProductViewSet):
         cached_data = cache.get(cache_key)
 
         if cached_data is not None:
+            print("girmedim\n", cached_data)
             # Return the cached data for the specific page
             return Response(cached_data)
 
@@ -132,6 +135,7 @@ class SecondhandProductViewSet(ProductViewSet):
         if page is not None:
             serializer = self.get_serializer(page, many=True)
             cached_data = serializer.data
+            print("\n\nLog2", cached_data)
             cache.set(cache_key, cached_data, timeout=60*60)  # Cache for 1 hour
             return self.get_paginated_response(cached_data)
 
@@ -292,6 +296,7 @@ def clicked_favorites(request):
 @api_view(['DELETE'])
 @permission_classes([IsAuthenticated])
 def delete_product_photo(request):
+    print ("LOGIMP\n\n\n\n\n")
     user = request.user
     product_id = request.data.get('product_id')
     image_id = request.data.get('image_id')
