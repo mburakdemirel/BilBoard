@@ -4,6 +4,7 @@ import React, {useContext, useEffect, useState} from "react";
 import ContextApi from "../context/ContextApi";
 import ReconnectingWebSocket from "reconnecting-websocket";
 import InfiniteScroll from 'react-infinite-scroll-component';
+import Placeholder from "./assets/img/WF Image Placeholder2.png"
 // TODO: put all style attributes into a css file and think about the layout of this page
 // Should there be products next to the messages??
 function MessagePage() {
@@ -11,16 +12,24 @@ function MessagePage() {
     const [messages, setMessages] = useState("");
     const [chatId, setChatId] = useState();
     const [participiant, setParticipiant] = useState();
-    const [loading, setLoading] = useState();
+    const [loading, setLoading] = useState(true);
+    const [isDeleted, setIsDeleted] = useState();
     const {newMessage} = useContext(ContextApi);
     console.log("newmessage", newMessage)
 
     useEffect(()=>{
         // User messages will be uploaded when page first open
-
+        setLoading(true);
         uploadAllMessages();
 
     },[])
+
+    useEffect(()=>{
+        debugger;
+        // User messages will be uploaded when page first ope
+        uploadAllMessages();
+
+    },[loading])
 
     const createNewMessage = async () => {
         if (newMessage) {
@@ -47,10 +56,10 @@ function MessagePage() {
         try{
 
             axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
-            axios.get("http://127.0.0.1:8000/chat/").then(response => {
+            await axios.get("http://127.0.0.1:8000/chat/").then(response => {
                 console.log("chat", response.data.results);
                 setAllMessages(response.data.results);
-
+                setLoading(false);
             });
 
             //const {data} = await axios.get('http://127.0.0.1:8000/api/user/me/') ;
@@ -91,8 +100,8 @@ function MessagePage() {
             setLoading(true);
             try {
                 // do update operations
-                await axios.delete('http://127.0.0.1:8000/api/user/product/' + product.id + '/');
-                setLoading(false);
+                await axios.delete('http://127.0.0.1:8000/chat/' + messageId + '/delete/');
+
 
             } catch (error) {
             }
@@ -106,7 +115,7 @@ function MessagePage() {
             <div className="container">
                 <div className="row gx-1 gy-3 justify-content-center" style={{ width: '100%', marginTop: '-21px' }}>
                     {/* I think this should not be here this page should be more like a pop-up page */}
-                    <Products allMessages={allMessages} pull_data={pull_data} deleteMessage={deleteMessage}></Products>
+                    <Products allMessages={allMessages} pull_data={pull_data} deleteMessage={deleteMessage} loading={loading}></Products>
                     <Messages pull_data={pull_data} chatId={chatId} participiant={participiant}></Messages>
                 </div>
             </div>
@@ -115,7 +124,7 @@ function MessagePage() {
 }
 
 
-function Products({allMessages,pull_data, deleteMessage}) {
+function Products({allMessages,pull_data, deleteMessage, loading}) {
 
     const [activeIndex, setActiveIndex] = useState(-1);
 
@@ -139,24 +148,27 @@ function Products({allMessages,pull_data, deleteMessage}) {
             <div className=" d-flex flex-grow-1 justify-content-center align-items-center" data-aos="fade-right" data-aos-duration="600" style={{ height: '40vw', width: '600px', minHeight: '230px' }}>
 
                 <div className="d-flex flex-column" style={{ background: '#ffffff', fontSize: '12px', borderRadius: '10px', height: '100%', width: '95%', padding: '5%' }} data-bs-smooth-scroll="true">
-                    {allMessages.length==0 ? <div className="d-flex justify-content-center align-items-center" style={{height:'100%', width:'100%'}}><span className="spinner-border spinner-border" aria-hidden="true" ></span></div>
+                    {loading ? <div className="d-flex justify-content-center align-items-center" style={{height:'100%', width:'100%'}}><span className="spinner-border spinner-border" aria-hidden="true" ></span></div>
                         :
                         <ul className="list-group" style={{ width: '100%', height: '100%', overflow: 'scroll' }} data-bs-smooth-scroll="true">
                             {Array(allMessages.length).fill().map((_,index) => (
-                                <li key={index} className="list-group-item" onClick={()=>setActiveIndex(index)} style={{ padding: '0px', paddingBottom: '10px', borderStyle: 'none' }}>
-                                <div className="card" style={{ borderStyle: 'none',  background: index===activeIndex? '#A0ABC0' : '#EDF0F7'}} onClick={()=>{messageClick(allMessages[index].id, allMessages[index].participiants)}}>
+                                <li key={index} className="list-group-item" onClick={()=>setActiveIndex(index)} style={{ padding: '0px', paddingBottom: '10px', borderStyle: 'none'}}>
+                                <div className="card d-flex justify-content-center" style={{ minHeight:'100px', maxHeight:'100px', borderStyle: 'none',  background: index===activeIndex? '#A0ABC0' : '#EDF0F7'}} onClick={()=>{messageClick(allMessages[index].id, allMessages[index].participiants)}}>
                                     <div className="d-flex flex-row align-items-center " style={{ height: '20%', minHeight: '80px', paddingTop: '5px', paddingBottom: '5px', borderStyle: 'none', paddingLeft: '20px', paddingRight: '6px' }}>
                                         <div className="d-flex flex-column " style={{ width: '50%', height: '100%' }}>
                                             <h4 className="text-truncate" style={{width:'fit-content', fontSize: '18px', marginBottom: '5px', fontFamily: 'Inter, sans-serif' }}>{allMessages[index].product_name}</h4>
                                             <h3 className="text-truncate" style={{width:'fit-content', paddingTop: '0px', margin: '0px', marginTop: '5px', fontSize: '18px', fontFamily:'Inter, sans-serif', fontWeight:'bold' }}>{allMessages[index] && (allMessages[index].participiants.contact_name + " " + allMessages[index].participiants.contact_surname)}</h3>
                                         </div>
                                         <div className="d-flex justify-content-end align-items-center" style={{ width: '50%', height: '100%' }}>
-                                            <button className="rounded-circle btn btn-primary d-flex justify-content-center align-items-center" style={{ width: '24px', fontWeight: 'bold', background: '#2d3648', borderStyle: 'none', borderColor: '#2d3648', height: '24px' }}>
+                                            <button className="rounded-circle btn btn-primary d-flex justify-content-center align-items-center" style={{ width: '32px', fontWeight: 'bold', background: '#2d3648', borderStyle: 'none', borderColor: '#2d3648', height: '32px' }}>
                                                 <i className="bi bi-trash"
-                                                   onClick={()=>deleteMessage(messageId)}></i>
+                                                   onClick={()=>deleteMessage(allMessages[index].id)}></i>
                                             </button>
                                             <span style={{ width: '12px' }}></span>
-                                            <img alt="" src={allMessages[index].image_url} style={{ width: '35%', height: '95%', minWidth: '70px' }} />
+                                            <div className="d-flex justify-content-center align-items-center" style={{ height:'90px', width: '35%', margin: '0px', padding: '0px' }}>
+                                                <img className="d-block w-100" style={{ borderRadius: '8px', height: '95%', objectFit: 'cover' }} src={allMessages[index].image_url ? allMessages[index].image_url : Placeholder} />
+                                            </div>
+
                                         </div>
                                     </div>
                                 </div>
