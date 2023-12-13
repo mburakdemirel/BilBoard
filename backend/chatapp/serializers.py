@@ -14,7 +14,7 @@ class MessageSerializer(serializers.ModelSerializer):
 class ChatListSerializer(serializers.ModelSerializer):
     participiants = serializers.StringRelatedField(many=True)
     product_name = serializers.StringRelatedField(read_only=True)
-    image_url = serializers.StringRelatedField(read_only=True)
+    image_url = 'http://127.0.0.1:8000' + serializers.StringRelatedField(read_only=True)
     class Meta:
         model = Chat
         fields = ('id', 'participiants', 'category', 'product_id', 'product_name', 'image_url')
