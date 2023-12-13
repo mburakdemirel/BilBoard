@@ -189,6 +189,7 @@ class ComplaintEntryViewSet(viewsets.ReadOnlyModelViewSet):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def vote_up_complaint(request):
+    cache.delete_pattern("complaint_entries_*")
     complaint_id = request.data.get('complaint_id')
     if not complaint_id:
         return Response({'error': 'Complaint ID should be sent'}, status=400)
@@ -228,6 +229,7 @@ def vote_up_complaint(request):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def vote_down_complaint(request):
+    cache.delete_pattern("complaint_entries_*")
     complaint_id = request.data.get('complaint_id')
     if not complaint_id:
         return Response({'error': 'Complaint ID should be sent'}, status=400)

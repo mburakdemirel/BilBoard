@@ -56,15 +56,17 @@ class CreateComplaintEntrySerializer(serializers.ModelSerializer):
         data = description.encode("utf-8")
 
         response = requests.post(endpoint + "contentmoderator/moderate/v1.0/ProcessText/Screen", headers=headers, data=data)
-        
         if response.status_code == 200:
             result = response.json()
+            print("\n\ndeneme1", result)
             if result.get('Terms'):
+                print("\n\n\nahahahha", result.get('Terms'))
                 # Raise an error for inappropriate content
                 raise serializers.ValidationError("Description contains inappropriate content.")
         else:
             raise serializers.ValidationError("Error while connecting to the content moderator service.")
 
+        raise serializers.ValidationError("Eşşek error")
         return description
 
 
