@@ -11,14 +11,13 @@ import NavigationBarDefault from "./components/NavigationBarDefault";
 import Profile from "./components/Profile";
 import ForgotPasswordPage from "./components/ForgotPasswordPage";
 import MessagePage from "./components/MessagePage";
-import MessagesDeneme from "./components/MessagesDeneme";
 import ProductMainPage from "./components/ProductMainPage";
 import ContextApi from "./context/ContextApi";
 import {useState, useEffect} from "react";
 import { ProductAddForm } from './components/ProductAddForm';
 import { EntryForm } from './components/EntryForm';
 import EntryMainPage from "./components/EntryMainPage";
-import Chat from "./components/Chat";
+
 import MainPage from "./components/MainPage";
 import ProfileOther from "./components/ProfileOther";
 import AboutPage from "./components/AboutPage";
@@ -62,13 +61,12 @@ function App() {
                   <Route path='/profile' element={<><NavigationBarDefault/><Profile/></>}></Route>
                   <Route path='/profile/:id' element={<><NavigationBarDefault/><ProfileOther/></>}></Route>
                   <Route path='/messages' element={<><NavigationBarDefault/><MessagePage/></>}></Route>
-                  <Route path='/messages_deneme' element={<><NavigationBarDefault/><MessagesDeneme/></>}></Route>
                   <Route path='/product_detail/:pageType/:id' element={<><NavigationBarDefault/><ProductDetailPage/></>}></Route>
 
                   <Route path='/main_page/:pageType/:searchText?' element={<><NavigationBarDefault/><MainPage/></>}> </Route>
                   <Route path='/entry' element={<><NavigationBarDefault/><EntryForm/></>}> </Route>
                   <Route path='/complaints' element={<><NavigationBarDefault/> <EntryMainPage/></>}> </Route>
-                  <Route path='/chat' element={<><NavigationBarDefault/><Chat/></>}> </Route>
+
                   <Route path='/add_product' element={<><NavigationBarDefault/><ProductAddForm/></>}></Route>
                   <Route path='/post_complaint' element={<><NavigationBarDefault/><EntryForm isComplaint={true}></EntryForm></>}></Route>
                   <Route path='/post_l&f' element={<><NavigationBarDefault/><EntryForm isComplaint={false}></EntryForm></>}></Route>

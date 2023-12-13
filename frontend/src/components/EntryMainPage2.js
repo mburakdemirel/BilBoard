@@ -6,6 +6,7 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 import axios from "axios";
 import InfiniteScroll from 'react-infinite-scroll-component';
 import ProfilePlaceholder from "./assets/img/default_profile.webp";
+import AOS from "aos";
 
 
 
@@ -21,6 +22,7 @@ function EntryMainPage2(){
     const [hasMore, setHasMore] = useState(true);
 
     useEffect(()=>{
+        AOS.init();
         console.log("pageType in entry page " + pageType);
         setProducts([]);
         setPage(1);
@@ -111,15 +113,14 @@ function EntryMainPage2(){
             <section className="d-flex flex-grow-1 justify-content-center align-items-start  py-5 py-x-5" style={{ background: '#edf0f7', minHeight: '91vh' }}>
                 {loading ? <div style={{height:'50px'}}><span className="spinner-border spinner-border" aria-hidden="true" ></span></div>
                     :
-
                 <div className="container d-flex justify-content-center align-items-center h-100">
                     <div className="row gx-1 gy-3 h-100" style={{ margin: '0px', width: '100%', marginTop: '-21px' }}>
 
-                        <div className="col" style={{ width: '45%', margin: '1%' }}>
+                        <div className="col" style={{ width: '45%', margin: '1%' }}  data-aos="fade-right" data-aos-duration="600">
                             <div className="d-flex flex-column" style={{ background: 'var(--bs-white)', fontSize: '12px', borderRadius: '10px', height: '100%', width: '100%', padding: '2%' }} data-bs-smooth-scroll="true">
                                 <ul className="list-group" style={{ width: '100%', height: '100%', overflow: 'scroll' }} data-bs-smooth-scroll="true">
-                                    {products.map((item) => ( item.category==="lost" &&
-                                        <li className="list-group-item" key={item.id} style={{ padding: '0px', paddingBottom: '10px', borderStyle: 'none', margin: '1%' }}>
+                                    {products.filter(item =>item.category==="lost").map((item,index) => (
+                                        <li className="list-group-item" key={item.id} style={{ padding: '0px', paddingBottom: '10px', borderStyle: 'none', margin: '1%' }} data-aos="fade-right" data-aos-duration="700">
                                             <div className="card" style={{ borderStyle: 'none', background: '#A0ABC0' }}>
                                                 <div className="card-body d-flex align-items-center" style={{ borderStyle: 'none', height: '11vw', minHeight: '80px', paddingLeft: '5px', paddingBottom: '5px', paddingRight: '5px', paddingTop: '5px' }}>
                                                     <div className="d-flex flex-column justify-content-between" style={{ width: '90%', height: '90%', margin: '0.7%', minWidth: '200px' }}>
@@ -155,11 +156,11 @@ function EntryMainPage2(){
                         </div>
 
 
-                        <div className="col" style={{ width: '45%', margin: '1%' }}>
+                        <div className="col" style={{ width: '45%', margin: '1%' }} data-aos="fade-left" data-aos-duration="600">
                             <div className="d-flex flex-column" style={{ background: 'var(--bs-white)', fontSize: '12px', borderRadius: '10px', height: '100%', width: '100%', padding: '2%' }} data-bs-smooth-scroll="true">
                                 <ul className="list-group" style={{ width: '100%', height: '100%', overflow: 'scroll' }} data-bs-smooth-scroll="true">
-                                    {products.map((item) => (item.category==="found" &&
-                                        <li className="list-group-item" key={item.id} style={{ padding: '0px', paddingBottom: '10px', borderStyle: 'none', margin: '1%' }}>
+                                    {products.filter(item =>item.category==="found").map((item,index) => (
+                                        <li className="list-group-item" key={item.id} style={{ padding: '0px', paddingBottom: '10px', borderStyle: 'none', margin: '1%' }} data-aos="fade-left" data-aos-duration="700" >
                                             <div className="card" style={{ borderStyle: 'none', background: '#d9e9fa' }}>
                                                 <div className="card-body d-flex align-items-center" style={{ borderStyle: 'none', height: '11vw', minHeight: '80px', paddingLeft: '5px', paddingBottom: '5px', paddingRight: '5px', paddingTop: '5px' }}>
                                                     <div className="d-flex flex-column justify-content-between" style={{ width: '90%', height: '90%', margin: '0.7%', minWidth: '200px' }}>

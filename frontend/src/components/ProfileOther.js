@@ -10,6 +10,7 @@ import alert from "bootstrap/js/src/alert";
 import {useNavigate, useParams, useLocation} from "react-router-dom";
 import Placeholder from "./assets/img/WF Image Placeholder2.png"
 import {set} from "react-hook-form";
+import AOS from "aos";
 
 //There are two kinds of profiles and they are rendered according to the value of myProfile boolean.
 //Probably myProfile will take its value from a context. Or we might directly pass is as props.
@@ -30,10 +31,11 @@ function ProfileOther() {
     useEffect(()=>{
         const profile = JSON.parse(localStorage.getItem('myProfile'));
         console.log("profil",profile.id);
-
-        if(!location.state || id == profile.id){
+        AOS.init();
+        if(!location.state){
             navigate('/profile')
         }
+
     },[])
 
     return (
@@ -93,7 +95,8 @@ function Products({myProfile, func}) {
 
 
                 <div className="input-group text-center d-flex d-xl-flex flex-row justify-content-lg-center justify-content-xl-center "
-                     style={{width: '100%', borderStyle: 'none', borderBottomStyle: 'none', height: '40px', marginBottom: '0px',}}>
+                     style={{width: '100%', borderStyle: 'none', borderBottomStyle: 'none', height: '40px', marginBottom: '0px',}}
+                     data-aos="fade-right" data-aos-duration="600" >
                     <button
                         className="d-flex d-xl-flex d-xxl-flex justify-content-center justify-content-xl-center justify-content-xxl-center input-group-text"
                         onClick={(event) => setFilteredProductsType("secondhand")}
@@ -125,7 +128,8 @@ function Products({myProfile, func}) {
                         <>
                             {Array(products.length).fill().map((_, index) => {
                                 if (products[index] && products[index].category === filteredProductsType) {
-                                    return(<div className="card" key={index} id="product" style={{width: '168px', height: '168px', borderRadius: '10px', borderStyle: 'none', borderBottomStyle: 'none', padding: '5px',maxHeight:'168px',minHeight:'168px' ,minWidth: '168px', maxWidth: '168px',}}>
+                                    return(<div className="card" key={index} id="product" style={{width: '168px', height: '168px', borderRadius: '10px', borderStyle: 'none', borderBottomStyle: 'none', padding: '5px',maxHeight:'168px',minHeight:'168px' ,minWidth: '168px', maxWidth: '168px',}}
+                                                data-aos="zoom-in" data-aos-duration="600">
                                         <div className="card-body" style={{ width: '100%', height: '100%', padding: '0' }}
                                              onClick={()=>sendProductDetailPage(products[index].id,products[index].category)}>
                                             <img style={{ width: '100%', height: '100%' }} src={PlaceHolder} alt={`Product ${index}`}/>

@@ -1,10 +1,11 @@
-import React from "react";
+import React, {useEffect} from "react";
 import './assets/bootstrap/css/bootstrap.min.css';
 import Logo from './assets/img/logo_bugbunny-removebg-preview.png'
 import NavigationBarLanding from "./NavigationBarLanding";
 import Footer from "./Footer";
 import {useState} from "react";
 import axios from "axios";
+import AOS from "aos";
 
 
 
@@ -20,6 +21,9 @@ function RegisterPage(){
     const token = urlSearchParams.get("token");
     console.log(token);
 
+    useEffect(() => {
+        AOS.init();
+    }, []);
     const submit = async (e) => {
         e.preventDefault();
         setLoading(true);

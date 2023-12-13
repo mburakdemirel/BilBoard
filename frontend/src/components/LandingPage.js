@@ -1,5 +1,8 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import './assets/bootstrap/css/bootstrap.min.css'; // Import Bootstrap CSS
+import './assets/css/aos.min.css';
+import './assets/css/animate.min.css';
+import AOS from 'aos';
 import Sıla from './assets/img/sıla.png'
 import Dilara from './assets/img/dilara.png'
 import Yusuf from './assets/img/yusuf.png'
@@ -13,11 +16,14 @@ import Complaint from './assets/landingPage/compliant.jpeg'
 
 import { NavLink } from 'react-router-dom';
 
+
 const WelcomeSection = () => (
+
+
     <section className="py-4 py-xl-5" style={{ background: '#edf0f7'}}>
         <div className="container h-100">
             <div className="row h-100">
-                <div className="col-md-10 col-xl-8 text-center d-flex align-items-center mx-auto">
+                <div className="col-md-10 col-xl-8 text-center d-flex align-items-center mx-auto" data-aos="zoom-in-down" data-aos-duration="700">
                     <div>
                         <h2 className="text-uppercase fw-semibold mb-3" style={{ fontFamily: 'Inter' }}>
                             <strong>WELCOME TO BILBOARD</strong>
@@ -44,7 +50,7 @@ const ServicesSection = () => (
                 <p className="w-lg-50" style={{ color: '#eef0f7' }}>BilBoard is a web application created only for Bilkent members.</p>
             </div>
         </div>
-        <div className="row gy-4 row-cols-2 row-cols-md-4 d-flex justify-content-center" style={{ padding: '0', width: '100%' }}>
+        <div className="row gy-4 row-cols-2 row-cols-md-4 d-flex justify-content-center" style={{ padding: '0', width: '100%' }}  data-aos="fade-up" data-aos-duration="700">
             {/* You can create another component for the individual card or simply map through a data array if they have similar structure */}
             {/*{[...Array(4)].map((_, index) => (
                 <div className="col" style={{ maxWidth: '200px' }} key={index}>
@@ -206,6 +212,11 @@ const TeamSection = () => {
 
 
 function LandingPage() {
+    useEffect(() => {
+        AOS.init();
+    }, []);
+
+
     return (
 
         <div>

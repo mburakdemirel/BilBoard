@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import "../ChooseFileInput.css"
+import AOS from "aos";
 
 const text_field_background = "#d9e9fa";
 
@@ -17,6 +18,7 @@ export function ProductAddForm() {
     const [count, setCount] = useState(0);
 
     useEffect(() => {
+        AOS.init();
         setPrice(0);
     }, [category]);
 

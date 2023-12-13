@@ -5,6 +5,7 @@ import ContextApi from "../context/ContextApi";
 import ReconnectingWebSocket from "reconnecting-websocket";
 import InfiniteScroll from 'react-infinite-scroll-component';
 import Placeholder from "./assets/img/WF Image Placeholder2.png"
+import AOS from "aos";
 // TODO: put all style attributes into a css file and think about the layout of this page
 // Should there be products next to the messages??
 function MessagePage() {
@@ -14,45 +15,24 @@ function MessagePage() {
     const [participiant, setParticipiant] = useState();
     const [loading, setLoading] = useState(true);
     const [isDeleted, setIsDeleted] = useState();
-    const {newMessage} = useContext(ContextApi);
-    console.log("newmessage", newMessage)
+
 
     useEffect(()=>{
+        AOS.init();
         // User messages will be uploaded when page first open
         setLoading(true);
         uploadAllMessages();
 
     },[])
 
-    useEffect(()=>{
-        debugger;
-        // User messages will be uploaded when page first ope
-        uploadAllMessages();
 
-    },[loading])
 
-    const createNewMessage = async () => {
-        if (newMessage) {
-            debugger;
-            axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
-            try {
-                const response = await axios.post("http://127.0.0.1:8000/chat/create/", {
-                    participiants: [newMessage.product_owner_id],
-                    category: newMessage.product_category,
-                    product_id: newMessage.product_id,
-                    image_url: newMessage.image_url
-                });
-                console.log("new Chat", response.data);
-                await uploadAllMessages();
-            } catch (error) {
 
-            }
-        }
-    };
 
 
     // Get all messages of user
     const uploadAllMessages = async () => {
+        debugger;
         try{
 
             axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
@@ -87,11 +67,13 @@ function MessagePage() {
     }
 
 
-    const deleteMessage = async (messageId) => {
-
+    const deleteMessage = async (e,messageId) => {
+        e.preventDefault();
         let confirmed;
+
         if (window.confirm("Do you confirm deleting the product?")) {
             confirmed = true;
+
         } else {
             confirmed = false;
 
@@ -101,8 +83,8 @@ function MessagePage() {
             try {
                 // do update operations
                 await axios.delete('http://127.0.0.1:8000/chat/' + messageId + '/delete/');
-
-
+                setChatId(null);
+                uploadAllMessages();
             } catch (error) {
             }
         }
@@ -116,7 +98,7 @@ function MessagePage() {
                 <div className="row gx-1 gy-3 justify-content-center" style={{ width: '100%', marginTop: '-21px' }}>
                     {/* I think this should not be here this page should be more like a pop-up page */}
                     <Products allMessages={allMessages} pull_data={pull_data} deleteMessage={deleteMessage} loading={loading}></Products>
-                    <Messages pull_data={pull_data} chatId={chatId} participiant={participiant}></Messages>
+                    <Messages pull_data={pull_data} chatId={chatId} participiant={participiant} loadingDelete={loading}></Messages>
                 </div>
             </div>
         </section>
@@ -124,20 +106,36 @@ function MessagePage() {
 }
 
 
-function Products({allMessages,pull_data, deleteMessage, loading}) {
+function Products({allMessages, pull_data, deleteMessage, loading}) {
 
     const [activeIndex, setActiveIndex] = useState(-1);
+    const {newMessage} = useContext(ContextApi);
+    console.log("newmessage", newMessage)
+
+
 
     useEffect(()=>{
+        findActiveIndex();
         console.log("all messages", allMessages.length);
         // Messages in the selected index will be opened on the right side
         console.log(activeIndex);
-    },[activeIndex,allMessages])
+    },[allMessages])
 
 
     const messageClick = (chatId, participiants) => {
         console.log("message index", chatId, participiants);
         pull_data(chatId, participiants);
+    };
+
+    const findActiveIndex = () => {
+        if(newMessage){
+            for(let i=0; i<allMessages.length;i++){
+                if(allMessages[i].id == newMessage.chat_id){
+                    setActiveIndex(i);
+                    pull_data(allMessages[i].id, allMessages[i].participiants);
+                }
+            }
+        }
     };
 
 
@@ -150,9 +148,9 @@ function Products({allMessages,pull_data, deleteMessage, loading}) {
                 <div className="d-flex flex-column" style={{ background: '#ffffff', fontSize: '12px', borderRadius: '10px', height: '100%', width: '95%', padding: '5%' }} data-bs-smooth-scroll="true">
                     {loading ? <div className="d-flex justify-content-center align-items-center" style={{height:'100%', width:'100%'}}><span className="spinner-border spinner-border" aria-hidden="true" ></span></div>
                         :
-                        <ul className="list-group" style={{ width: '100%', height: '100%', overflow: 'scroll' }} data-bs-smooth-scroll="true">
+                        <ul className="list-group" style={{ width: '100%', height: '100%', overflow: 'scroll' }}>
                             {Array(allMessages.length).fill().map((_,index) => (
-                                <li key={index} className="list-group-item" onClick={()=>setActiveIndex(index)} style={{ padding: '0px', paddingBottom: '10px', borderStyle: 'none'}}>
+                                <li key={index} className="list-group-item" onClick={()=>setActiveIndex(index)} style={{ padding: '0px', paddingBottom: '10px', borderStyle: 'none'}}  data-aos="fade-right" data-aos-duration="600" data-aos-delay={index*100}>
                                 <div className="card d-flex justify-content-center" style={{ minHeight:'100px', maxHeight:'100px', borderStyle: 'none',  background: index===activeIndex? '#A0ABC0' : '#EDF0F7'}} onClick={()=>{messageClick(allMessages[index].id, allMessages[index].participiants)}}>
                                     <div className="d-flex flex-row align-items-center " style={{ height: '20%', minHeight: '80px', paddingTop: '5px', paddingBottom: '5px', borderStyle: 'none', paddingLeft: '20px', paddingRight: '6px' }}>
                                         <div className="d-flex flex-column " style={{ width: '50%', height: '100%' }}>
@@ -160,9 +158,9 @@ function Products({allMessages,pull_data, deleteMessage, loading}) {
                                             <h3 className="text-truncate" style={{width:'fit-content', paddingTop: '0px', margin: '0px', marginTop: '5px', fontSize: '18px', fontFamily:'Inter, sans-serif', fontWeight:'bold' }}>{allMessages[index] && (allMessages[index].participiants.contact_name + " " + allMessages[index].participiants.contact_surname)}</h3>
                                         </div>
                                         <div className="d-flex justify-content-end align-items-center" style={{ width: '50%', height: '100%' }}>
-                                            <button className="rounded-circle btn btn-primary d-flex justify-content-center align-items-center" style={{ width: '32px', fontWeight: 'bold', background: '#2d3648', borderStyle: 'none', borderColor: '#2d3648', height: '32px' }}>
-                                                <i className="bi bi-trash"
-                                                   onClick={()=>deleteMessage(allMessages[index].id)}></i>
+                                            <button className="rounded-circle btn btn-primary d-flex justify-content-center align-items-center" style={{ width: '32px', fontWeight: 'bold', background: '#2d3648', borderStyle: 'none', borderColor: '#2d3648', height: '32px' }}
+                                                    onClick={(e)=>deleteMessage(e,allMessages[index].id)}>
+                                                <i className="bi bi-trash"></i>
                                             </button>
                                             <span style={{ width: '12px' }}></span>
                                             <div className="d-flex justify-content-center align-items-center" style={{ height:'90px', width: '35%', margin: '0px', padding: '0px' }}>
@@ -182,8 +180,8 @@ function Products({allMessages,pull_data, deleteMessage, loading}) {
     );
 }
 
-function Messages({chatId,participiant}) {
-    const [id, setId] = useState(chatId);
+function Messages({chatId,participiant, loadingDelete}) {
+
     const [messages, setMessages] = useState([]);
     const [chat, setChat] = useState([]);
 
@@ -196,7 +194,7 @@ function Messages({chatId,participiant}) {
     const [hasMore, setHasMore] = useState(true);
 
     const [loading, setLoading] = useState(true);
-    const [chatWaiting, setChatWaiting] = useState(true);
+
 
     console.log(myProfile);
     console.log(myProfile.id);
@@ -204,7 +202,6 @@ function Messages({chatId,participiant}) {
     //const newSocket = new ReconnectingWebSocket("ws://127.0.0.1:8000/ws/chat/" + chatId + "/");
 
     useEffect(() => {
-
         setLoading(true);
         setPage(1);
         setHasMore(true);
@@ -215,7 +212,6 @@ function Messages({chatId,participiant}) {
 
     const uploadMessages = async ()=> {
         if(chatId){
-            setChatWaiting(false);
             axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
             await axios.get("http://127.0.0.1:8000/chat/" + chatId + "/").then(response => {
                 console.log(response.data.messages);
@@ -314,17 +310,16 @@ function Messages({chatId,participiant}) {
     return (
         //flex-grow-1
             <div className="d-flex flex-grow-1 justify-content-center align-items-center " data-aos="fade-left" data-aos-duration="600" style={{ width: '600px', height: '40vw', minHeight: '380px' }}>
-                <div className="d-flex flex-column align-items-center" style={{ background: '#ffffff', fontSize: '12px', borderRadius: '10px', height: '100%', width: '95%' }}>
-                    <div className="d-flex flex-row align-items-center" style={{ height: '10%', width: '100%', paddingRight: '20px', paddingBottom: '10px', paddingLeft: '20px', paddingTop: '10px' }}>
-                        <h1 className="d-flex justify-content-start" style={{ width: '50%', fontSize: '150%', fontFamily: 'Inter, sans-serif', marginBottom: '0px' }}>{participiant && participiant.contact_name + " " + participiant.contact_surname}</h1>
+                <div  className="d-flex flex-column align-items-center" style={{ background: '#ffffff', fontSize: '12px', borderRadius: '10px', height: '100%', width: '95%' }} >
+                    <div className="d-flex flex-row align-items-center" style={{ height: '10%', width: '100%', paddingRight: '20px', paddingBottom: '10px', paddingLeft: '20px', paddingTop: '10px' }} >
+                        {(chatId && !loadingDelete) && <h1 className="d-flex justify-content-start" style={{ width: '50%', fontSize: '150%', fontFamily: 'Inter, sans-serif', marginBottom: '0px' }}> {participiant && participiant.contact_name + " " + participiant.contact_surname}</h1>}
                     </div>
                     <hr style={{ width: '100%', margin: '0px' }} />
-                    {!chatWaiting ? loading ? <div className="d-flex justify-content-center, align-items-center" style={{height:'76%', paddingTop: '10px'}}><span className="spinner-border spinner-border" aria-hidden="true" ></span></div>
+                    {chatId ? loading || loadingDelete ? <div className="d-flex justify-content-center, align-items-center" style={{height:'76%', paddingTop: '10px'}}><span className="spinner-border spinner-border" aria-hidden="true" ></span></div>
                         :
-                    <div className="d-flex flex-row justify-content-center" style={{ height: '76%', width: '100%', overflow: 'scroll' }}>
+                    <div className="d-flex flex-row justify-content-center" style={{ height: '76%', width: '100%', overflow: 'scroll' }} >
 
-
-                        <ul className="list-group flex-column-reverse" style={{ width: '90%', height: '100%', paddingTop: '20px', overflow: 'scroll' }} data-bs-smooth-scroll="true">
+                        <ul className="list-group flex-column-reverse" style={{ width: '90%', height: '100%', paddingTop: '20px', overflow: 'scroll' }} data-bs-smooth-scroll="true" data-aos="fade" data-aos-duration="600">
 
                             {messages.map((message, index) => (
 

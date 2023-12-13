@@ -12,6 +12,7 @@ import Placeholder from "./assets/img/WF Image Placeholder2.png"
 import {set} from "react-hook-form";
 import {json} from "react-router";
 import ContextApi from "../context/ContextApi";
+import AOS from "aos";
 
 //There are two kinds of profiles and they are rendered according to the value of myProfile boolean.
 //Probably myProfile will take its value from a context. Or we might directly pass is as props.
@@ -29,6 +30,11 @@ function Profile() {
     const [myProfile, setMyProfile] = useState();
     const [editMode, setEditMode] = useState(false);
 
+    useEffect(()=>{
+        AOS.init();
+        onLoad();
+    },[])
+
      const pull_data = (data) => {
         console.log("edit mode " + data); // LOGS DATA FROM CHILD (My name is Dean Winchester... &)
          setEditMode(data);
@@ -36,6 +42,7 @@ function Profile() {
 
     const onLoad = async () => {
         setMyProfile(JSON.parse(localStorage.getItem('myProfile')));
+        console.log("user on load", myProfile);
                 try{
                     // Create the GET request
                     axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
@@ -63,12 +70,6 @@ function Profile() {
 
 
 
-
-
-    useEffect(()=>{
-        onLoad();
-
-    },[])
 
     return (
         <section  className="d-flex d-xxl-flex flex-grow-1 justify-content-center align-items-start align-items-xl-start justify-content-xxl-center align-items-xxl-start  py-4 py-x-5" style={{ background: '#edf0f7', minHeight: '91vh'}}>
@@ -182,11 +183,10 @@ function Products({myProfile, func, editMode}) {
     return (
         <div className="col-xxl-6 d-flex d-sm-flex d-md-flex d-lg-flex d-xl-flex d-xxl-flex flex-grow-1 justify-content-center align-items-center justify-content-sm-center align-items-sm-center align-items-md-center align-items-lg-center"
             data-aos="fade-right" data-aos-duration="600" style={{height: '40vw', width: '600px', minHeight: '380px', maxWidth:'93vw', paddingTop:'10px'}}>
-            <div className="d-flex d-xxl-flex flex-column align-items-center  " style={{background: '#ffffff', fontSize: '12px', borderRadius: '10px', width: '95%', minWidth:'90%', padding: '5%', height: '100%',}} data-bs-smooth-scroll="true">
-
+            <div className="d-flex d-xxl-flex flex-column align-items-center  " style={{background: '#ffffff', fontSize: '12px', borderRadius: '10px', width: '95%', minWidth:'90%', padding: '5%', height: '100%',}}>
 
                 <div className="input-group text-center d-flex d-xl-flex flex-row justify-content-lg-center justify-content-xl-center "
-                     style={{width: '100%', borderStyle: 'none', borderBottomStyle: 'none', height: '40px', marginBottom: '0px',}}>
+                     style={{width: '100%', borderStyle: 'none', borderBottomStyle: 'none', height: '40px', marginBottom: '0px',}}  data-aos="flip-up" data-aos-duration="700">
                     <button
                         className="d-flex d-xl-flex d-xxl-flex justify-content-center justify-content-xl-center justify-content-xxl-center input-group-text"
                         onClick={(event) => setFilteredProductsType("secondhand")}
@@ -211,9 +211,12 @@ function Products({myProfile, func, editMode}) {
                             id="complaint" style={{background: filteredProductsType==="complaints"? '#2d3648' : '#717d96' , width: '20%', color: '#ffffff', fontFamily: 'Inter, sans-serif', fontSize: 'inherit',fontWeight: filteredProductsType==="complaints"? 'bold':''}}>Complaints
                     </button>
                 </div>
+
+
                 <hr className="d-xxl-flex justify-content-xxl-center align-items-xxl-center" style={{ width: '90%', margin: '0px', marginTop: '10px', marginBottom: '10px' }} />
 
-                    <div className="input-group text-center d-flex flex-row "  style={{width: '91%', borderStyle: 'none', borderBottomStyle: 'none', height: '40px', marginBottom: '10px',}}>
+                    <div className="input-group text-center d-flex flex-row "  style={{width: '91%', borderStyle: 'none', borderBottomStyle: 'none', height: '40px', marginBottom: '10px',}}
+                         data-aos="flip-down" data-aos-duration="700">
                         <ul className="nav nav-pills d-flex justify-content-between w-100">
                             <li className="nav-item" style={{width: '48%'}}>
                                 <a className="nav-link active" aria-current="page"
@@ -242,7 +245,8 @@ function Products({myProfile, func, editMode}) {
                             {showedProducts && Array(showedProducts.length).fill().map((_, index) => {
                                 if (showedProducts[index] && showedProducts[index].category === filteredProductsType) {
                                     return(
-                                        <div className="card d-flex align-items-center" key={index} id="product" style={{width: '168px', height: '168px', borderRadius: '10px', borderStyle: 'none', borderBottomStyle: 'none', padding: '5px',maxHeight:'168px',minHeight:'168px' ,minWidth: '168px', maxWidth: '168px',}}>
+                                        <div className="card d-flex align-items-center" key={index} id="product" style={{width: '168px', height: '168px', borderRadius: '10px', borderStyle: 'none', borderBottomStyle: 'none', padding: '5px',maxHeight:'168px',minHeight:'168px' ,minWidth: '168px', maxWidth: '168px',}}
+                                             data-aos="zoom-in" data-aos-duration="600">
                                             {editMode &&
                                                 <button
                                                     className="btn btn-primary position-relative d-flex align-items-center justify-content-center rounded-circle"

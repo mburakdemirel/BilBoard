@@ -5,6 +5,7 @@ import NavigationBarLanding from "./NavigationBarLanding";
 import Footer from "./Footer";
 import {useState} from "react";
 import axios from "axios";
+import {Link} from "react-router-dom";
 
 
 
@@ -88,7 +89,7 @@ function RegisterPage(){
                                             <span role="status"> Loading...</span>
                                         </button>}</div>
                                     <p style={textStyles}>Already have an account?
-                                        <a href="/login" style={{ paddingTop:'15px', fontFamily: 'Inter, sans-serif', color: 'rgb(0,0,0)', fontWeight: 'bold' }}>Sign In</a>
+                                        <Link to={"/login"} style={{ paddingTop:'15px', fontFamily: 'Inter, sans-serif', color: 'rgb(0,0,0)', fontWeight: 'bold' }}>Sign In</Link>
                                     </p>
                                 </form>
                                 <div>

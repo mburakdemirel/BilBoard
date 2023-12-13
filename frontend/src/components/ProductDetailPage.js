@@ -17,6 +17,7 @@ import ContextApi from "../context/ContextApi";
 import Carousel from 'react-bootstrap/Carousel';
 import Product from './assets/img//IMG_2252.png';
 import Product2 from './assets/img/Shape.png';
+import AOS from "aos";
 
 function ProductDetailPage() {
     const navigate = useNavigate();
@@ -25,6 +26,7 @@ function ProductDetailPage() {
     const {pageType,id} = useParams();
 
     const [loading, setLoading] = useState(true);
+    const [messagesLoading, setMesagesLoading] = useState(false);
     const [product, setProduct] = useState('');
     const [myProfile, setMyProfile] = useState(JSON.parse(localStorage.getItem('myProfile')));
     const [favorites, setFavorites] = useState(JSON.parse(localStorage.getItem('favoritesObjects')));
@@ -37,6 +39,7 @@ function ProductDetailPage() {
 
 
     useEffect(()=>{
+        AOS.init();
         if(pageType){
             uploadSelectedProduct(pageType);
         }
@@ -75,17 +78,16 @@ function ProductDetailPage() {
 
 
     const sendMessage = async () => {
-        const newMessage = { product_category: product.category, product_id: product.id, product_owner_id: product.user.id, product_image: product.images[0]};
-        debugger;
-        sendNewMessage(newMessage);
-        if(newMessage) {
-            debugger;
+        setMesagesLoading(true);
+
             axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
             await axios.post("http://127.0.0.1:8000/chat/create/",
-                {participiants: [newMessage.product_owner_id], category: newMessage.product_category, product_id: newMessage.product_id, image_url: newMessage.image_url}).then(response => {
+                {participiants: [product.user.id], category: product.category, product_id: product.id}).then(response => {
                 console.log("new Chat", response.data);
+                const newMessage = {chat_id:response.data.id};
+                sendNewMessage(newMessage);
+                setMesagesLoading(false);
             });
-        }
 
         navigate("/messages");
     }
@@ -127,8 +129,8 @@ function ProductDetailPage() {
     }
 
 
-    const deleteProduct = async (product) => {
-        setLoading(true);
+    const deleteProduct = async (e,product) => {
+        e.preventDefault();
         let confirmed;
         if (window.confirm("Do you confirm deleting the product?")) {
             confirmed = true;
@@ -137,6 +139,7 @@ function ProductDetailPage() {
         }
 
         if(confirmed){
+            setLoading(true);
             try{
                 // do update operations
                 if(product.category === "secondhand" || product.category === "borrow" || product.category === "donation"){
@@ -173,7 +176,13 @@ function ProductDetailPage() {
     };
 
     const goToProfile =  () => {
-       navigate('/profile/' + product.user.id,  {state:{user: product.user}});
+        if(product.user.id==myProfile.id){
+            navigate('/profile');
+        }
+        else{
+            navigate('/profile/' + product.user.id,  {state:{user: product.user}});
+        }
+
 
     }
 
@@ -220,7 +229,7 @@ function ProductDetailPage() {
                 <div className="d-flex flex-grow-1 justify-content-center align-items-center" data-aos="fade-left" data-aos-duration="600" style={containerStyle}>
                     <div className="d-flex flex-column " style={cardStyle}>
                         {loading ?
-                            <span className="placeholder col-7" style={{height:'30px'}}></span>
+                            <span className="placeholder placeholder-glow col-7" style={{height:'40px'}}></span>
                             :
                             <h1 style={headingStyle}>{product.title}</h1>
                         }
@@ -230,8 +239,8 @@ function ProductDetailPage() {
                         {(() => {
                             if(product.category==="borrow") {
                                 return (
-                                    loading ? <span className="placeholder col-3 "></span> :
-                                        <h1 className="placeholder-glow d-flex align-items-center" style={{
+                                    loading ? <span className="placeholder placeholder-glow col-3" style={{height:'40px'}}></span> :
+                                        <h1 className=" d-flex align-items-center" style={{
                                             ...headingStyle,
                                             fontWeight: 'bold'
                                         }}>{"Return Date: " + product.return_date} </h1>
@@ -239,22 +248,22 @@ function ProductDetailPage() {
                             }
                             else if(product.category==="donation"){
                                 return(
-                                        loading ? <span className="placeholder col-3"></span> :
-                                            <h1 className="placeholder-glow d-flex align-items-center" style={{ ...headingStyle, fontSize: '2.4em', fontWeight: 'bold' }}></h1>
+                                        loading ? <span className="placeholder placeholder-glow col-3" style={{height:'40px'}}></span> :
+                                            <h1 className=" d-flex align-items-center" style={{ ...headingStyle, fontSize: '2.4em', fontWeight: 'bold' }}></h1>
                                 )
                             }
 
                             else{
                                 return(
-                                        loading ? <span className="placeholder col-3"></span>
-                                        :<h1 className="placeholder-glow d-flex align-items-center" style={{ ...headingStyle, fontSize: '2.4em', fontWeight: 'bold' }}>{(!loading && (product.price + " ₺"))}</h1>
+                                        loading ? <span className="placeholder placeholder-glow col-3" style={{height:'40px'}}></span>
+                                        :<h1 className=" d-flex align-items-center" style={{ ...headingStyle, fontSize: '2.4em', fontWeight: 'bold' }}>{(!loading && (product.price + " ₺"))}</h1>
                                 )
                             }
                         })()}
                         <hr style={hrStyle} />
 
                         <div className="d-flex justify-content-between align-items-center placeholder-glow" style={{ height: '10%', width: '100%', marginTop: '10px', marginBottom: '10px' }}
-                             onClick={goToProfile}>
+                             role="button" onClick={goToProfile}>
                             <div className="d-flex flex-column justify-content-evenly" style={{ height: '100%', width: '100%'}}>
                                 {loading ? <span className="placeholder col-5 h-50"></span> : <h1 style={sellerNameStyle}>{product.user.name + " " + product.user.surname}</h1>}
                                 {loading ? <span className="placeholder col-5 h-25"></span> : <h1 style={sellerPhoneStyle}>{product.user.phone_number}</h1>}
@@ -264,17 +273,27 @@ function ProductDetailPage() {
                         <hr style={hrStyle} />
                         <div className="d-flex flex-row justify-content-between align-items-center" style={{ height: '10%', width: '100%', minHeight: '40px', maxHeight: '50px' }}>
                             {product.user && product.user.id !== myProfile.id &&
-                                <button onClick={sendMessage} disabled={loading} className="btn btn-primary d-flex justify-content-center align-items-center" role="button" style={{ width: '30%', height: '90%', fontWeight: 'bold', background: '#2d3648', borderStyle: 'none', borderColor: '#2d3648', minWidth: '150px' }} href="messages.html">
-                                    {!loading && <><span style={{ paddingRight: '10px', fontSize: '12px', fontFamily: 'Inter, sans-serif', fontWeight: 'bold' }}>Send Message</span>
+                                <>
+
+                                {!messagesLoading ?
+                                <button onClick={sendMessage} disabled={loading} className="btn btn-primary d-flex justify-content-center align-items-center" role="button" style={{ width: '30%', height: '90%', fontWeight: 'bold', background: '#2d3648', borderStyle: 'none', borderColor: '#2d3648', minWidth: '150px' }} >
+                                {!loading && <><span style={{ paddingRight: '10px', fontSize: '12px', fontFamily: 'Inter, sans-serif', fontWeight: 'bold' }}>Send Message</span>
                                     <i className="bi bi-send-fill" style={{ fontSize: '16px', color:'white' }}  ></i></>}
                                 </button>
+                                :
+                                <button  disabled={messagesLoading} className="btn btn-primary d-flex justify-content-center align-items-center" role="button" style={{ width: '30%', height: '90%', fontWeight: 'bold', background: '#2d3648', borderStyle: 'none', borderColor: '#2d3648', minWidth: '150px' }} >
+                                    <span style={{paddingRight:'10px', fontSize:'13px', fontFamily: 'Inter, sans-serif', fontWeight: 'bold'}} role="status"> Loading...</span>
+                                    <span className="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                                </button>}
+
+                                </>
                             }
                             <div className="d-flex flex-row justify-content-around align-items-center" style={{ height: '100%', minWidth: '90px' }}>
                                 {product.user && product.user.id === myProfile.id ?
-                                    <button disabled={loading} className="btn btn-primary" type="button" style={{ width: '40px', fontWeight: 'bold', background: '#2d3648', borderStyle: 'none', borderColor: '#2d3648', height: '90%' }}>
+                                    <button disabled={loading} className="btn btn-primary" type="button" style={{ width: '40px', fontWeight: 'bold', background: '#2d3648', borderStyle: 'none', borderColor: '#2d3648', height: '90%' }}
+                                            onClick={(e)=>deleteProduct(e,product)}>
                                         {!loading &&
-                                            <i className="bi bi-trash"
-                                               onClick={()=>deleteProduct(product)}></i>}
+                                            <i className="bi bi-trash"></i>}
                                     </button>
                                     :
                                     <button onClick={ ()=>  {addFavourites(product.id)}} disabled={loading} className="btn btn-primary" type="button" style={{ width: '40px', fontWeight: 'bold', background: '#2d3648', borderStyle: 'none', borderColor: '#2d3648', height: '90%' }}>

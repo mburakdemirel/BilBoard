@@ -11,6 +11,7 @@ import ProfilePlaceholder from "./assets/img/default_profile.webp";
 import axios from "axios";
 import {Dropdown} from 'react-bootstrap';
 import Profile from "./Profile";
+import AOS from "aos";
 
 function NavigationBarDefault() {
     const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
@@ -23,7 +24,7 @@ function NavigationBarDefault() {
     const [myProfile, setMyProfile] = useState(JSON.parse(localStorage.getItem('myProfile')));
 
     useEffect(() => {
-
+        AOS.init();
         getProfile();
         getFavorites();
         if(isProfileChanged){
@@ -175,10 +176,6 @@ function NavigationBarDefault() {
 
                     <i className="bi bi-envelope position-relative" type="button" style={{ fontSize: '28px', marginRight: '15px', marginTop: '5px', marginBottom: '5px' }}
                        onClick={() => {sendMessage()}}>
-                        <span className="d-flex justify-content-center position-absolute top-0 start-100 bg-danger translate-middle p-2 rounded-circle " style={{height:'20px', width:'20px'}}>
-                            <h1 className="d-flex justify-content-center align-items-center" style={{fontSize:'14px', fontFamily:'Inter,sans-serif'}}>9</h1>
-                      </span>
-
                     </i>
 
                     <div >

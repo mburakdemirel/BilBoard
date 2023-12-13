@@ -11,6 +11,7 @@ import {useNavigate, useParams} from "react-router-dom";
 import productDetailPage from "./ProductDetailPage";
 import Placeholder from "./assets/img/WF Image Placeholder2.png"
 import {set} from "react-hook-form";
+import AOS from "aos";
 function ProductMainPage() {
     const navigate = useNavigate();
 
@@ -27,7 +28,7 @@ function ProductMainPage() {
 
 
     useEffect(()=>{
-
+        AOS.init();
         console.log("In use effect" + searchText);
         setProducts([]);
         setPage(1);
@@ -71,7 +72,7 @@ function ProductMainPage() {
 
                 }
                 else{
-                    debugger;
+
                    try {
                        const {data} = await axios.get('http://127.0.0.1:8000/api/product/' + pageType + `?page=${page}`);
                        console.log(data);
@@ -122,7 +123,7 @@ function ProductMainPage() {
 
 
 
-                <section className="d-flex py-4 align-items-start justify-content-center" style={{ background: '#edf0f7', minHeight: '91vh' }}>
+                <section className="d-flex py-4 align-items-start justify-content-center" style={{ background: '#edf0f7', minHeight: '91vh' }}  >
 
                     {loading ? <div style={{height:'50px'}}><span className="spinner-border spinner-border" aria-hidden="true" ></span></div>
                         :
@@ -134,13 +135,13 @@ function ProductMainPage() {
                             endMessage={<p></p>}
                         >
 
-                            <div className="container" style={{minWidth:'100vw',  paddingRight: '1%', paddingLeft: '1%' }}>
+                            <div  className="container" style={{minWidth:'100vw',  paddingRight: '1%', paddingLeft: '1%' }} >
                                 <div className="row d-flex justify-content-center" style={{ minHeight:'100%',  marginRight: '5%', marginLeft: '5%' }}>
                                     {Array(products.length).fill().map((_, index) => {
                                         if (true) {
                                             return(<div key={index} className="col-md-3" style={{ minWidth:'150px', maxWidth: '18vw', padding: '1%' }}
-                                                        onClick={()=>sendProductDetailPage(products[index].id)}>
-                                                    <div className="card" style={{ maxHeight:'35vw', height:'230px', borderRadius: '10px', borderStyle: 'none', padding: '5px', background: 'transparent', margin: '2%' }}>
+                                                        onClick={()=>sendProductDetailPage(products[index].id)}  data-aos="zoom-out" data-aos-duration="700" >
+                                                    <div  className="card" style={{ maxHeight:'35vw', height:'230px', borderRadius: '10px', borderStyle: 'none', padding: '5px', background: 'transparent', margin: '2%' }} >
                                                         <div className="card-body" style={{ width: '100%', height: '100%', padding: '0px' }}>
                                                             <img style={{ width: '100%', height: '100%', borderRadius:'10px'}} src={products[index].images && products[index].images.length > 0 ? products[index].images[0].image : Placeholder} width="247" height="247" />
                                                             <div className="div-special" style={{ height: '45px', width: '100%', marginTop: '-45px', background: '#21252955', position: 'relative', borderBottomRightRadius: '10px', borderBottomLeftRadius: '10px', paddingTop: '3px', paddingBottom: '3px', paddingRight: '5px', paddingLeft: '5px' }}>
