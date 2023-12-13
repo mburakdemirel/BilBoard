@@ -36,7 +36,7 @@ class ChatListSerializer(serializers.ModelSerializer):
             representation['product_name'] = product.title
             product_images = ProductImage.objects.filter(product=product)
             if product_images.exists():
-                representation['image_url'] = product_images.first().image.url
+                representation['image_url'] = self.context['request'].build_absolute_uri(product_images.first().image.url)
             else:
                 representation['image_url'] = "null"
             print(f'\033[1;34;40m{product_images}\033[0;0m') #test
@@ -57,10 +57,11 @@ class ChatSerializer(serializers.ModelSerializer):
 
     messages = serializers.SerializerMethodField(read_only=True)
     product_name = serializers.StringRelatedField(read_only=True)
+    image_url = serializers.StringRelatedField(read_only=True)
 
     class Meta:
         model = Chat
-        fields = ('id', 'participiants', 'messages', 'category', 'product_id', 'product_name')
+        fields = ('id', 'participiants', 'messages', 'category', 'product_id', 'product_name', 'image_url')
         read_only_fields = ('id',)
 
     def get_messages(self, instance):
@@ -114,9 +115,16 @@ class ChatSerializer(serializers.ModelSerializer):
         if category in ['secondhand', 'borrow', 'donation']:
             product = Product.objects.get(id=product_id)
             representation['product_name'] = product.title
+            product_images = ProductImage.objects.filter(product=product)
+            print(f'\033[1;34;40m{product_images}\033[0;0m') #test
+            if product_images.exists():
+                representation['image_url'] = self.context['request'].build_absolute_uri(product_images.first().image.url)
+            else:
+                representation['image_url'] = "null"
         elif category in ['lost', 'found']:
             entry = LostAndFoundEntry.objects.get(id=product_id)
             representation['product_name'] = entry.topic
+            representation['image_url'] = "null"
         return representation
 
 
