@@ -13,12 +13,6 @@ import Complaint from './assets/landingPage/compliant.jpeg'
 
 import { NavLink } from 'react-router-dom';
 
-//import  './assets/css/aos.min.css'
-//import './assets/css/animate.min.css'
-
-import Footer from "./Footer";
-import LostFoundPage from "./LostFoundPage";
-
 const WelcomeSection = () => (
     <section className="py-4 py-xl-5" style={{ background: '#edf0f7'}}>
         <div className="container h-100">

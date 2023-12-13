@@ -129,7 +129,7 @@ function ProductMainPage() {
                         <InfiniteScroll style={{minHeight:'300px'}}
                             dataLength={products.length}
                             next={uploadProducts}
-                            hasMore={hasMore} // Replace with a condition based on your data source
+                            hasMore={hasMore}
                             loader={<div style={{height:'50px'}}><span className="spinner-border spinner-border" aria-hidden="true" ></span></div>}
                             endMessage={<p></p>}
                         >
