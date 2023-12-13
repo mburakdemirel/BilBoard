@@ -138,16 +138,16 @@ function Products({myProfile, func, editMode}) {
     }
 
     const deleteProduct = async (product) => {
-        setLoading(true);
+
         let confirmed;
         if (window.confirm("Do you confirm deleting the product?")) {
             confirmed = true;
         } else {
             confirmed = false;
-            uploadMyProducts();
         }
 
         if(confirmed){
+            setLoading(true);
             try{
                 // do update operations
                 if(product.category === "secondhand" || product.category === "borrow" || product.category === "donation"){

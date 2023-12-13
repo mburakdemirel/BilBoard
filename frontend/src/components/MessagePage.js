@@ -18,8 +18,6 @@ function MessagePage() {
     useEffect(()=>{
         // User messages will be uploaded when page first open
 
-
-
         uploadAllMessages();
 
     },[])
@@ -80,13 +78,35 @@ function MessagePage() {
     }
 
 
+    const deleteMessage = async (messageId) => {
+
+        let confirmed;
+        if (window.confirm("Do you confirm deleting the product?")) {
+            confirmed = true;
+        } else {
+            confirmed = false;
+
+        }
+        if (confirmed) {
+            setLoading(true);
+            try {
+                // do update operations
+                await axios.delete('http://127.0.0.1:8000/api/user/product/' + product.id + '/');
+                setLoading(false);
+
+            } catch (error) {
+            }
+        }
+    };
+
+
 
     return (
         <section className="d-flex justify-content-center align-items-center py-4" style={{ background: '#edf0f7', minHeight: '91vh' }}>
             <div className="container">
                 <div className="row gx-1 gy-3 justify-content-center" style={{ width: '100%', marginTop: '-21px' }}>
                     {/* I think this should not be here this page should be more like a pop-up page */}
-                    <Products allMessages={allMessages} pull_data={pull_data}></Products>
+                    <Products allMessages={allMessages} pull_data={pull_data} deleteMessage={deleteMessage}></Products>
                     <Messages pull_data={pull_data} chatId={chatId} participiant={participiant}></Messages>
                 </div>
             </div>
@@ -95,7 +115,7 @@ function MessagePage() {
 }
 
 
-function Products({allMessages,pull_data}) {
+function Products({allMessages,pull_data, deleteMessage}) {
 
     const [activeIndex, setActiveIndex] = useState(-1);
 
@@ -110,6 +130,9 @@ function Products({allMessages,pull_data}) {
         console.log("message index", chatId, participiants);
         pull_data(chatId, participiants);
     };
+
+
+
 
 
         return (
@@ -129,7 +152,8 @@ function Products({allMessages,pull_data}) {
                                         </div>
                                         <div className="d-flex justify-content-end align-items-center" style={{ width: '50%', height: '100%' }}>
                                             <button className="rounded-circle btn btn-primary d-flex justify-content-center align-items-center" style={{ width: '24px', fontWeight: 'bold', background: '#2d3648', borderStyle: 'none', borderColor: '#2d3648', height: '24px' }}>
-                                                <i className="fas fa-share-alt"></i>
+                                                <i className="bi bi-trash"
+                                                   onClick={()=>deleteMessage(messageId)}></i>
                                             </button>
                                             <span style={{ width: '12px' }}></span>
                                             <img alt="" src={allMessages[index].image_url} style={{ width: '35%', height: '95%', minWidth: '70px' }} />
