@@ -66,7 +66,6 @@ class CreateComplaintEntrySerializer(serializers.ModelSerializer):
         else:
             raise serializers.ValidationError("Error while connecting to the content moderator service.")
 
-        raise serializers.ValidationError("Eşşek error")
         return description
 
 
