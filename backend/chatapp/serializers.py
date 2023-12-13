@@ -66,10 +66,11 @@ class ChatSerializer(serializers.ModelSerializer):
     messages = serializers.SerializerMethodField(read_only=True)
     product_name = serializers.StringRelatedField(read_only=True)
     image_url = serializers.StringRelatedField(read_only=True)
+    contact = serializers.StringRelatedField(read_only=True)
 
     class Meta:
         model = Chat
-        fields = ('id', 'participiants', 'messages', 'category', 'product_id', 'product_name', 'image_url')
+        fields = ('id', 'participiants', 'messages', 'category', 'product_id', 'product_name', 'image_url', 'contact')
         read_only_fields = ('id',)
 
     def get_messages(self, instance):
@@ -117,9 +118,17 @@ class ChatSerializer(serializers.ModelSerializer):
         return attrs
 
     def to_representation(self, instance):
+        user = self.context['request'].user
+        participiants = instance.participiants.all()
+        contact = participiants.exclude(id=user.id).distinct()
+        representation = super().to_representation(instance)
+        representation['contact'] = {
+            "contact_name": contact.first().name,
+            "contact_surname": contact.first().surname,
+        }
+
         category = instance.category
         product_id = instance.product_id
-        representation = super().to_representation(instance)
         if category in ['secondhand', 'borrow', 'donation']:
             product = Product.objects.get(id=product_id)
             representation['product_name'] = product.title

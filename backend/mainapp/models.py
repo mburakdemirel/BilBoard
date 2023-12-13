@@ -187,3 +187,20 @@ class Chat(models.Model):
 
     def get_participiants(self):
         return "\n".join([str(p) for p in self.participiants.all()])
+
+
+class Notification(models.Model):
+    user = models.ForeignKey(
+        get_user_model(),
+        on_delete=models.CASCADE,
+    )
+    title = models.CharField(max_length=100)
+    description = models.TextField(blank=True)
+    timestamp = models.DateTimeField(auto_now_add=True)
+    is_read = models.BooleanField(default=False)
+
+    REQUIRED_FIELDS = ['title', 'description']
+
+    def _str_(self):
+        return self.title + " from " + self.user
+
