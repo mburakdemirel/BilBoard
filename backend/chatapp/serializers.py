@@ -15,9 +15,10 @@ class ChatListSerializer(serializers.ModelSerializer):
     participiants = serializers.StringRelatedField(many=True)
     product_name = serializers.StringRelatedField(read_only=True)
     image_url = serializers.StringRelatedField(read_only=True)
+    last_message_timestamp = serializers.StringRelatedField(read_only=True)
     class Meta:
         model = Chat
-        fields = ('id', 'participiants', 'category', 'product_id', 'product_name', 'image_url')
+        fields = ('id', 'participiants', 'category', 'product_id', 'product_name', 'image_url', 'last_message_timestamp')
         read_only_fields = ('id', 'participiants')
 
     def to_representation(self, instance):
@@ -44,6 +45,13 @@ class ChatListSerializer(serializers.ModelSerializer):
             entry = LostAndFoundEntry.objects.get(id=product_id)
             representation['product_name'] = entry.topic
             representation['image_url'] = "null"
+
+        last_message = instance.messages.order_by('-timestamp').first()
+        # format timestamp to string representation of datetime
+        representation['last_message_timestamp'] = last_message.timestamp.strftime("%d/%m/%Y, %H:%M:%S") if last_message is not None else "null"
+
+
+
         return representation
 
 class ChatSerializer(serializers.ModelSerializer):

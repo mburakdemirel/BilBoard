@@ -21,6 +21,7 @@ def room(request, room_name):
 # actual code
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import get_user_model
+from django.db.models import Max
 from rest_framework import permissions
 from rest_framework.generics import (
     ListAPIView,
@@ -43,21 +44,15 @@ class ChatListView(ListAPIView):
         user_id = self.request.user.id
         if user_id is not None:
             actual_user = get_user_or_404(user_id)
-            queryset = actual_user.chats.all()
-            last_message_timestamps = []
-            for i in queryset:
-                if i.get_messages().count() > 0:
-                    last_message_timestamps.append((i.get_messages().order_by('-timestamp').first().timestamp, i))
-                else:
-                    last_message_timestamps.append((None, i))
-            last_message_timestamps.sort(key=lambda x: (x[0] is None, x[0]), reverse=True)
-            queryset = [i[1] for i in last_message_timestamps]
-            queryset.reverse()
+            # Exclude chats that have no messages
+            queryset = actual_user.chats.all().exclude(messages__isnull=True)
+            # Order by last message timestamp
+            queryset = queryset.annotate(last_message_timestamp=Max('messages__timestamp')).order_by('-last_message_timestamp')
         return queryset
 
 class ChatDetailView(RetrieveAPIView):
     serializer_class = ChatSerializer
-    permission_classes = (permissions.AllowAny,)
+    permission_classes = (permissions.IsAuthenticated,)
     def get_queryset(self):
         queryset = None
         user_id = self.request.user.id
@@ -69,16 +64,16 @@ class ChatDetailView(RetrieveAPIView):
 class ChatCreateView(CreateAPIView):
     queryset = Chat.objects.all()
     serializer_class = ChatSerializer
-    permission_classes = (permissions.AllowAny,)
+    permission_classes = (permissions.IsAuthenticated,)
 
 class ChatUpdateView(UpdateAPIView):
     queryset = Chat.objects.all()
     serializer_class = ChatSerializer
-    permission_classes = (permissions.AllowAny,)
+    permission_classes = (permissions.IsAuthenticated,)
 
 class ChatDeleteView(DestroyAPIView):
     serializer_class = ChatSerializer
-    permission_classes = (permissions.AllowAny,)
+    permission_classes = (permissions.IsAuthenticated,)
     def get_queryset(self):
         queryset = None
         user_id = self.request.user.id

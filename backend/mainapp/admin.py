@@ -85,11 +85,14 @@ class LostAndFoundEntryAdmin(admin.ModelAdmin):
     )
 
 class ChatAdmin(admin.ModelAdmin):
-    list_display = ('id', 'get_participiants', 'category', 'product_id',)
+    list_display = ('id', 'get_participiants', 'category', 'product_id', 'number_of_messages')
     readonly_fields = ['id', 'category', 'product_id', 'participiants'] # add messages
     fieldsets = (
         (None, {'fields': ('id', 'participiants', 'category', 'product_id', 'messages')}),
     )
+
+    def number_of_messages(self, obj):
+        return obj.messages.count()
 
 class MessageAdmin(admin.ModelAdmin):
     list_display = ('id', 'author', 'timestamp', 'content')

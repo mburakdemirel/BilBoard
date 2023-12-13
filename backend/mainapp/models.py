@@ -180,7 +180,10 @@ class Chat(models.Model):
         return self.messages.all()
 
     def get_last_message_timestamp(self):
-        return self.messages.order_by('-timestamp').first().timestamp
+        if self.messages.count() > 0:
+            return self.messages.order_by('-timestamp').first().timestamp
+        else:
+            return None
 
     def get_participiants(self):
         return "\n".join([str(p) for p in self.participiants.all()])
