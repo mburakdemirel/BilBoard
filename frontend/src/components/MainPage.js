@@ -4,7 +4,6 @@ import {useParams} from "react-router-dom";
 import ProductMainPage from "./ProductMainPage";
 import EntryMainPage from "./EntryMainPage";
 import axios from "axios";
-import LostFoundPage from "./LostFoundPage";
 import EntryMainPage2 from "./EntryMainPage2";
 import FilterBar from "./FilterBar";
 function MainPage(){

@@ -8,6 +8,7 @@ export function EntryForm({ isComplaint }) {
     const [topic, setTopic] = useState("");
     const [description, setDescription] = useState("");
     const [category, setCategory] = useState("lost");
+    const [targetMail, setTargetMail] = useState();
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
@@ -20,10 +21,15 @@ export function EntryForm({ isComplaint }) {
             entry.append("category", category);
             try {
                 axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
-                const response = axios.post("http://127.0.0.1:8000/api/user/laf-entry/", entry, { headers: { 'Content-Type': 'multipart/form-data' } });
-
-                console.log("Post was successful");
-                navigate("/main_page/secondhand");
+                //const plainText = Array.from(entry.entries()).map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`).join('&');
+                const response = await axios.post("http://127.0.0.1:8000/api/user/laf-entry/", entry, { headers: { 'Content-Type': 'multipart/form-data' } });
+                if(response.status === 200 || response.status === 201) {
+                    console.log("Post was successful");
+                    navigate("/main_page/secondhand");
+                }
+                else {
+                    console.log(response);
+                }
             }
             catch (error) {
                 console.log(error.response);
@@ -31,12 +37,19 @@ export function EntryForm({ isComplaint }) {
         }
         else {
             try {
+                if(targetMail) {
+                    entry.append("target_mail", targetMail);
+                }
                 axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
-                const response = axios.post("http://127.0.0.1:8000/api/user/complaint-entry/", entry, { headers: { 'Content-Type': 'multipart/form-data' } });
-
-                console.log("Post was successful");
-                navigate("/main_page/secondhand");
-
+                //const plainText = Array.from(entry.entries()).map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`).join('&');
+                const response = await axios.post("http://127.0.0.1:8000/api/user/complaint-entry/", entry, { headers: { 'Content-Type': 'multipart/form-data' } });
+                if(response.status === 200 || response.status === 201) {
+                    console.log("Post was successful");
+                    navigate("/main_page/secondhand");
+                }
+                else {
+                    console.log(response);
+                }
             }
             catch (error) {
                 console.log(error.response);
@@ -89,9 +102,9 @@ export function EntryForm({ isComplaint }) {
                                         >
                                         </input>
                                     </div>
-                                    {/* <div className="form-group row justify-content-between text-center">
+                                    <div className="form-group row justify-content-between text-center">
                                         <label className="form-control-label"><h5>Target Email</h5></label>
-                                        <input onChange={(e)=>{setTargetMail(e.target.value)}} type="email" placeholder="Target Email"
+                                        <input onChange={(e)=>{setTargetMail(e.target.value);console.log(e.target.value)}} type="email" placeholder="Target Email"
                                             name="email"
                                             className="form-control"
                                             style={{
@@ -106,7 +119,7 @@ export function EntryForm({ isComplaint }) {
                                             }}
                                         >
                                         </input>
-                                    </div> */}
+                                    </div>
 
                                     {!isComplaint ? <div className="form-group row justify-content-between text-center">
                                         <label className="form-control-label" htmlFor="Category" style={{ textAlign: 'left',fontFamily: 'Inter, sans-serif' }} ><h5>Choose Category</h5></label>

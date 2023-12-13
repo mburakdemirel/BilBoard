@@ -8,16 +8,16 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 
 
 function EntryMainPage(){
-    const navigate = useNavigate();
-    const imageUrl = "http://127.0.0.1:8000/media/pphotos/Activity_Diagram1.jpg";
     const {pageType,searchText} = useParams();
 
     const [loading, setLoading] = useState(true);
-    const [productCategory, setProductCategory] = useState();
     const [page, setPage] = useState();
     const [products, setProducts] = useState([]);
     const [hasMore, setHasMore] = useState(true);
+    const [upvotes,setUpvotes] = useState([]);
+    const [downvotes, setDownvotes] = useState([]);
     const [user,setUser] = useState();
+    const baseurl = 'http://127.0.0.1:8000';
 
     useEffect(()=>{
         console.log("pageType in entry page " + pageType);
@@ -35,6 +35,19 @@ function EntryMainPage(){
 
     }, [page]);
 
+    useEffect(() => {
+       console.log("getting vote data");
+       axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
+       axios.get(`${baseurl}/api/user/list-my-voted-complaints/`)
+       .then((response) => {
+        console.log("response ", response.data);
+        if(response.data.upvoted_complaints) {setUpvotes(response.data.upvoted_complaints);}
+        if(response.data.downvoted_complaints) {setDownvotes(response.data.downvoted_complaints);}
+       })
+       .catch((error) => {
+        console.log("Error getting complaints: ", error);
+       })
+    }, []);
 
     const uploadProducts = async () => {
         try{
@@ -83,7 +96,42 @@ function EntryMainPage(){
         }
     }
 
+    function containsComplaint(upvotedOrDownvoted, id) {
+        if(upvotedOrDownvoted === "upvoted") {
+            if(upvotes && upvotes.some(i => i===id)) {
+                return true;
+            }
+            return false;
+        }
+        if(upvotedOrDownvoted === "downvoted") {
+            if(downvotes && downvotes.some(i => i === id)) {
+                return true;
+            }
+            return false;
+        }
+    }
 
+    function handleUpvote(id) {
+        console.log("handling upvote");
+        axios.post(`${baseurl}/api/complaint/vote-up/`, {complaint_id: id})
+        .then((response) => {
+            console.log(response);
+        })
+        .catch((error) => {
+            console.log(error);
+        })
+    }
+
+    function handleDownvote(id) {
+        console.log("handling downvote");
+        axios.post(`${baseurl}/api/complaint/vote-down`, {complaint_id: id})
+        .then((response) => {
+            console.log(response);
+        })
+        .catch((error) => {
+            console.log(error);
+        })
+    }
 
     return (
         <div className="d-flex flex-column">
@@ -94,7 +142,7 @@ function EntryMainPage(){
             <div className="container d-flex h-100">
                 <div className="row gx-1 gy-3 d-flex h-100" style={{ margin: '0px', width: '100%', marginTop: '-21px' }}>
                     <div className="col">
-                        <div className="d-flex flex-column" style={{ background: 'var(--bs-white)', borderRadius: '10px', height: '100%', width: '100%', padding: '2%' }} data-bs-smooth-scroll="true">
+                        <div className="d-flex flex-column col-xl-6" style={{ background: 'var(--bs-white)', borderRadius: '10px', height: '100%', width: '100%', padding: '2%' }} data-bs-smooth-scroll="true">
                                 <InfiniteScroll
                                     dataLength={products.length}
                                     next={uploadProducts}
@@ -112,31 +160,22 @@ function EntryMainPage(){
                                                                 <div>
                                                                     <div className="d-flex r">
                                                                         <h1 className="d-flex align-items-center" style={{ fontFamily: 'Inter, sans-serif', fontWeight: 'bold', margin: '0px', fontSize: '20px', width: '70%' }}>{products[index].topic}</h1>
-                                                                        <button className="btn btn-primary d-flex justify-content-center align-items-center " type="button" style={{ width: '30%', height: '100%', fontWeight: 'bold', background: '#717D96', borderStyle: 'none', borderColor: '#2d3648', marginRight: '0px', minWidth: '120px' }}>
-                                                                            <span className="d-flex" style={{ fontSize: '12px', fontFamily: 'Inter, sans-serif', fontWeight: 'bold', textAlign: 'center', marginRight: '-' }}>{products[index].user.mail}</span>
-                                                                        </button>
+                                                                        {products[index].target_mail ?  <button className="btn btn-primary d-flex justify-content-center align-items-center " type="button" style={{ width: '30%', height: '100%', fontWeight: 'bold', background: '#717D96', borderStyle: 'none', borderColor: '#2d3648', marginRight: '0px', minWidth: '120px' }}>
+                                                                            <span className="d-flex" style={{ fontSize: '12px', fontFamily: 'Inter, sans-serif', fontWeight: 'bold', textAlign: 'center', marginRight: '-' }}>{products[index].target_mail}</span>
+                                                                        </button> : <></>}
                                                                     </div>
                                                                     <h4 className="d-flex text-truncate text-start" style={{ fontFamily: 'Inter, sans-serif',fontSize: '13px', marginTop: '0px', paddingTop: '5px', whiteSpace: 'normal', height: '68.5938px' }}>{products[index].description}<br /><br /></h4>
                                                                 </div>
-                                                                <div className="d-flex justify-content-end ">
-                                                                    <button className="btn btn-primary d-flex justify-content-center align-items-center" type="button" style={{ width: '12%', height: '90%', fontWeight: 'bold', background: '#717D96', borderStyle: 'none', borderColor: '#2d3648', marginRight: '1%', minWidth: '120px' }}>
-                                                                        <i className="bi bi-chat-square-text-fill" style={{ marginRight: '5px' }}></i>
-                                                                        <span className="d-flex" style={{ fontSize: '12px', fontFamily: 'Inter, sans-serif', fontWeight: 'bold', textAlign: 'center', marginRight: '-' }}>249</span>
-                                                                    </button>
-                                                                    <button className="btn btn-primary d-flex justify-content-center align-items-center" type="button" style={{ width: '12%', height: '90%', fontWeight: 'bold', background: '#717D96', borderStyle: 'none', borderColor: '#2d3648', marginRight: '0px', minWidth: '120px', padding: '0px' }}>
-                                                                        <i className="bi bi-share-fill" style={{ marginRight: '5px' }}></i>
-                                                                        <span className="d-flex" style={{ fontSize: '12px', fontFamily: 'Inter, sans-serif', fontWeight: 'bold', textAlign: 'center', marginRight: '-' }}>Share</span>
-                                                                    </button>
-                                                                </div>
                                                             </div>
                                                             <div className="d-flex flex-column" style={{ width: '6%', height: '90%', minWidth: '26px', margin: '0.7%' }}>
-                                                                <button className="btn btn-primary d-flex justify-content-center align-items-center" type="button" style={{ width: '100%', height: '40%', background: '#2D3648', borderBottomRightRadius: '0px', borderBottomLeftRadius: '0px', borderStyle: 'none' }}>
+                                                                {/** buraları düzeltmem gerekiyor!!! */}
+                                                                {containsComplaint("downvoted", products[index].id) ? <button onClick={() => handleUpvote(products[index].id)} className="btn btn-primary d-flex justify-content-center align-items-center" type="button" style={{ width: '100%', height: '40%', background: '#2D3648', borderRadius: '10px', borderStyle: 'none' }}>
                                                                     <i className="bi bi-arrow-up" style={{ fontSize: '24px' }}></i>
-                                                                </button>
-                                                                <h4 className="text-center d-flex justify-content-center align-items-center" style={{  fontSize: '18px', margin: '0px', height: '20%', background: '#2D3648', color: 'white', fontFamily: 'Inter, sans-serif' }}>160</h4>
-                                                                <button className="btn btn-primary d-flex justify-content-center align-items-center" type="button" style={{ width: '100%', height: '40%', background: '#2D3648', borderTopLeftRadius: '0px', borderTopRightRadius: '0px', borderStyle: 'none' }}>
+                                                                </button>:<></>}
+                                                                <h4 className="text-center d-flex justify-content-center align-items-center" style={{  fontSize: '18px', margin: '0px', height: '20%', color: 'white', fontFamily: 'Inter, sans-serif' }}>{products[index].vote}</h4>
+                                                                {containsComplaint("upvoted", products[index].id) ? <button onClick={() => handleDownvote(products[index].id)} className="btn btn-primary d-flex justify-content-center align-items-center" type="button" style={{ width: '100%', height: '40%', background: '#131924', borderRadius: '10px', borderStyle: 'none' }}>
                                                                     <i className="bi bi-arrow-down" style={{ fontSize: '24px' }}></i>
-                                                                </button>
+                                                                </button>:<></>}
                                                             </div>
                                                             <div className="d-flex flex-column justify-content-center align-items-center" style={{ height: '90%', margin: '0.7%', width: '13%', minWidth: '60px', background: '#EDF0F7', borderRadius: '10px' }}>
                                                                 <img className="rounded-circle" src={products[index].user.profile_photo ? products[index].user.profile_photo : PlaceHolder} style={{ height: '70%', width: '70%', marginTop: '5%', marginBottom: '5%' }} />
