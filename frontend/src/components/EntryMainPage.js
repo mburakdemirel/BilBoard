@@ -118,13 +118,14 @@ function EntryMainPage(){
 
     function containsComplaint(upvotedOrDownvoted, id) {
         if(upvotedOrDownvoted === "upvoted") {
-            if(upvotes && upvotes.some(i => i===id)) {
+            if(upvotes && upvotes.some(complaint => complaint.id === id)) {
                 return true;
             }
             return false;
         }
         if(upvotedOrDownvoted === "downvoted") {
-            if(downvotes && downvotes.some(i => i === id)) {
+            console.log(downvotes);
+            if(downvotes && downvotes.some(complaint => complaint.id === id)) {
                 return true;
             }
             return false;
@@ -136,6 +137,7 @@ function EntryMainPage(){
         axios.post(`${baseurl}/api/complaint/vote-up/`, {complaint_id: id})
         .then((response) => {
             console.log(response);
+            window.location.reload(true);
         })
         .catch((error) => {
             console.log(error);
@@ -144,9 +146,10 @@ function EntryMainPage(){
 
     function handleDownvote(id) {
         console.log("handling downvote");
-        axios.post(`${baseurl}/api/complaint/vote-down`, {complaint_id: id})
+        axios.post(`${baseurl}/api/complaint/vote-down/`, {complaint_id: id})
         .then((response) => {
             console.log(response);
+            window.location.reload(true);
         })
         .catch((error) => {
             console.log(error);
@@ -189,13 +192,13 @@ function EntryMainPage(){
                                                             </div>
                                                             <div className="d-flex flex-column" style={{ width: '6%', height: '90%', minWidth: '26px', margin: '0.7%' }}>
                                                                 {/** buraları düzeltmem gerekiyor!!! */}
-                                                                {containsComplaint("downvoted", products[index].id) ? <button onClick={() => handleUpvote(products[index].id)} className="btn btn-primary d-flex justify-content-center align-items-center" type="button" style={{ width: '100%', height: '40%', background: '#2D3648', borderRadius: '10px', borderStyle: 'none' }}>
+                                                                <button onClick={() => handleUpvote(products[index].id)} className="btn btn-primary d-flex justify-content-center align-items-center" type="button" style={{ width: '100%', height: '40%', background: '#2D3648', borderRadius: '10px', borderStyle: 'none' }}>
                                                                     <i className="bi bi-arrow-up" style={{ fontSize: '24px' }}></i>
-                                                                </button>:<></>}
+                                                                </button>
                                                                 <h4 className="text-center d-flex justify-content-center align-items-center" style={{  fontSize: '18px', margin: '0px', height: '20%', color: 'white', fontFamily: 'Inter, sans-serif' }}>{products[index].vote}</h4>
-                                                                {containsComplaint("upvoted", products[index].id) ? <button onClick={() => handleDownvote(products[index].id)} className="btn btn-primary d-flex justify-content-center align-items-center" type="button" style={{ width: '100%', height: '40%', background: '#131924', borderRadius: '10px', borderStyle: 'none' }}>
+                                                                <button onClick={() => handleDownvote(products[index].id)} className="btn btn-primary d-flex justify-content-center align-items-center" type="button" style={{ width: '100%', height: '40%', background: '#131924', borderRadius: '10px', borderStyle: 'none' }}>
                                                                     <i className="bi bi-arrow-down" style={{ fontSize: '24px' }}></i>
-                                                                </button>:<></>}
+                                                                </button>
                                                             </div>
                                                             <div className="d-flex flex-column justify-content-center align-items-center" style={{ height: '90%', margin: '0.7%', width: '13%', minWidth: '60px', background: '#EDF0F7', borderRadius: '10px' }}>
                                                                 <img className="rounded-circle" src={products[index].user.profile_photo ? products[index].user.profile_photo : PlaceHolder} style={{ height: '70%', width: '70%', marginTop: '5%', marginBottom: '5%' }} />
