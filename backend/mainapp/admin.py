@@ -91,6 +91,10 @@ class ChatAdmin(admin.ModelAdmin):
         (None, {'fields': ('id', 'participiants', 'category', 'product_id', 'messages')}),
     )
 
+class MessageAdmin(admin.ModelAdmin):
+    list_display = ('id', 'author', 'timestamp', 'content')
+    readonly_fields = ('id', 'timestamp',)
+
 admin.site.register(models.CustomUser, UserAdmin)
 admin.site.register(models.Product, ProductAdmin)
 admin.site.register(models.LostAndFoundEntry, LostAndFoundEntryAdmin)
@@ -98,4 +102,4 @@ admin.site.register(models.ComplaintEntry)
 
 # Test
 admin.site.register(models.Chat, ChatAdmin)
-admin.site.register(models.Message)
+admin.site.register(models.Message, MessageAdmin)
