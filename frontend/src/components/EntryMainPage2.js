@@ -43,28 +43,47 @@ function EntryMainPage2(){
             if(pageType){
 
                 if(searchText){
-                    const {data} = await axios.get('http://127.0.0.1:8000/api/entry/laf-entry/' + `?search=${searchText}`)
-                    console.log(data.results);
-                    console.log(hasMore);
-                    const lafEntries = data.results ? data.results : data;
-                    if(lafEntries) {
-                        setProducts(prevProducts => [...prevProducts, ...lafEntries]);
-                        console.log("search products", products);
-                        setPage(prevPage => prevPage + 1);
-                        setHasMore(lafEntries.length >= 16);
+
+                    try {
+                        const {data} = await axios.get('http://127.0.0.1:8000/api/entry/laf-entry/' + `?search=${searchText}`)
+                        console.log(data.results);
+                        console.log(hasMore);
+                        const lafEntries = data.results ? data.results : data;
+                        if(lafEntries) {
+                            setProducts(prevProducts => [...prevProducts, ...lafEntries]);
+                            console.log("search products", products);
+                            setPage(prevPage => prevPage + 1);
+                            setHasMore(lafEntries.length >= 16);
+                        }
+                        else{
+                            setHasMore(false);
+                        }
                     }
+                    catch (e){
+                        setHasMore(false);
+                    }
+
                 }
                 else{
-                    const {data} = await axios.get('http://127.0.0.1:8000/api/entry/laf-entry/' + `?page=${page}`);
-                    console.log("laf data is heree ",  data);
-                    console.log("products", data.results);
-                    console.log(hasMore);
-                    const lafEntries = data.results ? data.results : data;
-                    if(lafEntries) {
-                        setProducts(prevProducts => [...prevProducts, ...lafEntries]);
-                        setPage(prevPage => prevPage + 1);
-                        setHasMore(lafEntries.length >= 16);
+                    try {
+                        const {data} = await axios.get('http://127.0.0.1:8000/api/entry/laf-entry/' + `?page=${page}`);
+                        console.log("laf data is heree ",  data);
+                        console.log("products", data.results);
+                        console.log(hasMore);
+                        const lafEntries = data.results ? data.results : data;
+                        if(lafEntries) {
+                            setProducts(prevProducts => [...prevProducts, ...lafEntries]);
+                            setPage(prevPage => prevPage + 1);
+                            setHasMore(lafEntries.length >= 16);
+                        }
+                        else{
+                            setHasMore(false);
+                        }
                     }
+                    catch (e){
+                        setHasMore(false);
+                    }
+
                 }
                 setLoading(false);
 

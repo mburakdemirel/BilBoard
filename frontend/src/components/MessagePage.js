@@ -1,14 +1,16 @@
 import PlaceHolder from './assets/img/WF Image Placeholder.png';
-import axios from "axios";
+import axios, {all} from "axios";
 import React, {useContext, useEffect, useState} from "react";
 import ContextApi from "../context/ContextApi";
 import ReconnectingWebSocket from "reconnecting-websocket";
+import InfiniteScroll from 'react-infinite-scroll-component';
 // TODO: put all style attributes into a css file and think about the layout of this page
 // Should there be products next to the messages??
 function MessagePage() {
     const [allMessages, setAllMessages] = useState([]);
     const [messages, setMessages] = useState("");
     const [chatId, setChatId] = useState();
+    const [participiant, setParticipiant] = useState();
     const [loading, setLoading] = useState();
     const {newMessage} = useContext(ContextApi);
     console.log("newmessage", newMessage)
@@ -16,27 +18,36 @@ function MessagePage() {
     useEffect(()=>{
         // User messages will be uploaded when page first open
 
-        if(newMessage) {
-            debugger;
-            axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
-            axios.post("http://127.0.0.1:8000/chat/create/",
-                {participiants: [newMessage.product_owner_id], category: newMessage.product_category, product_id: newMessage.product_id, image_url: newMessage.image_url}).then(response => {
-                console.log("new Chat", response.data);
-            });
 
-        }
 
         uploadAllMessages();
 
     },[])
 
+    const createNewMessage = async () => {
+        if (newMessage) {
+            debugger;
+            axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
+            try {
+                const response = await axios.post("http://127.0.0.1:8000/chat/create/", {
+                    participiants: [newMessage.product_owner_id],
+                    category: newMessage.product_category,
+                    product_id: newMessage.product_id,
+                    image_url: newMessage.image_url
+                });
+                console.log("new Chat", response.data);
+                await uploadAllMessages();
+            } catch (error) {
 
+            }
+        }
+    };
 
 
     // Get all messages of user
     const uploadAllMessages = async () => {
         try{
-            debugger;
+
             axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
             axios.get("http://127.0.0.1:8000/chat/").then(response => {
                 console.log("chat", response.data.results);
@@ -61,9 +72,11 @@ function MessagePage() {
     }
 
 
-    const pull_data = (id) => {
+    const pull_data = (id, participiants) => {
         console.log("chat id " + id); // LOGS DATA FROM CHILD (My name is Dean Winchester... &)
+        console.log("participiant ", participiants);
         setChatId(id);
+        setParticipiant(participiants);
     }
 
 
@@ -74,7 +87,7 @@ function MessagePage() {
                 <div className="row gx-1 gy-3 justify-content-center" style={{ width: '100%', marginTop: '-21px' }}>
                     {/* I think this should not be here this page should be more like a pop-up page */}
                     <Products allMessages={allMessages} pull_data={pull_data}></Products>
-                    <Messages pull_data={pull_data} chatId={chatId} ></Messages>
+                    <Messages pull_data={pull_data} chatId={chatId} participiant={participiant}></Messages>
                 </div>
             </div>
         </section>
@@ -93,42 +106,47 @@ function Products({allMessages,pull_data}) {
     },[activeIndex,allMessages])
 
 
-    const messageClick = (index) => {
-        console.log("message index", index);
-        pull_data(index);
+    const messageClick = (chatId, participiants) => {
+        console.log("message index", chatId, participiants);
+        pull_data(chatId, participiants);
     };
 
 
         return (
             <div className=" d-flex flex-grow-1 justify-content-center align-items-center" data-aos="fade-right" data-aos-duration="600" style={{ height: '40vw', width: '600px', minHeight: '230px' }}>
+
                 <div className="d-flex flex-column" style={{ background: '#ffffff', fontSize: '12px', borderRadius: '10px', height: '100%', width: '95%', padding: '5%' }} data-bs-smooth-scroll="true">
-                    <ul className="list-group" style={{ width: '100%', height: '100%', overflow: 'scroll' }} data-bs-smooth-scroll="true">
-                        {Array(allMessages.length).fill().map((_,index) => (
-                            <li key={index} className="list-group-item" onClick={()=>setActiveIndex(index)} style={{ padding: '0px', paddingBottom: '10px', borderStyle: 'none' }}>
-                            <div className="card" style={{ borderStyle: 'none',  background: index===activeIndex? '#A0ABC0' : '#EDF0F7'}} onClick={()=>{messageClick(allMessages[index].id)}}>
-                                <div className="d-flex flex-row align-items-center " style={{ height: '20%', minHeight: '80px', paddingTop: '5px', paddingBottom: '5px', borderStyle: 'none', paddingLeft: '20px', paddingRight: '6px' }}>
-                                    <div className="d-flex flex-column " style={{ width: '50%', height: '100%' }}>
-                                        <h4 style={{width:'fit-content', fontSize: '20px', marginBottom: '5px', fontFamily: 'Inter, sans-serif' }}>{"yatak"}</h4>
-                                        <h3 style={{width:'fit-content', paddingTop: '0px', margin: '0px', marginTop: '5px', fontSize: '20px', fontFamily:'Inter, sans-serif', fontWeight:'bold' }}>{allMessages[index] && (allMessages[index].participiants.contact_name + " " + allMessages[index].participiants.contact_surname)}</h3>
-                                    </div>
-                                    <div className="d-flex justify-content-end align-items-center" style={{ width: '50%', height: '100%' }}>
-                                        <button className="rounded-circle btn btn-primary d-flex justify-content-center align-items-center" style={{ width: '24px', fontWeight: 'bold', background: '#2d3648', borderStyle: 'none', borderColor: '#2d3648', height: '24px' }}>
-                                            <i className="fas fa-share-alt"></i>
-                                        </button>
-                                        <span style={{ width: '12px' }}></span>
-                                        <img alt="" src={PlaceHolder} style={{ width: '35%', height: '95%', minWidth: '70px' }} />
+                    {allMessages.length==0 ? <div className="d-flex justify-content-center align-items-center" style={{height:'100%', width:'100%'}}><span className="spinner-border spinner-border" aria-hidden="true" ></span></div>
+                        :
+                        <ul className="list-group" style={{ width: '100%', height: '100%', overflow: 'scroll' }} data-bs-smooth-scroll="true">
+                            {Array(allMessages.length).fill().map((_,index) => (
+                                <li key={index} className="list-group-item" onClick={()=>setActiveIndex(index)} style={{ padding: '0px', paddingBottom: '10px', borderStyle: 'none' }}>
+                                <div className="card" style={{ borderStyle: 'none',  background: index===activeIndex? '#A0ABC0' : '#EDF0F7'}} onClick={()=>{messageClick(allMessages[index].id, allMessages[index].participiants)}}>
+                                    <div className="d-flex flex-row align-items-center " style={{ height: '20%', minHeight: '80px', paddingTop: '5px', paddingBottom: '5px', borderStyle: 'none', paddingLeft: '20px', paddingRight: '6px' }}>
+                                        <div className="d-flex flex-column " style={{ width: '50%', height: '100%' }}>
+                                            <h4 className="text-truncate" style={{width:'fit-content', fontSize: '18px', marginBottom: '5px', fontFamily: 'Inter, sans-serif' }}>{allMessages[index].product_name}</h4>
+                                            <h3 className="text-truncate" style={{width:'fit-content', paddingTop: '0px', margin: '0px', marginTop: '5px', fontSize: '18px', fontFamily:'Inter, sans-serif', fontWeight:'bold' }}>{allMessages[index] && (allMessages[index].participiants.contact_name + " " + allMessages[index].participiants.contact_surname)}</h3>
+                                        </div>
+                                        <div className="d-flex justify-content-end align-items-center" style={{ width: '50%', height: '100%' }}>
+                                            <button className="rounded-circle btn btn-primary d-flex justify-content-center align-items-center" style={{ width: '24px', fontWeight: 'bold', background: '#2d3648', borderStyle: 'none', borderColor: '#2d3648', height: '24px' }}>
+                                                <i className="fas fa-share-alt"></i>
+                                            </button>
+                                            <span style={{ width: '12px' }}></span>
+                                            <img alt="" src={allMessages[index].image_url} style={{ width: '35%', height: '95%', minWidth: '70px' }} />
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </li>))}
-                    </ul>
+                            </li>))}
+                        </ul>
+                    }
                 </div>
+
             </div>
 
     );
 }
 
-function Messages({chatId}) {
+function Messages({chatId,participiant}) {
     const [id, setId] = useState(chatId);
     const [messages, setMessages] = useState([]);
     const [chat, setChat] = useState([]);
@@ -137,6 +155,13 @@ function Messages({chatId}) {
     const [myProfile, setMyProfile] = useState(JSON.parse(localStorage.getItem('myProfile')));
     const [newMessage, setNewMessage] = useState('');
 
+    // pagination variables
+    const [page, setPage] = useState(1);
+    const [hasMore, setHasMore] = useState(true);
+
+    const [loading, setLoading] = useState(true);
+    const [chatWaiting, setChatWaiting] = useState(true);
+
     console.log(myProfile);
     console.log(myProfile.id);
     axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
@@ -144,18 +169,30 @@ function Messages({chatId}) {
 
     useEffect(() => {
 
+        setLoading(true);
+        setPage(1);
+        setHasMore(true);
+        uploadMessages();
+
+    }, [chatId]);
+
+
+    const uploadMessages = async ()=> {
         if(chatId){
+            setChatWaiting(false);
             axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
-            axios.get("http://127.0.0.1:8000/chat/" + chatId + "/").then(response => {
+            await axios.get("http://127.0.0.1:8000/chat/" + chatId + "/").then(response => {
                 console.log(response.data.messages);
                 setMessages(response.data.messages);
                 console.log(response.data);
                 setChat(response.data);
-
+                setLoading(false);
+              /*  setMessages(prevMessages => [...response.data.messages, ...prevMessages]);
+                setPage(prevPage => prevPage + 1);
+                setHasMore(response.data.messages.length >= 10);*/
             })
         }
-
-    }, [chatId]);
+    }
 
     useEffect(() => {
         // Setting up the WebSocket connection
@@ -206,13 +243,15 @@ function Messages({chatId}) {
 
     const sendMessage = (e) => {
 
+        if(newMessage){
+            socket.send(JSON.stringify({
+                'command': 'new_message',
+                'message': newMessage,
+                'author': myProfile.id,
+                'chat_id': chat.id
+            }));
+        }
 
-        socket.send(JSON.stringify({
-            'command': 'new_message',
-            'message': newMessage,
-            'author': myProfile.id,
-            'chat_id': chat.id
-        }));
         setNewMessage("");
     };
 
@@ -240,39 +279,49 @@ function Messages({chatId}) {
         //flex-grow-1
             <div className="d-flex flex-grow-1 justify-content-center align-items-center " data-aos="fade-left" data-aos-duration="600" style={{ width: '600px', height: '40vw', minHeight: '380px' }}>
                 <div className="d-flex flex-column align-items-center" style={{ background: '#ffffff', fontSize: '12px', borderRadius: '10px', height: '100%', width: '95%' }}>
-                    <div className="d-flex flex-row align-items-center" style={{ height: '18%', width: '100%', paddingRight: '20px', paddingBottom: '10px', paddingLeft: '20px', paddingTop: '10px' }}>
-                        <h1 className="d-flex justify-content-start" style={{ width: '50%', fontSize: '150%', fontFamily: 'Inter, sans-serif', marginBottom: '0px' }}>Seller Name</h1>
-                        <div className="d-flex justify-content-end" style={{ height: '100%', width: '60%' }}>
-                            <img alt="" className="rounded-circle" src={PlaceHolder} style={{ height: '100%', width: '30%' }} />
-                        </div>
+                    <div className="d-flex flex-row align-items-center" style={{ height: '10%', width: '100%', paddingRight: '20px', paddingBottom: '10px', paddingLeft: '20px', paddingTop: '10px' }}>
+                        <h1 className="d-flex justify-content-start" style={{ width: '50%', fontSize: '150%', fontFamily: 'Inter, sans-serif', marginBottom: '0px' }}>{participiant && participiant.contact_name + " " + participiant.contact_surname}</h1>
                     </div>
                     <hr style={{ width: '100%', margin: '0px' }} />
-                    <div className="d-flex flex-row justify-content-center" style={{ height: '68%', width: '100%', overflow: 'scroll' }}>
+                    {!chatWaiting ? loading ? <div className="d-flex justify-content-center, align-items-center" style={{height:'76%', paddingTop: '10px'}}><span className="spinner-border spinner-border" aria-hidden="true" ></span></div>
+                        :
+                    <div className="d-flex flex-row justify-content-center" style={{ height: '76%', width: '100%', overflow: 'scroll' }}>
+
+
                         <ul className="list-group flex-column-reverse" style={{ width: '90%', height: '100%', paddingTop: '20px', overflow: 'scroll' }} data-bs-smooth-scroll="true">
-                            {/** burada kimin mesajı olduğuna göre sağa veya sola alignlanmış halini göstermeliyiz 
-                             * backendden mesajları alıp kim tarafından gönderildiğine göre buna karar veririz
-                            */}
+
                             {messages.map((message, index) => (
 
                                 <li key={index} className="list-group-item d-flex w-100 " style={{justifyContent: message.author === myProfile.id ? 'right' : 'left', padding: '0px', paddingBottom: '10px', borderStyle: 'none' }}>
                                     <div className="card" style={{ borderStyle: 'none', background: message.author === myProfile.id ? '#717D96' : '#A0ABC0', width: '70%', borderRadius:'10px' }}>
-                                        <div className="text-start" style={{ height: '100%', borderStyle: 'none', width: '100%', padding: '10px', fontSize: '20%' }}>
+                                        <div className="d-flex text-start" style={{ height: '100%', borderStyle: 'none', width: '100%', padding: '10px', fontSize: '20%' }}>
                                             <p style={{ marginBottom: '0px', width: '100%', fontFamily: 'Inter, sans-serif', fontSize: '600%' }}>{message && message.content}</p>
+                                            <p className="d-flex align-items-end justify-content-end" style={{ textAlign:'end', padding:'0px', margin: '0px', fontFamily: 'Inter, sans-serif', fontSize: '8px' }}>{message && getHourAndMinuteFromTime(message.timestamp)}</p>
                                         </div>
                                     </div>
                                 </li>
                             ))}
                         </ul>
-                    </div>
-                    <div className="d-flex flex-row " style={{ minHeight:'32px', height: '7%', width: '90%', background: '#edf0f7', borderRadius: '10px', marginTop: '12px', border: '2px solid #CBD2E0' }}>
 
-                        <input className="form-control-sm" type="text" style={{  fontSize:'1em', width: '90%',  background: '#edf0f7', borderRadius: '0px', borderTopLeftRadius: '8px', borderBottomLeftRadius: '8px', borderBottomRightRadius: '0px', borderTopRightRadius: '0px', borderStyle: 'none', borderTopWidth: '2px', borderTopStyle: 'none', borderRight: '2px solid #CBD2E0', borderBottomWidth: '2px', borderBottomStyle: 'none', borderLeft: '2px solid #CBD2E0' }}
-                              value={newMessage} onKeyDown={(e)=>{sendMessageWithEnter(e)}} onChange={(e)=> setNewMessage(e.target.value)}/>
-                        <div className="d-flex align-items-center justify-content-center" onClick={(e)=>{sendMessage(e)}} style={{ width: '10%', height: '100%', borderStyle: 'none' }}>
-                            <i className="bi bi-send-fill" style={{ fontSize: '20px' }} ></i>
-                        </div>
+
                     </div>
+                        :
+                        <div style={{height:'76%'}}></div>
+                    }
+
+
+                        <div className="d-flex flex-row " style={{ minHeight:'32px', height: '7%', width: '90%', background: '#edf0f7', borderRadius: '10px', marginTop: '12px', border: '2px solid #CBD2E0' }}>
+
+                            <input className="form-control-sm" type="text" style={{  fontSize:'1em', width: '90%',  background: '#edf0f7', borderRadius: '0px', borderTopLeftRadius: '8px', borderBottomLeftRadius: '8px', borderBottomRightRadius: '0px', borderTopRightRadius: '0px', borderStyle: 'none', borderTopWidth: '2px', borderTopStyle: 'none', borderRight: '2px solid #CBD2E0', borderBottomWidth: '2px', borderBottomStyle: 'none', borderLeft: '2px solid #CBD2E0' }}
+                                   disabled={loading} value={newMessage} onKeyDown={(e)=>{sendMessageWithEnter(e)}} onChange={(e)=> setNewMessage(e.target.value)}/>
+                            <div className="d-flex align-items-center justify-content-center" onClick={(e)=>{sendMessage(e)}} style={{ width: '10%', height: '100%', borderStyle: 'none' }}>
+                                <i className="bi bi-send-fill" style={{ fontSize: '20px' }} ></i>
+                            </div>
+                        </div>
+
+
                 </div>
+
             </div>
 
     );

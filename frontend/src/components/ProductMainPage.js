@@ -10,6 +10,7 @@ import ContextApi from "../context/ContextApi";
 import {useNavigate, useParams} from "react-router-dom";
 import productDetailPage from "./ProductDetailPage";
 import Placeholder from "./assets/img/WF Image Placeholder2.png"
+import {set} from "react-hook-form";
 function ProductMainPage() {
     const navigate = useNavigate();
 
@@ -51,24 +52,44 @@ function ProductMainPage() {
 
                 if(searchText){
 
-                    const {data} = await axios.get('http://127.0.0.1:8000/api/product/' + pageType + `?search=${searchText}`);
-                    const productData = data.results ? data.results : data;
-                    if(productData) {
-                        setProducts(prevProducts => [...prevProducts, ...productData]);
-                        setPage(prevPage => prevPage + 1);
-                        setHasMore(productData.length >= 16);
+                    try {
+                        const {data} = await axios.get('http://127.0.0.1:8000/api/product/' + pageType + `?search=${searchText}`);
+                        const productData = data.results ? data.results : data;
+                        if(productData) {
+                            setProducts(prevProducts => [...prevProducts, ...productData]);
+                            setPage(prevPage => prevPage + 1);
+                            setHasMore(productData.length >= 16);
+                        }
+                        else {
+                            setHasMore(false);
+                        }
                     }
+                    catch (e){
+                        setHasMore(false);
+                    }
+
+
                 }
                 else{
+                    debugger;
+                   try {
+                       const {data} = await axios.get('http://127.0.0.1:8000/api/product/' + pageType + `?page=${page}`);
+                       console.log(data);
+                       const productData = data.results ? data.results : data;
+                       if(productData) {
+                           setProducts(prevProducts => [...prevProducts, ...productData]);
+                           setPage(prevPage => prevPage + 1);
+                           setHasMore(productData.length >= 16);
+                       }
+                       else{
+                           setHasMore(false);
+                       }
+                   }
+                   catch (e){
+                       setHasMore(false);
+                   }
 
-                    const {data} = await axios.get('http://127.0.0.1:8000/api/product/' + pageType + `?page=${page}`);
-                    console.log(data);
-                    const productData = data.results ? data.results : data;
-                    if(productData) {
-                        setProducts(prevProducts => [...prevProducts, ...productData]);
-                        setPage(prevPage => prevPage + 1);
-                        setHasMore(productData.length >= 16);
-                    } 
+
                 }
 
                 setLoading(false);

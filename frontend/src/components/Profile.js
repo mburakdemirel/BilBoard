@@ -144,12 +144,22 @@ function Products({myProfile, func, editMode}) {
             confirmed = true;
         } else {
             confirmed = false;
+            uploadMyProducts();
         }
 
         if(confirmed){
             try{
                 // do update operations
-                await axios.delete('http://127.0.0.1:8000/api/product/' +  product.category + '/' + product.id);
+                if(product.category === "secondhand" || product.category === "borrow" || product.category === "donation"){
+                    await axios.delete('http://127.0.0.1:8000/api/user/product/' +  product.id + '/');
+                }
+                else if(product.category === "lostandfound"){
+                    await axios.delete('http://127.0.0.1:8000/api/user/laf-entry/' +  product.id + '/');
+                }
+                else{
+                    await axios.delete('http://127.0.0.1:8000/api/user/complaint-entry/' +  product.id + '/');
+                }
+
                 uploadMyProducts();
             }
             catch (error){

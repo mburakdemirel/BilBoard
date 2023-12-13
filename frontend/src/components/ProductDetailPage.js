@@ -73,9 +73,20 @@ function ProductDetailPage() {
         }
     }
 
-    const sendMessage = () => {
+
+    const sendMessage = async () => {
         const newMessage = { product_category: product.category, product_id: product.id, product_owner_id: product.user.id, product_image: product.images[0]};
+        debugger;
         sendNewMessage(newMessage);
+        if(newMessage) {
+            debugger;
+            axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
+            await axios.post("http://127.0.0.1:8000/chat/create/",
+                {participiants: [newMessage.product_owner_id], category: newMessage.product_category, product_id: newMessage.product_id, image_url: newMessage.image_url}).then(response => {
+                console.log("new Chat", response.data);
+            });
+        }
+
         navigate("/messages");
     }
     const checkContains = (index) => {
@@ -128,7 +139,16 @@ function ProductDetailPage() {
         if(confirmed){
             try{
                 // do update operations
-                await axios.delete('http://127.0.0.1:8000/api/product/' +  product.category + '/' + product.id);
+                if(product.category === "secondhand" || product.category === "borrow" || product.category === "donation"){
+                    await axios.delete('http://127.0.0.1:8000/api/user/product/' +  product.id + '/');
+                }
+                else if(product.category === "lostandfound"){
+                    await axios.delete('http://127.0.0.1:8000/api/user/laf-entry/' +  product.id + '/');
+                }
+                else{
+                    await axios.delete('http://127.0.0.1:8000/api/user/complaint-entry/' +  product.id + '/');
+                }
+
                 navigate("/main_page/secondhand");
             }
             catch (error){

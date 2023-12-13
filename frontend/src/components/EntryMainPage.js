@@ -42,29 +42,49 @@ function EntryMainPage(){
             if(pageType){
 
                 if(searchText){
-                    const {data} = await axios.get('http://127.0.0.1:8000/api/entry/complaint-entry/' + `?search=${searchText}`)
-                    console.log(data.results);
-                    console.log(hasMore);
-                    const entryData = data.results ? data.results : data;
-                    console.log("entry data: ", entryData);
-                    if(entryData) {
-                        setProducts(prevProducts => [...prevProducts, ...entryData]);
-                        setPage(prevPage => prevPage + 1);
-                        setHasMore(entryData.length >= 16);
+
+                    try {
+                        const {data} = await axios.get('http://127.0.0.1:8000/api/entry/complaint-entry/' + `?search=${searchText}`)
+                        console.log(data.results);
+                        console.log(hasMore);
+                        const entryData = data.results ? data.results : data;
+                        console.log("entry data: ", entryData);
+                        if(entryData) {
+                            setProducts(prevProducts => [...prevProducts, ...entryData]);
+                            setPage(prevPage => prevPage + 1);
+                            setHasMore(entryData.length >= 16);
+                        }
+                        else{
+                            setHasMore(false);
+                        }
+
                     }
+                    catch (e){
+                        setHasMore(false);
+                    }
+
                 }
                 else{
-                    const {data} = await axios.get('http://127.0.0.1:8000/api/entry/complaint-entry/' + `?page=${page}`);
-                    console.log(data);
-                    console.log(data.results);
-                    console.log(hasMore);
-                    const entryData = data.results ? data.results : data;
-                    console.log("entry data: ", entryData);
-                    if(entryData) {
-                        setProducts(prevProducts => [...prevProducts, ...entryData]);
-                        setPage(prevPage => prevPage + 1);
-                        setHasMore(entryData.length >= 16);
+                    try {
+                        const {data} = await axios.get('http://127.0.0.1:8000/api/entry/complaint-entry/' + `?page=${page}`);
+                        console.log(data);
+                        console.log(data.results);
+                        console.log(hasMore);
+                        const entryData = data.results ? data.results : data;
+                        console.log("entry data: ", entryData);
+                        if(entryData) {
+                            setProducts(prevProducts => [...prevProducts, ...entryData]);
+                            setPage(prevPage => prevPage + 1);
+                            setHasMore(entryData.length >= 16);
+                        }
+                        else{
+                            setHasMore(false);
+                        }
                     }
+                    catch (e){
+                        setHasMore(false);
+                    }
+
                 }
                 setLoading(false);
 
