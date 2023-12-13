@@ -8,6 +8,7 @@ from .helpers import send_forget_password_mail
 from rest_framework import generics
 from userapp.serializers import (
     UserSerializer,
+    DefaultUserSerializer,
     MyTokenObtainPairSerializer,
     EmailVerifySerializer,
 )
@@ -235,7 +236,7 @@ def get_user_by_id(request):
     user_id = request.data.get('user_id')
     user = CustomUser.objects.get(id=user_id)
     if user:
-        serializer = UserSerializer(user)
+        serializer = DefaultUserSerializer(user)
         return Response(serializer.data, status=status.HTTP_200_OK)
     else:
         return Response({"error": "User with specified id is not found."}, status=status.HTTP_404_NOT_FOUND)

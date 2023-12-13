@@ -37,13 +37,13 @@ class UserSerializer(serializers.ModelSerializer):
         return instance
     
 
-class UserSerializer(serializers.ModelSerializer):
+class DefaultUserSerializer(serializers.ModelSerializer):
     """Serializer for the user object"""
     #Tell djangorest, the model, fields and extra args that we want to pass to serializer
     profile_photo = serializers.ImageField(required=False)
     class Meta:
         model = get_user_model()
-        fields = ('id', 'email', 'name', 'surname', 'password', 'is_verified', 'profile_photo', 'description', 'phone_number')
+        fields = ('id', 'email', 'name', 'surname', 'password', 'is_verified', 'profile_photo')
 
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
