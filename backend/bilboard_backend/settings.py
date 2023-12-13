@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'productapp',
     'entryapp',
+    'notificationapp.apps.NotificationappConfig',
 ]
 
 MIDDLEWARE = [
