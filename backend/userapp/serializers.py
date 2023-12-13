@@ -43,7 +43,7 @@ class DefaultUserSerializer(serializers.ModelSerializer):
     profile_photo = serializers.ImageField(required=False)
     class Meta:
         model = get_user_model()
-        fields = ('id', 'email', 'name', 'surname', 'password', 'is_verified', 'profile_photo')
+        fields = ('id', 'email', 'name', 'surname', 'profile_photo', 'description', 'phone_number')
 
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):

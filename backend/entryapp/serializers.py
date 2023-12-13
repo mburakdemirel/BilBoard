@@ -5,7 +5,7 @@ import requests
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = ['id', 'profile_photo', 'name', 'surname', 'phone_number', 'description']
+        fields = ['id', 'profile_photo', 'name', 'surname']
 
 
 class CreateLostAndFoundEntrySerializer(serializers.ModelSerializer):
