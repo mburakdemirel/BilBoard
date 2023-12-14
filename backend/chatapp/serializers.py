@@ -40,16 +40,16 @@ class ChatListSerializer(serializers.ModelSerializer):
             if product_images.exists():
                 representation['image_url'] = self.context['request'].build_absolute_uri(product_images.first().image.url)
             else:
-                representation['image_url'] = "null"
+                representation['image_url'] = None
             print(f'\033[1;34;40m{product_images}\033[0;0m') #test
         elif category in ['lost', 'found']:
             entry = LostAndFoundEntry.objects.get(id=product_id)
             representation['product_name'] = entry.topic
-            representation['image_url'] = "null"
+            representation['image_url'] = None
 
         last_message = instance.messages.order_by('-timestamp').first()
         # format timestamp to string representation of datetime
-        representation['last_message_timestamp'] = last_message.timestamp.strftime("%d/%m/%Y, %H:%M:%S") if last_message is not None else "null"
+        representation['last_message_timestamp'] = last_message.timestamp.strftime("%d/%m/%Y, %H:%M:%S") if last_message is not None else None
 
 
 
@@ -139,11 +139,11 @@ class ChatSerializer(serializers.ModelSerializer):
             if product_images.exists():
                 representation['image_url'] = self.context['request'].build_absolute_uri(product_images.first().image.url)
             else:
-                representation['image_url'] = "null"
+                representation['image_url'] = None
         elif category in ['lost', 'found']:
             entry = LostAndFoundEntry.objects.get(id=product_id)
             representation['product_name'] = entry.topic
-            representation['image_url'] = "null"
+            representation['image_url'] = None
         return representation
 
 
