@@ -80,7 +80,6 @@ class ProductUpdateSerializer(serializers.ModelSerializer):
         """Check category and set price, return_date fields."""
         if self.instance:
             category = self.instance.category
-        #Frontend engellemeli çünkü return_date'i de girebilir adam o field gözükmemeli
         if category == 'secondhand':
             if 'return_date' in data:
                 raise serializers.ValidationError("Return date should not be included for secondhand products.")
@@ -102,4 +101,4 @@ class ProductSerializer(serializers.ModelSerializer):
     images = ProductImageSerializer(many=True, read_only=True)
     class Meta:
         model = Product
-        fields = ['id', 'title', 'price', 'return_date', 'images', 'category', 'user']
+        fields = ['id', 'title', 'price', 'return_date', 'images', 'category', 'product_type', 'user']

@@ -70,6 +70,17 @@ class Product(models.Model):
         ('donation', 'Donation'),
     ]
 
+    TYPE_CHOICES = [
+        ('electronics', 'Electronics'),
+        ('book', 'Book'),
+        ('household', 'Household'),
+        ('clothing_accessories', 'Clothing & Accessories'),
+        ('toys_games', 'Toys & Games'),
+        ('sports', 'Sports'),
+        ('art', 'Art'),
+        ('other', 'Other')
+    ]
+
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -78,15 +89,12 @@ class Product(models.Model):
     title = models.CharField(max_length=100)
     description = models.TextField(blank=True)
     upload_date = models.DateField(auto_now=True) #bu ilerde içi silinecek ve daytime ile yüklendiği an
-    # create product view de set edilecek.
-    #product photo kaldırıldı.
     category = models.CharField(max_length=10, choices=CATEGORY_CHOICES)
     return_date = models.DateField(null=True, blank=True)
-    product_type = models.CharField(max_length=30, blank=True, null=True)
-    # Common fields for all products
+    product_type = models.CharField(max_length=30, default='other', choices=TYPE_CHOICES)
     price = models.DecimalField(max_digits=7, decimal_places=2, null=True, blank=True)
 
-    REQUIRED_FIELDS = ['title', 'category']
+    REQUIRED_FIELDS = ['title', 'category', 'product_type']
 
     def _str_(self):
         return self.title

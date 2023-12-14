@@ -115,26 +115,19 @@ class SecondhandProductViewSet(ProductViewSet):
         search_query = request.query_params.get('search', None)
         min_price = self.request.query_params.get('min_price', None)
         max_price = self.request.query_params.get('max_price', None)
+        product_type = request.query_params.get('product_type', None)
         page_number = request.query_params.get('page', 1)  # Default to page 1 if no page is specified
-        # 3 params birden varsa
-        if search_query and min_price and max_price:
-            cache_key = f"secondhand_products_{search_query}_{min_price}_{max_price}_page_{page_number}"
-        # Sadece search ve min_price varsa
-        elif search_query and min_price:
-            cache_key = f"secondhand_products_{search_query}_{min_price}_page_{page_number}"
-        # Sadece search ve max_price varsa
-        elif search_query and max_price:
-            cache_key = f"secondhand_products_{search_query}_{max_price}_page_{page_number}"
-        elif search_query:
-            cache_key = f"secondhand_products_{search_query}_page_{page_number}"
-        elif min_price and max_price:
-            cache_key = f"secondhand_products_{min_price}_{max_price}_page_{page_number}"
-        elif min_price:
-            cache_key = f"secondhand_products_{min_price}_page_{page_number}"
-        elif max_price:
-            cache_key = f"secondhand_products_{max_price}_page_{page_number}"
-        else:
-            cache_key = f"secondhand_products_all_page_{page_number}"
+        
+        cache_key_parts = [
+            'secondhand_products',
+            f'search_{search_query}' if search_query else 'all',
+            f'min_{min_price}' if min_price else 'no_min',
+            f'max_{max_price}' if max_price else 'no_max',
+            f'type_{product_type}' if product_type else 'all_types',
+            f'page_{page_number}'
+        ]
+        cache_key = '_'.join(cache_key_parts)
+
 
         cached_data = cache.get(cache_key)
 
@@ -164,12 +157,15 @@ class SecondhandProductViewSet(ProductViewSet):
         search_query = self.request.query_params.get('search', None)
         min_price = self.request.query_params.get('min_price', None)
         max_price = self.request.query_params.get('max_price', None)
+        product_type = self.request.query_params.get('product_type', None)
 
         queryset = Product.objects.filter(category='secondhand')
         if min_price:
             queryset = queryset.filter(price__gte=min_price)
         if max_price:
             queryset = queryset.filter(price__lte=max_price)
+        if product_type:
+            queryset = queryset.filter(product_type=product_type)
 
         # Arama sorgusu varsa, trigram benzerliğine göre filtrele
         if search_query:
