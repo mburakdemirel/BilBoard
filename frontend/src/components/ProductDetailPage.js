@@ -84,7 +84,7 @@ function ProductDetailPage() {
             await axios.post("http://127.0.0.1:8000/chat/create/",
                 {participiants: [product.user.id], category: product.category, product_id: product.id}).then(response => {
                 console.log("new Chat", response.data);
-                const newMessage = {chat_id:response.data.id};
+                const newMessage = {chat_id:response.data.id, contact_name:product.user.name, contact_surname:product.user.surname, contact_id:product.user.id};
                 sendNewMessage(newMessage);
                 setMesagesLoading(false);
             });
@@ -92,7 +92,7 @@ function ProductDetailPage() {
         navigate("/messages");
     }
     const checkContains = (index) => {
-        debugger;
+
         console.log(favorites);
         if (favorites && favorites.some(favorite => favorite.id === index)) {
             return true;
@@ -180,10 +180,8 @@ function ProductDetailPage() {
             navigate('/profile');
         }
         else{
-            navigate('/profile/' + product.user.id,  {state:{user: product.user}});
+            navigate('/profile/' + product.user.id);
         }
-
-
     }
 
     return (

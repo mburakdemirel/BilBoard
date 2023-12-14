@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import Burak from './assets/img/burak.png';
 import {useNavigate, useParams} from "react-router-dom";
 import './assets/bootstrap/css/bootstrap.min.css'; // Import Bootstrap CSS
@@ -7,16 +7,17 @@ import axios from "axios";
 import InfiniteScroll from 'react-infinite-scroll-component';
 import ProfilePlaceholder from "./assets/img/default_profile.webp";
 import AOS from "aos";
+import ContextApi from "../context/ContextApi";
 
 
 
 function EntryMainPage2(){
-    //const navigate = useNavigate();
-    const imageUrl = "http://127.0.0.1:8000/media/pphotos/Activity_Diagram1.jpg";
+    const{sendNewMessage} = useContext(ContextApi);
+    const navigate = useNavigate();
     const {pageType,searchText} = useParams();
 
     const [loading, setLoading] = useState(true);
-
+    const [messagesLoading, setMesagesLoading] = useState(false);
     const [page, setPage] = useState();
     const [products, setProducts] = useState([]);
     const [hasMore, setHasMore] = useState(true);
@@ -105,10 +106,34 @@ function EntryMainPage2(){
 
 
 
+    const goToProfile =  (id) => {
+        let myProfile = JSON.parse(localStorage.getItem('myProfile'));
+        if(id==myProfile.id){
+            navigate('/profile');
+        }
+        else{
+            navigate('/profile/' + id);
+        }
+    }
+
+
+    const sendMessage = async (e,item) => {
+        e.preventDefault();
+        setMesagesLoading(true);
+        console.log("item", item)
+        axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
+        await axios.post("http://127.0.0.1:8000/chat/create/",
+            {participiants: [item.user.id], category: item.category, product_id: item.id}).then(response => {
+            console.log("new Chat", response.data);
+            const newMessage = {chat_id:response.data.id, contact_name:item.user.name, contact_surname:item.user.surname, contact_id:item.user.id};
+            sendNewMessage(newMessage);
+            setMesagesLoading(false);
+        });
+        navigate("/messages");
+    }
+
     return (
         <div  className="d-flex flex-column">
-
-
 
             <section className="d-flex flex-grow-1 justify-content-center align-items-start  py-5 py-x-5" style={{ background: '#edf0f7', minHeight: '91vh' }}>
                 {loading ? <div style={{height:'50px'}}><span className="spinner-border spinner-border" aria-hidden="true" ></span></div>
@@ -136,14 +161,16 @@ function EntryMainPage2(){
                                                             </h4>
                                                         </div>
                                                         <div className="d-flex  justify-content-end align-items-center ">
-                                                            <button className="btn btn-primary d-flex justify-content-center align-items-center" type="button" style={{ width: '36%', height: '100%', fontWeight: 'bold', background: '#2d3648', borderStyle: 'none', borderColor: '#2d3648', marginRight: '1%', minWidth: '120px' }}>
+                                                            <button className="btn btn-primary d-flex justify-content-center align-items-center" type="button" style={{ width: '36%', height: '100%', fontWeight: 'bold', background: '#2d3648', borderStyle: 'none', borderColor: '#2d3648', marginRight: '1%', minWidth: '120px' }}
+                                                                    onClick={(e)=>sendMessage(e,item)}>
                                                                 <i className="bi bi-send-fill" style={{ fontSize: '12px', color:'white', marginRight:'5px' }}  ></i>
                                                                 <span className="d-flex" style={{ fontSize: '11px', fontFamily: 'Inter, sans-serif', fontWeight: 'bold', textAlign: 'center' }}>Send Message</span>
                                                             </button>
                                                             {/* ...other buttons... */}
                                                         </div>
                                                     </div>
-                                                    <div className="d-flex flex-column justify-content-start align-items-center " style={{ height: '90%', margin: '1.5%', width: '30%', minWidth: '60px', background: '#EDF0F7', borderRadius: '10px' }}>
+                                                    <div className="d-flex flex-column justify-content-start align-items-center " style={{ height: '90%', margin: '1.5%', width: '30%', minWidth: '60px', background: '#EDF0F7', borderRadius: '10px' }}
+                                                        onClick={(e)=> goToProfile(item.user.id)}>
                                                         <img className="rounded-circle" src={item.user.profile_photo ? item.user.profile_photo : ProfilePlaceholder} style={{ height: '70%', width: '70%', marginTop: '5%', marginBottom: '5%' }} alt="User" />
                                                         <h1 className="text-center d-flex justify-content-center align-items-center " style={{height:'25%', fontFamily: 'Inter, sans-serif', fontSize: '13px', width: '95%' }}>{item.user.name + " " + item.user.surname}</h1>
                                                     </div>
@@ -176,14 +203,16 @@ function EntryMainPage2(){
                                                             </h4>
                                                         </div>
                                                         <div className="d-flex  justify-content-end align-items-center ">
-                                                            <button className="btn btn-primary d-flex justify-content-center align-items-center" type="button" style={{ width: '36%', height: '100%', fontWeight: 'bold', background: '#2d3648', borderStyle: 'none', borderColor: '#2d3648', marginRight: '1%', minWidth: '120px' }}>
+                                                            <button className="btn btn-primary d-flex justify-content-center align-items-center" type="button" style={{ width: '36%', height: '100%', fontWeight: 'bold', background: '#2d3648', borderStyle: 'none', borderColor: '#2d3648', marginRight: '1%', minWidth: '120px' }}
+                                                                onClick={(e)=>sendMessage(e,item)}>
                                                                 <i className="bi bi-send-fill" style={{ fontSize: '12px', color:'white', marginRight:'5px' }}  ></i>
                                                                 <span className="d-flex" style={{ fontSize: '11px', fontFamily: 'Inter, sans-serif', fontWeight: 'bold', textAlign: 'center' }}>Send Message</span>
 
                                                             </button>
                                                         </div>
                                                     </div>
-                                                    <div className="d-flex flex-column justify-content-start align-items-center " style={{ height: '90%', margin: '1.5%', width: '30%', minWidth: '60px', background: '#9ebcdb', borderRadius: '10px' }}>
+                                                    <div className="d-flex flex-column justify-content-start align-items-center " style={{ height: '90%', margin: '1.5%', width: '30%', minWidth: '60px', background: '#9ebcdb', borderRadius: '10px' }}
+                                                         onClick={(e)=> goToProfile(item.user.id)}>
                                                         <img className="rounded-circle" src={item.user.profile_photo ? item.user.profile_photo : ProfilePlaceholder} style={{ height: '70%', width: '70%', marginTop: '5%', marginBottom: '5%' }} alt="User" />
                                                         <h1 className="text-center d-flex justify-content-center align-items-center " style={{height:'25%', fontFamily: 'Inter, sans-serif', fontSize: '13px', width: '95%' }}>{item.user.name + " " + item.user.surname}</h1>
                                                     </div>

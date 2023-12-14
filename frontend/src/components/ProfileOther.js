@@ -29,12 +29,8 @@ function ProfileOther() {
 
 
     useEffect(()=>{
-
         AOS.init();
-        if(!location.state){
-            navigate('/profile')
-        }
-
+        onLoad();
     },[])
 
     const onLoad = async () => {
@@ -43,8 +39,8 @@ function ProfileOther() {
         try{
             // Create the GET request
             axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
-            const {data} = await axios.get('http://127.0.0.1:8000/api/user/me/') ;
-            //console.log(data);
+            const {data} = await axios.post('http://127.0.0.1:8000/api/user/get-user-by-id/', {user_id:id}) ;
+            console.log("other profile", data);
             setMyProfile(data);
         }
         catch (error){
@@ -69,13 +65,18 @@ function ProfileOther() {
 
 
     return (
+
         <section  className="d-flex d-xxl-flex flex-grow-1 justify-content-center align-items-start align-items-xl-start justify-content-xxl-center align-items-xxl-start  py-4 py-x-5" style={{ background: '#edf0f7', minHeight: '91vh'}}>
-                <div className="container d-sm-flex d-md-flex d-lg-flex d-xl-flex d-xxl-flex">
+            {myProfile &&
+            <div className="container d-sm-flex d-md-flex d-lg-flex d-xl-flex d-xxl-flex">
                 <div className="row gx-1 gy-3 justify-content-center" ></div>
-                <Products  myProfile={location.state.user} ></Products>
-                <ProfileArea myProfile={location.state.user} ></ProfileArea>
-                </div>
+                <Products  myProfile={myProfile} ></Products>
+                <ProfileArea myProfile={myProfile} ></ProfileArea>
+            </div>
+            }
         </section>
+
+
     );
 
 }
@@ -167,7 +168,7 @@ function Products({myProfile, func}) {
                                                 <h1 className="text-center text-truncate d-flex d-xxl-flex justify-content-start align-items-start justify-content-xxl-start"
                                                     style={{width: '100%', fontSize: '14px', fontFamily: 'Inter, sans-serif', marginBottom: '0px',color:'white'}}>{products[index].title}</h1>
                                                 <h1 className="text-center text-truncate d-flex d-xxl-flex justify-content-start justify-content-xxl-start"
-                                                    style={{width: '100%', fontSize: '10px', fontFamily: 'Inter, sans-serif', marginBottom: '0px', color:'white'}}>{products[index].price + "₺"}</h1>
+                                                    style={{width: '100%', fontSize: '10px', fontFamily: 'Inter, sans-serif', marginBottom: '0px', color:'white'}}>{products[index].price && products[index].price + "₺"}</h1>
                                             </div>
 
                                         </div>

@@ -15,32 +15,46 @@ function MessagePage() {
     const [chatId, setChatId] = useState();
     const [participiant, setParticipiant] = useState();
     const [loading, setLoading] = useState(true);
-    const [isDeleted, setIsDeleted] = useState();
-
+    const [firstMessage, setFirstMessage] = useState(true);
+    const {newMessage} = useContext(ContextApi);
+    const [activeIndex, setActiveIndex] = useState(-1);
 
     useEffect(()=>{
         AOS.init();
+
+        if(newMessage){
+            setChatId(newMessage.chat_id);
+        }
         // User messages will be uploaded when page first open
         setLoading(true);
+
         uploadAllMessages();
 
     },[])
 
+    useEffect(() => {
 
+        if(!firstMessage){
+            uploadAllMessages().then(response=>{
+                setActiveIndex(0);
+            });
 
+        }
+    }, [firstMessage]);
 
-
+    const sleep = (delay) => new Promise((resolve) => setTimeout(resolve, delay));
 
     // Get all messages of user
     const uploadAllMessages = async () => {
-        debugger;
-        try{
+        await sleep(1000)
 
+        try{
             axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
             await axios.get("http://127.0.0.1:8000/chat/").then(response => {
                 console.log("chat", response.data.results);
                 setAllMessages(response.data.results);
                 setLoading(false);
+
             });
 
             //const {data} = await axios.get('http://127.0.0.1:8000/api/user/me/') ;
@@ -66,6 +80,17 @@ function MessagePage() {
         setChatId(id);
         setParticipiant(participiants);
     }
+
+    const pull_first_message = (firstMessage) => {
+        console.log("firstMessage" + firstMessage);
+        setFirstMessage(firstMessage);
+    }
+
+    const pull_active_index = (activeIndex) => {
+        console.log("active Index " + activeIndex); // LOGS DATA FROM CHILD (My name is Dean Winchester... &)
+        setActiveIndex(activeIndex);
+    }
+
 
 
     const deleteMessage = async (e,messageId) => {
@@ -98,8 +123,8 @@ function MessagePage() {
             <div className="container">
                 <div className="row gx-1 gy-3 justify-content-center" style={{ width: '100%', marginTop: '-21px' }}>
                     {/* I think this should not be here this page should be more like a pop-up page */}
-                    <Products allMessages={allMessages} pull_data={pull_data} deleteMessage={deleteMessage} loading={loading}></Products>
-                    <Messages pull_data={pull_data} chatId={chatId} participiant={participiant} loadingDelete={loading}></Messages>
+                    <Products allMessages={allMessages} pull_data={pull_data} deleteMessage={deleteMessage} loading={loading}  activeIndex={activeIndex} pull_active_index={pull_active_index}></Products>
+                    <Messages  chatId={chatId} participiant={participiant} pull_first_message={pull_first_message} loadingDelete={loading}></Messages>
                 </div>
             </div>
         </section>
@@ -107,9 +132,8 @@ function MessagePage() {
 }
 
 
-function Products({allMessages, pull_data, deleteMessage, loading}) {
+function Products({allMessages, pull_data, deleteMessage, loading, activeIndex, pull_active_index}) {
     const navigate = useNavigate();
-    const [activeIndex, setActiveIndex] = useState(-1);
     const {newMessage} = useContext(ContextApi);
     console.log("newmessage", newMessage)
 
@@ -128,18 +152,31 @@ function Products({allMessages, pull_data, deleteMessage, loading}) {
         pull_data(chatId, participiants);
     };
 
-    const findActiveIndex = () => {
-        if(newMessage){
-            for(let i=0; i<allMessages.length;i++){
-                if(allMessages[i].id == newMessage.chat_id){
-                    setActiveIndex(i);
-                    pull_data(allMessages[i].id, allMessages[i].participiants);
-                }
-            }
+    const goToItem = (category, id, name) => {
+        if(category==="secondhand" || category ==="borrow" || category==="donation"){
+            navigate("/product_detail/" + category + "/" + id);
+        }
+        else if(category==="lost" || category==="found"){
+            navigate("/main_page/lost&found/" + name);
         }
     };
 
 
+
+    const findActiveIndex = () => {
+        debugger;
+        if(newMessage){
+            for(let i=0; i<allMessages.length;i++){
+                if(allMessages[i].id == newMessage.chat_id){
+                    pull_active_index(i);
+                    pull_data(allMessages[i].id, allMessages[i].participiants);
+                }
+            }
+        }
+        else{
+            pull_active_index(-1);
+        }
+    };
 
 
 
@@ -151,7 +188,7 @@ function Products({allMessages, pull_data, deleteMessage, loading}) {
                         :
                         <ul className="list-group" style={{ width: '100%', height: '100%', overflow: 'scroll' }}>
                             {Array(allMessages.length).fill().map((_,index) => (
-                                <li key={index} className="list-group-item" onClick={()=>setActiveIndex(index)} style={{ padding: '0px', paddingBottom: '10px', borderStyle: 'none'}}  data-aos="fade-right" data-aos-duration="600" data-aos-delay={index*100}>
+                                <li key={index} className="list-group-item" onClick={()=>pull_active_index(index)} style={{ padding: '0px', paddingBottom: '10px', borderStyle: 'none'}}  data-aos="fade-right" data-aos-duration="600" data-aos-delay={index*100}>
                                 <div className="card d-flex justify-content-center" style={{ minHeight:'100px', maxHeight:'100px', borderStyle: 'none',  background: index===activeIndex? '#346fad' : '#EDF0F7'}} onClick={()=>{messageClick(allMessages[index].id, allMessages[index].participiants)}}>
                                     <div className="d-flex flex-row align-items-center " style={{ height: '20%', minHeight: '80px', paddingTop: '5px', paddingBottom: '5px', borderStyle: 'none', paddingLeft: '20px', paddingRight: '6px' }}>
                                         <div className="d-flex flex-column " style={{ width: '50%', height: '100%' }}>
@@ -165,8 +202,8 @@ function Products({allMessages, pull_data, deleteMessage, loading}) {
                                             </button>
                                             <span style={{ width: '12px' }}></span>
                                             <div className="d-flex justify-content-center align-items-center" style={{ height:'90px', width: '35%', margin: '0px', padding: '0px' }}>
-                                                <img className="d-block w-100" style={{ borderRadius: '8px', height: '95%', objectFit: 'cover' }} src={allMessages[index].image_url ? allMessages[index].image_url : Placeholder}
-                                                    onClick={(e)=>navigate("/product_detail/" + allMessages[index].category + "/" + allMessages[index].product_id)}/>
+                                                <img className="d-block w-100" style={{ borderRadius: '8px', height: '95%', objectFit: 'cover' }} src={typeof allMessages[index].image_url === "null" ? Placeholder: allMessages[index].image_url }
+                                                    onClick={(e)=>goToItem(allMessages[index].category, allMessages[index].product_id,allMessages[index].product_name)}/>
                                             </div>
 
                                         </div>
@@ -182,21 +219,23 @@ function Products({allMessages, pull_data, deleteMessage, loading}) {
     );
 }
 
-function Messages({chatId,participiant, loadingDelete}) {
-
+function Messages({chatId,participiant,loadingDelete,pull_first_message}) {
+    const navigate = useNavigate();
     const [messages, setMessages] = useState([]);
     const [chat, setChat] = useState([]);
 
     const [socket, setSocket] = useState();
     const [myProfile, setMyProfile] = useState(JSON.parse(localStorage.getItem('myProfile')));
-    const [newMessage, setNewMessage] = useState('');
+    const {newMessage} = useContext(ContextApi);
+    const [newSendedMessage, setNewSendedMessage] = useState('');
 
     // pagination variables
     const [page, setPage] = useState(1);
     const [hasMore, setHasMore] = useState(true);
 
     const [loading, setLoading] = useState(true);
-
+    const [firstMessage, setFirstMessage] = useState();
+    const [contact, setContact] = useState();
 
     console.log(myProfile);
     console.log(myProfile.id);
@@ -204,6 +243,7 @@ function Messages({chatId,participiant, loadingDelete}) {
     //const newSocket = new ReconnectingWebSocket("ws://127.0.0.1:8000/ws/chat/" + chatId + "/");
 
     useEffect(() => {
+
         setLoading(true);
         setPage(1);
         setHasMore(true);
@@ -212,13 +252,21 @@ function Messages({chatId,participiant, loadingDelete}) {
     }, [chatId]);
 
 
+
+
     const uploadMessages = async ()=> {
         if(chatId){
             axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
             await axios.get("http://127.0.0.1:8000/chat/" + chatId + "/").then(response => {
-                console.log(response.data.messages);
-                setMessages(response.data.messages);
-                console.log(response.data);
+                console.log("messages",response.data.messages);
+                if(response.data.messages){
+                    setMessages(response.data.messages);
+                }
+                if(response.data){
+                    console.log(response.data);
+                }
+
+
                 setChat(response.data);
                 setLoading(false);
               /*  setMessages(prevMessages => [...response.data.messages, ...prevMessages]);
@@ -230,9 +278,18 @@ function Messages({chatId,participiant, loadingDelete}) {
 
     useEffect(() => {
         // Setting up the WebSocket connection
+        if(newMessage){
+            chatId = newMessage.chat_id;
+            setContact({contact_name:newMessage.contact_name, contact_surname:newMessage.contact_surname, contact_id:newMessage.contact_id})
+        }
+        if(participiant){
+            setContact(participiant);
+        }
+
         const newSocket = new ReconnectingWebSocket("ws://127.0.0.1:8000/ws/chat/"+ chatId + "/");
         setSocket(newSocket);
-
+        setFirstMessage(true);
+        pull_first_message(true);
         newSocket.onopen = function (e) {
             console.log("WebSocket is connected");
         };
@@ -240,35 +297,45 @@ function Messages({chatId,participiant, loadingDelete}) {
 
         newSocket.onmessage = (event) => {
             const data = JSON.parse(event.data);
-
             if(data["command"]==='new_message'){
-                debugger;
                 console.log("message", data);
                 setMessages((prevMessages) => [data.message, ...prevMessages]);
             }
-
         };
 
         // Clean up the WebSocket connection when the component unmounts
         return () => {
             newSocket.close();
         };
-    }, []);
+    }, [chatId]);
 
 
+
+
+   const sendMessageCommant =  () => {
+       if (newSendedMessage) {
+
+           socket.send(JSON.stringify({
+               'command': 'new_message',
+               'message': newSendedMessage,
+               'author': myProfile.id,
+               'chat_id': chat.id
+           }));
+
+           if (firstMessage) {
+               setFirstMessage(false);
+               pull_first_message(false);
+           }
+       }
+
+       setNewSendedMessage("");
+   }
 
     const sendMessageWithEnter = (e) => {
 
         if(e.key === "Enter") {
             console.log("Enter Click")
-
-            socket.send(JSON.stringify({
-                'command': 'new_message',
-                'message': newMessage,
-                'author': myProfile.id,
-                'chat_id': chat.id
-            }));
-            setNewMessage("");
+            sendMessageCommant();
         }
 
     };
@@ -276,17 +343,7 @@ function Messages({chatId,participiant, loadingDelete}) {
 
 
     const sendMessage = (e) => {
-
-        if(newMessage){
-            socket.send(JSON.stringify({
-                'command': 'new_message',
-                'message': newMessage,
-                'author': myProfile.id,
-                'chat_id': chat.id
-            }));
-        }
-
-        setNewMessage("");
+        sendMessageCommant();
     };
 
 
@@ -314,7 +371,8 @@ function Messages({chatId,participiant, loadingDelete}) {
             <div className="d-flex flex-grow-1 justify-content-center align-items-center " data-aos="fade-left" data-aos-duration="600" style={{ width: '600px', height: '40vw', minHeight: '380px' }}>
                 <div  className="d-flex flex-column align-items-center" style={{ background: '#ffffff', fontSize: '12px', borderRadius: '10px', height: '100%', width: '95%' }} >
                     <div className="d-flex flex-row align-items-center" style={{ height: '10%', width: '100%', paddingRight: '20px', paddingBottom: '10px', paddingLeft: '20px', paddingTop: '10px' }} >
-                        {(chatId && !loadingDelete) && <h1 className="d-flex justify-content-start" style={{ width: '50%', fontSize: '150%', fontFamily: 'Inter, sans-serif', marginBottom: '0px' }}> {participiant && participiant.contact_name + " " + participiant.contact_surname}</h1>}
+                        {(chatId && !loadingDelete) && <h1 className="d-flex justify-content-start" style={{ width: '50%', fontSize: '150%', fontFamily: 'Inter, sans-serif', marginBottom: '0px' }}
+                         onClick={(e)=>navigate("/profile/"+ contact.contact_id)}> {contact && contact.contact_name + " " + contact.contact_surname}</h1>}
                     </div>
                     <hr style={{ width: '100%', margin: '0px' }} />
                     {chatId ? loading || loadingDelete ? <div className="d-flex justify-content-center, align-items-center" style={{height:'76%', paddingTop: '10px'}}><span className="spinner-border spinner-border" aria-hidden="true" ></span></div>
@@ -346,7 +404,7 @@ function Messages({chatId,participiant, loadingDelete}) {
                         <div className="d-flex flex-row " style={{ minHeight:'32px', height: '7%', width: '90%', background: '#edf0f7', borderRadius: '10px', marginTop: '12px', border: '2px solid #CBD2E0' }}>
 
                             <input className="form-control-sm" type="text" style={{  fontSize:'1em', width: '90%',  background: '#edf0f7', borderRadius: '0px', borderTopLeftRadius: '8px', borderBottomLeftRadius: '8px', borderBottomRightRadius: '0px', borderTopRightRadius: '0px', borderStyle: 'none', borderTopWidth: '2px', borderTopStyle: 'none', borderRight: '2px solid #CBD2E0', borderBottomWidth: '2px', borderBottomStyle: 'none', borderLeft: '2px solid #CBD2E0' }}
-                                   disabled={loading} value={newMessage} onKeyDown={(e)=>{sendMessageWithEnter(e)}} onChange={(e)=> setNewMessage(e.target.value)}/>
+                                   disabled={loading} value={newSendedMessage} onKeyDown={(e)=>{sendMessageWithEnter(e)}} onChange={(e)=> setNewSendedMessage(e.target.value)}/>
                             <div className="d-flex align-items-center justify-content-center" onClick={(e)=>{sendMessage(e)}} style={{ width: '10%', height: '100%', borderStyle: 'none' }}>
                                 <i className="bi bi-send-fill" style={{ fontSize: '20px' }} ></i>
                             </div>

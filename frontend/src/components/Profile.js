@@ -263,7 +263,7 @@ function Products({myProfile, func, editMode}) {
                                                     <h1 className="text-center d-flex justify-content-start align-items-start text-truncate"
                                                         style={{width: '100%', fontSize: '14px', fontFamily: 'Inter, sans-serif', marginBottom: '0px',color:'white'}}>{showedProducts[index].title}</h1>
                                                     <h1 className="text-center d-flex d-xxl-flex justify-content-start justify-content-xxl-start text-truncate"
-                                                        style={{width: '100%', fontSize: '10px', fontFamily: 'Inter, sans-serif', marginBottom: '0px',color:'white'}}>{showedProducts[index].price + "₺"}</h1>
+                                                        style={{width: '100%', fontSize: '10px', fontFamily: 'Inter, sans-serif', marginBottom: '0px',color:'white'}}>{showedProducts[index].price && showedProducts[index].price + "₺"}</h1>
                                                 </div>
 
                                             </div>
