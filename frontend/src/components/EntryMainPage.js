@@ -17,7 +17,6 @@ function EntryMainPage(){
     const [hasMore, setHasMore] = useState(true);
     const [upvotes,setUpvotes] = useState([]);
     const [downvotes, setDownvotes] = useState([]);
-    const [user,setUser] = useState();
     const baseurl = 'http://127.0.0.1:8000';
 
     useEffect(()=>{
@@ -42,14 +41,14 @@ function EntryMainPage(){
        axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
        axios.get(`${baseurl}/api/user/list-my-voted-complaints/`)
        .then((response) => {
-        console.log("response ", response.data);
+        console.log("upvotes and downvotes ", response.data);
         if(response.data.upvoted_complaints) {setUpvotes(response.data.upvoted_complaints);}
         if(response.data.downvoted_complaints) {setDownvotes(response.data.downvoted_complaints);}
        })
        .catch((error) => {
         console.log("Error getting complaints: ", error);
        })
-    }, []);
+    }, [products]);
 
     const uploadProducts = async () => {
         try{
@@ -126,7 +125,6 @@ function EntryMainPage(){
             return false;
         }
         if(upvotedOrDownvoted === "downvoted") {
-            console.log(downvotes);
             if(downvotes && downvotes.some(complaint => complaint.id === id)) {
                 return true;
             }
@@ -139,7 +137,7 @@ function EntryMainPage(){
         axios.post(`${baseurl}/api/complaint/vote-up/`, {complaint_id: id})
         .then((response) => {
             console.log(response);
-            window.location.reload(true);
+            setComplaintData(id);
         })
         .catch((error) => {
             console.log(error);
@@ -151,11 +149,35 @@ function EntryMainPage(){
         axios.post(`${baseurl}/api/complaint/vote-down/`, {complaint_id: id})
         .then((response) => {
             console.log(response);
-            window.location.reload(true);
+            setComplaintData(id);
         })
         .catch((error) => {
             console.log(error);
         })
+    }
+
+    function setComplaintData(complaintId) {
+        axios.get(`${baseurl}/api/entry/complaint-entry/${complaintId}/`)
+        .then((response) => {
+            console.log("complaint data: ", response.data);
+            for (let i = 0; i < products.length; i++) {
+                if(products[i].id === complaintId) {
+                    products[i].vote = response.data.vote;
+                    sortProducts();
+                    break;
+                }
+            }
+        })
+        .catch((error) => {
+            console.log(error.response);
+        })
+    }
+
+
+    function sortProducts() {
+        console.log("in sortProducts");
+        const sortedProducts = [...products].sort((a,b) => b.vote - a.vote);
+        setProducts(sortedProducts);
     }
 
     return (
@@ -194,11 +216,11 @@ function EntryMainPage(){
                                                             </div>
                                                             <div className="d-flex flex-column" style={{ width: '6%', height: '90%', minWidth: '26px', margin: '0.7%' }}>
                                                                 {/** buraları düzeltmem gerekiyor!!! */}
-                                                                <button onClick={() => handleUpvote(products[index].id)} className="btn btn-primary d-flex justify-content-center align-items-center" type="button" style={{ width: '100%', height: '40%', background: '#2D3648', borderRadius: '10px', borderStyle: 'none' }}>
+                                                                <button onClick={() => handleUpvote(products[index].id)} className="btn btn-primary d-flex justify-content-center align-items-center" type="button" style={containsComplaint("upvoted", products[index].id) ? clickedState : nonClickedState}>
                                                                     <i className="bi bi-arrow-up" style={{ fontSize: '24px' }}></i>
                                                                 </button>
                                                                 <h4 className="text-center d-flex justify-content-center align-items-center" style={{  fontSize: '18px', margin: '0px', height: '20%', color: 'white', fontFamily: 'Inter, sans-serif' }}>{products[index].vote}</h4>
-                                                                <button onClick={() => handleDownvote(products[index].id)} className="btn btn-primary d-flex justify-content-center align-items-center" type="button" style={{ width: '100%', height: '40%', background: '#131924', borderRadius: '10px', borderStyle: 'none' }}>
+                                                                <button onClick={() => handleDownvote(products[index].id)} className="btn btn-primary d-flex justify-content-center align-items-center" type="button" style={containsComplaint("downvoted", products[index].id) ? clickedState:nonClickedState}>
                                                                     <i className="bi bi-arrow-down" style={{ fontSize: '24px' }}></i>
                                                                 </button>
                                                             </div>
@@ -230,5 +252,21 @@ function EntryMainPage(){
     );
 
 };
+
+const clickedState = {
+    width: '100%',
+    height: '40%',
+    background: '#545f75',
+    borderRadius: '10px',
+    borderStyle: 'none' 
+}
+
+const nonClickedState = {
+    width: '100%',
+    height: '40%',
+    background: '#131924',
+    borderRadius: '10px',
+    borderStyle: 'none'
+}
 
 export default EntryMainPage;

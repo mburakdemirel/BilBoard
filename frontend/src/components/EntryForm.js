@@ -86,7 +86,7 @@ export function EntryForm({ isComplaint }) {
 
                                 <div className="col-xl-6 flex-column d-flex " style={{ width: '100%' }}>
                                     <div className="form-group row justify-content-between text-center">
-                                        <label className="form-control-label"style={{ textAlign: 'left',fontFamily: 'Inter, sans-serif' }}><h5>Topic/Title</h5></label>
+                                        <label className="form-control-label"style={{ textAlign: 'left',fontFamily: 'Inter, sans-serif', marginTop: '2%',marginBottom:'2%' }}><h5>Topic/Title</h5></label>
                                         <input onChange={(e) => setTopic(e.target.value)} required type="text" placeholder="Title"
                                             className="form-control"
                                             style={{
@@ -103,7 +103,7 @@ export function EntryForm({ isComplaint }) {
                                         </input>
                                     </div>
                                     <div className="form-group row justify-content-between text-center">
-                                        <label className="form-control-label"><h5>Target Email</h5></label>
+                                        <label className="form-control-label" style={{textAlign: 'left',fontFamily: 'Inter, sans-serif', marginTop: '2%',marginBottom:'2%'}}><h5>Target Email</h5></label>
                                         <input onChange={(e)=>{setTargetMail(e.target.value);console.log(e.target.value)}} type="email" placeholder="Target Email"
                                             name="email"
                                             className="form-control"
@@ -112,7 +112,7 @@ export function EntryForm({ isComplaint }) {
                                                 fontFamily: 'Inter, sans-serif',
                                                 marginBottom: '0px',
                                                 height: '100%',
-                                                background: '#a0abc0',
+                                                background: text_field_background,
                                                 borderRadius: '10px',
                                                 paddingLeft: '15px',
                                                 borderStyle: 'none',
@@ -122,7 +122,7 @@ export function EntryForm({ isComplaint }) {
                                     </div>
 
                                     {!isComplaint ? <div className="form-group row justify-content-between text-center">
-                                        <label className="form-control-label" htmlFor="Category" style={{ textAlign: 'left',fontFamily: 'Inter, sans-serif' }} ><h5>Choose Category</h5></label>
+                                        <label className="form-control-label" htmlFor="Category" style={{ textAlign: 'left',fontFamily: 'Inter, sans-serif',marginTop: '2%',marginBottom:'2%' }} ><h5>Choose Category</h5></label>
                                         <select required onChange={(e) => {setCategory(e.target.value); console.log(e.target.value);}}
                                             id="Category"
                                             className="form-control"
@@ -142,7 +142,7 @@ export function EntryForm({ isComplaint }) {
                                         </select>
                                     </div> : <></>}
                                     <div className="form-group row justify-content-between text-center">
-                                        <label className="form-control-label" htmlFor="description" style={{ textAlign: 'left',fontFamily: 'Inter, sans-serif' }}><h5>Enter Description</h5></label>
+                                        <label className="form-control-label" htmlFor="description" style={{ textAlign: 'left',fontFamily: 'Inter, sans-serif', marginTop: '2%',marginBottom:'2%' }}><h5>Enter Description</h5></label>
                                         <textarea required onChange={(e) => { setDescription(e.target.value) }}
                                             id="description"
                                             placeholder="Description"

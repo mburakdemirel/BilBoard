@@ -16,7 +16,7 @@ input[type="file"]::file-selector-button {
   
 
   input[type="file"]::file-selector-button:hover {
-    background-color: #b3bbcc;
+    background-color: #d9e9fa;
   }
   
   input[type="file"]::file-selector-button:active {

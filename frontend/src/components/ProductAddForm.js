@@ -223,7 +223,7 @@ export function ProductAddForm() {
                                     </div>) : <></>}
                                     <div style={{ paddingTop: '20px' }} className="row justify-content-between text-left">
                                         <div className="col-xl-6 flex-column d-flex">
-                                            <button onClick={() => { navigate("/main_page/secondhand") }} className="btn btn-primary d-block w-100 mb-3" style={{ background: '#2d3648', border: 'none', fontFamily: 'Inter, sans-serif', height: '40px' }}>Cancel</button>
+                                            <button onClick={() => { navigate("/main_page/secondhand") }} className="btn btn-primary d-block w-100 mb-3" style={{ background: '#ffffff', color: '#0558b0', border: 'solid #0558b0', fontFamily: 'Inter, sans-serif', height: '40px' }}>Cancel</button>
                                         </div>
                                         <div className="col-xl-6 flex-column d-flex">
                                             <button className="btn btn-primary d-block w-100 mb-3" type="submit" style={{ background:'#0558b0', border: 'none', fontFamily: 'Inter, sans-serif', height: '40px' }}>Post</button>
