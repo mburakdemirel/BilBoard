@@ -3,9 +3,23 @@ import json
 from django.contrib.auth import get_user_model
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import WebsocketConsumer
-from mainapp.models import Message, Chat
+from mainapp.models import (
+    Message,
+    Chat,
+    Notification,
+)
+
+def notification_fields(contact_name, realted_item_id):
+    return {
+        'notification_type' : 'new_message',
+        'title' : 'New Message',
+        'description' : 'You have a new message from ' + str(contact_name) + '.',
+        'related_item_id' : realted_item_id,
+        'related_item' : 'CHAT',
+    }
 
 class ChatConsumer(WebsocketConsumer):
+    notificationBoolean = True
     def load_messages(self, data):
         chat = Chat.objects.get(id=data["chat_id"])
         messages = chat.messages.all().order_by("timestamp")[:15]
@@ -28,6 +42,22 @@ class ChatConsumer(WebsocketConsumer):
             "command": "new_message",
             "message": self.msg_to_json(message)
         }
+
+        if(self.notificationBoolean):
+            contact = chat.participiants.exclude(id=author_user.id).first()
+            notification_header = notification_fields(author_user.name + " " + author_user.surname, chat.id)
+            notification = Notification.objects.create(
+                receiver = contact,
+                notification_type = notification_header['notification_type'],
+                title = notification_header['title'],
+                description = notification_header['description'],
+                related_item_id = notification_header['related_item_id'],
+                related_item = notification_header['related_item'],
+            )
+            self.notificationBoolean = False
+        else:
+            contact = chat.participiants.exclude(id=author_user.id).first()
+            print(f'\033[1;36;40m User:{author_user.email} Boolean: {self.notificationBoolean} Other: {contact.email}\033[0;0m')
         return self.send_chat_message(content)
 
     commands = {
@@ -49,7 +79,6 @@ class ChatConsumer(WebsocketConsumer):
     def connect(self):
         self.room_name = self.scope["url_route"]["kwargs"]["room_name"]
         self.room_group_name = f"chat_{self.room_name}"
-
         # Join room group
         async_to_sync(self.channel_layer.group_add)(
             self.room_group_name, self.channel_name

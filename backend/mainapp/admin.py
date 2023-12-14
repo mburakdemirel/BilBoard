@@ -98,6 +98,14 @@ class MessageAdmin(admin.ModelAdmin):
     list_display = ('id', 'author', 'timestamp', 'content')
     readonly_fields = ('id', 'timestamp',)
 
+
+class NotificationAdmin(admin.ModelAdmin):
+    list_display = ('id', 'get_receiver', 'notification_type', 'title', 'description', 'related_item_id', 'related_item')
+    readonly_fields = ('id', 'receiver', 'notification_type', 'title', 'description', 'related_item_id', 'related_item', 'timestamp', 'is_read')
+
+    def get_receiver(self, obj):
+        return obj.receiver.email
+
 admin.site.register(models.CustomUser, UserAdmin)
 admin.site.register(models.Product, ProductAdmin)
 admin.site.register(models.LostAndFoundEntry, LostAndFoundEntryAdmin)
@@ -106,3 +114,4 @@ admin.site.register(models.ComplaintEntry)
 # Test
 admin.site.register(models.Chat, ChatAdmin)
 admin.site.register(models.Message, MessageAdmin)
+admin.site.register(models.Notification, NotificationAdmin)

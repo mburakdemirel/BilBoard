@@ -1,0 +1,42 @@
+{%load static%}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notification</title>
+</head>
+<body>
+    <div id="content">
+        <h2>Notification</h2>
+        <ul id="notification">
+        </ul>
+    </div>
+    <script src="{% static 'reconnecting_websocket.js' %}"></script>
+    <script>
+        var user_id = {{user.id}}
+        var notificationSocket = new ReconnectingWebSocket(
+        'ws://' + window.location.host +
+        '/ws/notification/' + user_id + '/');
+        notificationSocket.onopen = function(e) {
+
+            console.log("Connected to notification socket")
+        }
+
+        notificationSocket.onmessage = function(e) {
+            var data = JSON.parse(e.data);
+            var message = data['count'];
+            var notification = document.createElement('li');
+            var pTag = document.createElement('p');
+            pTag.textContent = "You have " + message + " new notifications";
+            notification.appendChild(pTag);
+            document.querySelector('#notification').appendChild(notification);
+        }
+
+        notificationSocket.onclose = function(e) {
+            console.error("Notification socket closed unexpectedly")
+        }
+    </script>
+</body>
+</html>

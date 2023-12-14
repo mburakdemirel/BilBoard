@@ -190,17 +190,33 @@ class Chat(models.Model):
 
 
 class Notification(models.Model):
-    user = models.ForeignKey(
+    NOTIFICATION_CHOICES = [
+        ('new_message', 'New Message'),
+        ('upvoted_complaint', 'Upvoted Complaint'),
+        ('downvoted_complaint', 'Downvoted Complaint'),
+    ]
+
+    ITEM_CHOICES = [
+        ('PRODUCT', 'Product'),
+        ('COMPLAINT', 'ComplaintEntry'),
+        ('LOSTFOUND', 'LostAndFoundEntry'),
+        ('CHAT', 'Chat'),
+    ]
+
+    receiver = models.ForeignKey(
         get_user_model(),
         on_delete=models.CASCADE,
     )
+    notification_type = models.CharField(max_length=100, choices=NOTIFICATION_CHOICES)
     title = models.CharField(max_length=100)
     description = models.TextField(blank=True)
     timestamp = models.DateTimeField(auto_now_add=True)
     is_read = models.BooleanField(default=False)
+    related_item_id = models.IntegerField(blank=True, null=True)
+    related_item = models.CharField(max_length=100, choices=ITEM_CHOICES, blank=True, null=True)
 
-    REQUIRED_FIELDS = ['title', 'description']
+    REQUIRED_FIELDS = ['receiver', 'type', 'title', 'description', 'related_item_id']
 
-    def _str_(self):
-        return self.title + " from " + self.user
+    def _str_(self) -> str:
+        return self.receiver.email + ",\n" + self.notification_type + ",\n" + self.title + ",\n" + self.description + ",\n" + self.timestamp.strftime("%d/%m/%Y, %H:%M:%S") + ",\n" + str(self.is_read) + ",\n" + str(self.related_item_id) + ",\n" + str(self.related_item)
 

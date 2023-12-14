@@ -115,7 +115,6 @@
     var roomName = {{ room_name }};
     var authorName = {{ user.id }};
     var chat_id = Number(roomName);
-
     var chatSocket = new ReconnectingWebSocket(
         'ws://' + window.location.host +
         '/ws/chat/' + roomName + '/');

@@ -27,6 +27,7 @@ class ChatListSerializer(serializers.ModelSerializer):
         contact = participiants.exclude(id=user.id).distinct()
         representation = super().to_representation(instance)
         representation['participiants'] = {
+            "contact_id": contact.first().id,
             "contact_name": contact.first().name,
             "contact_surname": contact.first().surname,
         }
@@ -123,6 +124,7 @@ class ChatSerializer(serializers.ModelSerializer):
         contact = participiants.exclude(id=user.id).distinct()
         representation = super().to_representation(instance)
         representation['contact'] = {
+            "contact_id": contact.first().id,
             "contact_name": contact.first().name,
             "contact_surname": contact.first().surname,
         }
