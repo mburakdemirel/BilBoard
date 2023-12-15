@@ -117,7 +117,7 @@ class SecondhandProductViewSet(ProductViewSet):
         max_price = self.request.query_params.get('max_price', None)
         product_type = request.query_params.get('product_type', None)
         page_number = request.query_params.get('page', 1)  # Default to page 1 if no page is specified
-        
+
         cache_key_parts = [
             'secondhand_products',
             f'search_{search_query}' if search_query else 'all',
@@ -126,13 +126,11 @@ class SecondhandProductViewSet(ProductViewSet):
             f'type_{product_type}' if product_type else 'all_types',
             f'page_{page_number}'
         ]
+        #Create a single string with all parts separated by underscore
         cache_key = '_'.join(cache_key_parts)
 
-
         cached_data = cache.get(cache_key)
-
         if cached_data is not None:
-            print("girmedim\n", cached_data)
             # Return the cached data for the specific page
             return Response(cached_data)
 
@@ -141,7 +139,6 @@ class SecondhandProductViewSet(ProductViewSet):
         if page is not None:
             serializer = self.get_serializer(page, many=True)
             cached_data = serializer.data
-            print("\n\nLog2", cached_data)
             cache.set(cache_key, cached_data, timeout=60*60)  # Cache for 1 hour
             return self.get_paginated_response(cached_data)
 
@@ -187,9 +184,19 @@ class BorrowProductViewSet(ProductViewSet):
     def list(self, request, *args, **kwargs):
         search_query = request.query_params.get('search', None)
         page_number = request.query_params.get('page', 1)  # Default to page 1 if no page is specified
-        cache_key = f"borrow_products_{search_query or 'all'}_page_{page_number}"
-        cached_data = cache.get(cache_key)
+        product_type = request.query_params.get('product_type', None)
 
+        cache_key_parts = [
+            'borrow_products',
+            f'search_{search_query}' if search_query else 'all',
+            f'type_{product_type}' if product_type else 'all_types',
+            f'page_{page_number}'
+        ]
+        #Create a single string with all parts separated by underscore
+        cache_key = '_'.join(cache_key_parts)
+        print('\033[2;31;43m LOG1 \033[0;0m', cache_key)
+
+        cached_data = cache.get(cache_key)
         if cached_data is not None:
             # Return the cached data for the specific page
             return Response(cached_data)
@@ -211,8 +218,12 @@ class BorrowProductViewSet(ProductViewSet):
         """Retrieve all borrowable products or filter based on title using trigram similarity for fuzzy search."""
 
         search_query = self.request.query_params.get('search', None)
-        queryset = Product.objects.filter(category='borrow')  # Adjusted category
+        product_type = self.request.query_params.get('product_type', None)
 
+        queryset = Product.objects.filter(category='borrow')  
+
+        if product_type:
+            queryset = queryset.filter(product_type=product_type)
         if search_query:
             queryset = queryset.annotate(
                 similarity=TrigramSimilarity('title', search_query)
@@ -232,9 +243,18 @@ class DonationProductViewSet(ProductViewSet):
     def list(self, request, *args, **kwargs):
         search_query = request.query_params.get('search', None)
         page_number = request.query_params.get('page', 1)  # Default to page 1 if no page is specified
-        cache_key = f"donation_products_{search_query or 'all'}_page_{page_number}"
-        cached_data = cache.get(cache_key)
+        product_type = request.query_params.get('product_type', None)
+        
+        cache_key_parts = [
+            'donation_products',
+            f'search_{search_query}' if search_query else 'all',
+            f'type_{product_type}' if product_type else 'all_types',
+            f'page_{page_number}'
+        ]
+        #Create a single string with all parts separated by underscore
+        cache_key = '_'.join(cache_key_parts)
 
+        cached_data = cache.get(cache_key)
         if cached_data is not None:
             # Return the cached data for the specific page
             return Response(cached_data)
@@ -254,10 +274,13 @@ class DonationProductViewSet(ProductViewSet):
 
     def get_queryset(self):
         """Retrieve all donations or filter based on title using trigram similarity for fuzzy search."""
-        queryset = Product.objects.filter(category='donation')
-
         search_query = self.request.query_params.get('search', None)
+        product_type = self.request.query_params.get('product_type', None)
 
+        queryset = Product.objects.filter(category='donation')  
+
+        if product_type:
+            queryset = queryset.filter(product_type=product_type)
         if search_query:
             queryset = queryset.annotate(
                 similarity=TrigramSimilarity('title', search_query)
@@ -265,7 +288,6 @@ class DonationProductViewSet(ProductViewSet):
 
         return queryset
     
-
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
