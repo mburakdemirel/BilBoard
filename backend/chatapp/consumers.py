@@ -40,10 +40,9 @@ class ChatConsumer(WebsocketConsumer):
         }
 
         if(self.notificationBoolean and not contact_online.is_online):
-            # contact mail need to be changed to contact name
             notification_header = notification_fields(
                 notification_type=NotificationType.NEW_MESSAGE,
-                contact_name=author_user.email,
+                contact_name=author_user.name + ' ' + author_user.surname,
                 realted_item_id=chat.id,
             )
             notification = Notification.objects.create(

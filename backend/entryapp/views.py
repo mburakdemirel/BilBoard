@@ -232,7 +232,7 @@ def vote_up_complaint(request):
             notification_util(
                 notification_type=NotificationType.UPVOTE,
                 receiver=complaint.user,
-                contact_name=user.email,
+                contact_name=user.name + ' ' + user.surname,
                 complaint_name=complaint.topic,
                 related_item_id=complaint.id,
             )
@@ -256,7 +256,7 @@ def vote_up_complaint(request):
             notification_util(
                 notification_type=NotificationType.UPVOTE,
                 receiver=complaint.user,
-                contact_name=user.email,
+                contact_name=user.name + ' ' + user.surname,
                 complaint_name=complaint.topic,
                 related_item_id=complaint.id,
             )
@@ -290,7 +290,7 @@ def vote_down_complaint(request):
             notification_util(
                 notification_type=NotificationType.DOWNVOTE,
                 receiver=complaint.user,
-                contact_name=user.email,
+                contact_name=user.name + ' ' + user.surname,
                 complaint_name=complaint.topic,
                 related_item_id=complaint.id,
             )
@@ -313,7 +313,7 @@ def vote_down_complaint(request):
             notification_util(
                 notification_type=NotificationType.DOWNVOTE,
                 receiver=complaint.user,
-                contact_name=user.email,
+                contact_name=user.name + ' ' + user.surname,
                 complaint_name=complaint.topic,
                 related_item_id=complaint.id,
             )
