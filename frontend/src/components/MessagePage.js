@@ -7,6 +7,7 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import Placeholder from "./assets/img/WF Image Placeholder2.png"
 import AOS from "aos";
 import {useNavigate} from "react-router-dom";
+import {set} from "react-hook-form";
 // TODO: put all style attributes into a css file and think about the layout of this page
 // Should there be products next to the messages??
 function MessagePage() {
@@ -133,13 +134,14 @@ function MessagePage() {
 
 function Products({allMessages, pull_data, deleteMessage, loading, activeIndex, pull_active_index}) {
     const navigate = useNavigate();
+    const [firstOpen, setFirstOpen] = useState(0);
     const {newMessage} = useContext(ContextApi);
     console.log("newmessage", newMessage)
 
 
 
     useEffect(()=>{
-        debugger;
+
 
         findActiveIndex();
         console.log("all messages", allMessages.length);
@@ -174,6 +176,10 @@ function Products({allMessages, pull_data, deleteMessage, loading, activeIndex, 
                 }
             }
         }
+        else if(firstOpen<=1){
+            pull_active_index(-1);
+            setFirstOpen(firstOpen+1);
+        }
         else{
             pull_active_index(0);
         }
@@ -182,10 +188,11 @@ function Products({allMessages, pull_data, deleteMessage, loading, activeIndex, 
 
 
         return (
-            <div className=" d-flex flex-grow-1 justify-content-center align-items-center" data-aos="fade-right" data-aos-duration="600" style={{ height: '40vw', width: '600px', minHeight: '230px' }}>
+            <div className=" d-flex flex-grow-1 justify-content-center align-items-center " data-aos="fade-right" data-aos-duration="600" style={{ height: '40vw', width: '600px', minHeight: '230px' }}>
 
                 <div className="d-flex flex-column" style={{ background: '#ffffff', fontSize: '12px', borderRadius: '10px', height: '100%', width: '95%', padding: '5%' }} data-bs-smooth-scroll="true">
-                    {loading ? <div className="d-flex justify-content-center align-items-center" style={{height:'100%', width:'100%'}}><span className="spinner-border spinner-border" aria-hidden="true" ></span></div>
+                    <div className="" style={{height:'100%', width:'100%', padding:'0px', margin:'0px'}}>
+                    {loading ? <div className="d-flex justify-content-center align-items-center " style={{height:'100%', width:'100%'}}><span className="spinner-border spinner-border" aria-hidden="true" ></span></div>
                         :
                         <ul className="list-group" style={{ width: '100%', height: '100%', overflow: 'scroll' }}>
                             {Array(allMessages.length).fill().map((_,index) => (
@@ -213,6 +220,7 @@ function Products({allMessages, pull_data, deleteMessage, loading, activeIndex, 
                             </li>))}
                         </ul>
                     }
+                </div>
                 </div>
 
             </div>
@@ -362,10 +370,6 @@ function Messages({chatId,participiant,loadingDelete,pull_first_message}) {
 
         return hours + ':' + minutes;
     };
-
-
-
-
 
 
     return (

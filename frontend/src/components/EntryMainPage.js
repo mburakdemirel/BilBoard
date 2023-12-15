@@ -10,7 +10,9 @@ import {Collapse, Button} from 'react-bootstrap';
 
 
 function EntryMainPage(){
-    const {pageType,searchText} = useParams();
+    const urlParams = new URLSearchParams(window.location.search);
+    const {pageType} = useParams();
+    const searchText = urlParams.get('search');
     const navigate = useNavigate();
     const myProfile = JSON.parse(localStorage.getItem('myProfile'));
     const [loading, setLoading] = useState(true);
@@ -223,10 +225,10 @@ function EntryMainPage(){
         <section className="d-flex flex-grow-1 py-5 justify-content-center" style={{ background: '#edf0f7', minHeight: '91vh' }}>
             {loading ? <div style={{height:'50px'}}><span className="spinner-border spinner-border" aria-hidden="true" ></span></div>
                 :
-            <div className="container d-flex h-100 justify-content-center">
-                <div className="row gx-1 gy-3 d-flex h-100" style={{ margin: '0px', width: '90%', marginTop: '-21px' }}>
-                    <div className="col" data-aos="fade" data-aos-duration="500" >
-                        <div className="d-flex flex-column col-xl-6" style={{ background: 'var(--bs-white)', borderRadius: '10px', height: '100%', width: '75%', padding: '2%', display:'block', margin:'auto' }} data-bs-smooth-scroll="true">
+            <div className="container d-flex h-100 justify-content-center ">
+                <div className="row gx-1 gy-3 d-flex h-100" style={{ margin: '0px', width: '75%', marginTop: '-21px' }}>
+                    <div className="col shadow-sm p-0 rounded" data-aos="fade" data-aos-duration="500" >
+                        <div className="d-flex flex-column col-xl-6" style={{ background: 'var(--bs-white)', borderRadius: '10px', height: '100%', width: '100%', padding: '2%', display:'block', margin:'auto' }} data-bs-smooth-scroll="true">
                                 <InfiniteScroll
                                     dataLength={products.length}
                                     next={uploadProducts}
@@ -239,7 +241,7 @@ function EntryMainPage(){
                                             return (
                                                 <li key={index} className="list-group-item" style={{ padding: '0px', paddingBottom: '10px', borderStyle: 'none' }} data-aos="fade-left" data-aos-duration="500"  >
                                                     <div className="card" style={{ borderStyle: 'none', background: '#d9e9fa' }}>
-                                                        <div className="card-body d-flex flex-row " style={{ borderStyle: 'none', minHeight: '12vw', minHeight: '80px', paddingLeft: '5px', paddingBottom: '5px', paddingRight: '5px', paddingTop: '5px' }}>
+                                                        <div className="card-body d-flex flex-row " style={{ borderStyle: 'none', minHeight: '80px', paddingLeft: '5px', paddingBottom: '5px', paddingRight: '5px', paddingTop: '5px' }}>
                                                             <div className="d-flex flex-column justify-content-between" style={{ width: '90%', height: '90%', margin: '0.7%', minWidth: '200px' }}>
                                                                 <div>
                                                                     <div className="d-flex ">

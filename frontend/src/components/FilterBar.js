@@ -35,7 +35,10 @@ function FilterBar() {
 
     useEffect(() => {
         AOS.init();
-    }, []);
+        setType("");
+        setMinValue();
+        setMaxValue();
+    }, [pageType]);
 
 
     const applyQuery = () => {

@@ -256,9 +256,9 @@ function Products({myProfile, func, editMode}) {
 
 
     return (
-        <div className="col-xxl-6 d-flex d-sm-flex d-md-flex d-lg-flex d-xl-flex d-xxl-flex flex-grow-1 justify-content-center align-items-center justify-content-sm-center align-items-sm-center align-items-md-center align-items-lg-center"
+        <div className=" col-xxl-6 d-flex d-sm-flex d-md-flex d-lg-flex d-xl-flex d-xxl-flex flex-grow-1 justify-content-center align-items-center justify-content-sm-center align-items-sm-center align-items-md-center align-items-lg-center"
             data-aos="fade-right" data-aos-duration="600" style={{height: '40vw', width: '600px', minHeight: '380px', maxWidth:'93vw', paddingTop:'10px'}}>
-            <div className="d-flex d-xxl-flex flex-column align-items-center  " style={{background: '#ffffff', fontSize: '12px', borderRadius: '10px', width: '95%', minWidth:'90%', padding: '5%', height: '100%',}}>
+            <div className=" d-flex d-xxl-flex flex-column align-items-center  " style={{background: '#ffffff', fontSize: '12px', borderRadius: '10px', width: '95%', minWidth:'90%', padding: '5%', height: '100%',}}>
 
                 <div className="input-group text-center d-flex d-xl-flex flex-row justify-content-lg-center justify-content-xl-center "
                      style={{width: '100%', borderStyle: 'none', borderBottomStyle: 'none', height: '40px', marginBottom: '0px',}}  data-aos="flip-up" data-aos-duration="700">
@@ -353,7 +353,7 @@ function Products({myProfile, func, editMode}) {
                                                         <div className="d-flex justify-content-between">
                                                             <h1 className="d-flex text-start text-truncate" style={{ fontFamily: 'Inter, sans-serif', fontWeight: 'bold', margin: '0px', fontSize: '16px', width: '75%' }}>{showedProducts[index].topic}</h1>
 
-                                                            {editMode &&
+                                                            {editMode && uploadedOrFavorites==="uploaded" &&
                                                                 <button
                                                                     className="btn btn-primary position-relative d-flex align-items-center justify-content-center rounded-circle"
                                                                     type="button"
@@ -603,7 +603,7 @@ function ProfileArea({myProfile,func} ) {
                     {editMode
                         ?
                         <div className="d-flex flex-row " style={{width:'50%', padding:'0px', height:'37px'}}>
-                            <input className="form-control mb-3" value={newPhone} onChange={e=>setNewPhone(e.target.value)} type="text" name="surname" placeholder="Phone" style={inputStyles} required />
+                            <input className="form-control mb-3" value={newPhone} onChange={e=>setNewPhone(e.target.value)} type="tel"  placeholder="Phone" style={inputStyles} required />
                         </div>
                         :
                         <p style={{ marginBottom: '0px', fontFamily: 'Inter, sans-serif', fontSize: '17px' }}>{phone}</p>

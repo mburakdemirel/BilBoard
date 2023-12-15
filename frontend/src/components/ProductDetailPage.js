@@ -6,7 +6,8 @@ import ImageViewer from 'react-simple-image-viewer';
 import './assets/bootstrap/css/bootstrap.min.css'; // Import Bootstrap CSS
 import "bootstrap-icons/font/bootstrap-icons.css";
 import { RWebShare } from "react-web-share";
-import Burak2 from './assets/img/burak2.jpeg';
+import PlaceholderPhoto from './assets/img/default_profile.webp';
+import Product2 from './assets/img/Shape.png';
 import {useEffect, useState, useCallback } from 'react';
 import {useNavigate, useParams} from 'react-router-dom';
 import { render } from 'react-dom';
@@ -15,9 +16,9 @@ import {isDisabled} from "@testing-library/user-event/dist/utils";
 import {useContext} from "react";
 import ContextApi from "../context/ContextApi";
 import Carousel from 'react-bootstrap/Carousel';
-import Product from './assets/img//IMG_2252.png';
-import Product2 from './assets/img/Shape.png';
+
 import AOS from "aos";
+import {Placeholder} from "react-bootstrap";
 
 function ProductDetailPage() {
     const navigate = useNavigate();
@@ -266,7 +267,7 @@ function ProductDetailPage() {
                                 {loading ? <span className="placeholder col-5 h-50"></span> : <h1 style={sellerNameStyle}>{product.user.name + " " + product.user.surname}</h1>}
                                 {loading ? <span className="placeholder col-5 h-25"></span> : <h1 style={sellerPhoneStyle}>{product.user.phone_number}</h1>}
                             </div>
-                            <img className="rounded-circle mb-3 fit-cover" data-bss-hover-animate="pulse" src={loading? Burak2 :product.user.profile_photo} style={imageStyle} />
+                            <img className="rounded-circle mb-3 fit-cover" data-bss-hover-animate="pulse" src={loading? PlaceholderPhoto :product.user.profile_photo} style={imageStyle} />
                         </div>
                         <hr style={hrStyle} />
                         <div className="d-flex flex-row justify-content-between align-items-center" style={{ height: '10%', width: '100%', minHeight: '40px', maxHeight: '50px' }}>

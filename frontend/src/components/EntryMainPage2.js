@@ -14,7 +14,9 @@ import ContextApi from "../context/ContextApi";
 function EntryMainPage2(){
     const{sendNewMessage} = useContext(ContextApi);
     const navigate = useNavigate();
-    const {pageType,searchText} = useParams();
+    const urlParams = new URLSearchParams(window.location.search);
+    const {pageType} = useParams();
+    const searchText = urlParams.get('search');
     const myProfile = JSON.parse(localStorage.getItem('myProfile'));
     const [loading, setLoading] = useState(true);
     const [messagesLoading, setMesagesLoading] = useState(false);
@@ -164,7 +166,7 @@ function EntryMainPage2(){
                 <div className="container d-flex justify-content-center align-items-center h-100">
                     <div className="row gx-1 gy-3 h-100" style={{ margin: '0px', width: '100%', marginTop: '-21px' }}>
 
-                        <div className="col" style={{ width: '45%', margin: '1%' }}  data-aos="fade-right" data-aos-duration="600">
+                        <div className="col shadow-sm p-0 " style={{ width: '45%', margin: '1%' }}  data-aos="fade-right" data-aos-duration="600">
                             <div className="d-flex flex-column" style={{ background: 'var(--bs-white)', fontSize: '12px', borderRadius: '10px', height: '100%', width: '100%', padding: '2%' }} data-bs-smooth-scroll="true">
                                 <ul className="list-group" style={{ width: '100%', height: '100%', overflow: 'scroll' }} data-bs-smooth-scroll="true">
                                     {products.filter(item =>item.category==="lost").map((item,index) => (
@@ -214,7 +216,7 @@ function EntryMainPage2(){
                         </div>
 
 
-                        <div className="col" style={{ width: '45%', margin: '1%' }} data-aos="fade-left" data-aos-duration="600">
+                        <div className="col shadow-sm p-0 "  style={{ width: '45%', margin: '1%' }} data-aos="fade-left" data-aos-duration="600">
                             <div className="d-flex flex-column" style={{ background: 'var(--bs-white)', fontSize: '12px', borderRadius: '10px', height: '100%', width: '100%', padding: '2%' }} data-bs-smooth-scroll="true">
                                 <ul className="list-group" style={{ width: '100%', height: '100%', overflow: 'scroll' }} data-bs-smooth-scroll="true">
                                     {products.filter(item =>item.category==="found").map((item,index) => (
