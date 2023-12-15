@@ -113,6 +113,7 @@ class ManageUserView(generics.RetrieveUpdateDestroyAPIView):
         serializer = self.get_serializer(user, data=request.data, partial=True)
 
         if serializer.is_valid():
+            print("\033[2;31;43m serializer.is_valid in views \033[0;0m")
             #get profile photo from request with name profile_photo
             file = request.FILES.get('profile_photo', None)
             if file:
@@ -140,11 +141,17 @@ class ManageUserView(generics.RetrieveUpdateDestroyAPIView):
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    #İleride user silindiğinde ürünlere yaptığı yorumları reviewları da sil eklemeyi unutma!! save tarzı bi şey ile
     def delete(self, request):
         user = self.get_object()
         user.delete()
-        return Response({"message": "User deleted"}, status=status.HTTP_204_NO_CONTENT)  # Return no content response with 204 status code
+
+        #Üşenmezsen ürüne veya entry'e sahip olduğu yerlere göre cache key invalidate et
+        cache.delete_pattern("secondhand_products_*")
+        cache.delete_pattern("borrow_products_*")
+        cache.delete_pattern("donation_products_*")
+        cache.delete_pattern("laf_entries_*")
+        cache.delete_pattern("complaint_entries_*")
+        return Response(status=status.HTTP_204_NO_CONTENT)  # Return no content response with 204 status code
     
 @api_view(['POST'])
 def ChangePassword(request):

@@ -51,6 +51,7 @@ class CreateComplaintEntrySerializer(serializers.ModelSerializer):
         endpoint = "https://bilboard-contentmoderator.cognitiveservices.azure.com/"
         headers = {
             "Content-Type": "text/plain",
+            #ENV e taşı key'i x.api_key yap
             "Ocp-Apim-Subscription-Key": "4042096c1951481d9859da0516043a96"
         }
         data = description.encode("utf-8")
@@ -58,9 +59,7 @@ class CreateComplaintEntrySerializer(serializers.ModelSerializer):
         response = requests.post(endpoint + "contentmoderator/moderate/v1.0/ProcessText/Screen", headers=headers, data=data)
         if response.status_code == 200:
             result = response.json()
-            print("\n\ndeneme1", result)
             if result.get('Terms'):
-                print("\n\n\nahahahha", result.get('Terms'))
                 # Raise an error for inappropriate content
                 raise serializers.ValidationError("Description contains inappropriate content.")
         else:
