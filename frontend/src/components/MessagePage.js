@@ -46,8 +46,7 @@ function MessagePage() {
 
     // Get all messages of user
     const uploadAllMessages = async () => {
-        await sleep(1000)
-
+        await sleep(300);
         try{
             axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
             await axios.get("http://127.0.0.1:8000/chat/").then(response => {
@@ -140,6 +139,8 @@ function Products({allMessages, pull_data, deleteMessage, loading, activeIndex, 
 
 
     useEffect(()=>{
+        debugger;
+
         findActiveIndex();
         console.log("all messages", allMessages.length);
         // Messages in the selected index will be opened on the right side
@@ -174,7 +175,7 @@ function Products({allMessages, pull_data, deleteMessage, loading, activeIndex, 
             }
         }
         else{
-            pull_active_index(-1);
+            pull_active_index(0);
         }
     };
 
@@ -255,6 +256,7 @@ function Messages({chatId,participiant,loadingDelete,pull_first_message}) {
 
 
     const uploadMessages = async ()=> {
+
         if(chatId){
             axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
             await axios.get("http://127.0.0.1:8000/chat/" + chatId + "/").then(response => {

@@ -140,7 +140,7 @@ function ProductMainPage() {
     }
 
     return (
-        <div st className="d-flex flex-column">
+        <div className="d-flex flex-column">
 
 
 
@@ -149,7 +149,7 @@ function ProductMainPage() {
 
                     {loading ? <div style={{height:'50px'}}><span className="spinner-border spinner-border" aria-hidden="true" ></span></div>
                         :
-                        <InfiniteScroll style={{minHeight:'300px',position: '', zIndex: 1}}
+                        <InfiniteScroll style={{minHeight:'300px'}}
                             dataLength={products.length}
                             next={uploadProducts}
                             hasMore={hasMore}

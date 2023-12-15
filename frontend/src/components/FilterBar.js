@@ -18,9 +18,19 @@ function FilterBar() {
     let {pageType} = useParams();
     const urlParams = new URLSearchParams(window.location.search);
     const searchText = urlParams.get('search');
+    const [otherCategory, setOtherCategory] = useState("Others");
+
     const [type, setType] = useState("");
     const [minValue, setMinValue] = useState();
     const [maxValue, setMaxValue] = useState();
+
+    const categoryMap = {
+        clothing_accessories: "Clothing & Accessories",
+        toys_games: "Toys & Games",
+        sports: "Sports",
+        art: "Art",
+        other: "Other"
+    };
 
 
     useEffect(() => {
@@ -41,9 +51,13 @@ function FilterBar() {
     const buttonClicked = (typeParam) => {
         if(type===typeParam){
             setType("");
+            setOtherCategory("Others")
         }
         else{
             setType(typeParam);
+            if(typeParam!=="electronics" && typeParam!=="book" && typeParam!=="household"){
+                setOtherCategory(categoryMap[typeParam]);
+            }
         }
     }
 
@@ -58,7 +72,7 @@ function FilterBar() {
                         <Dropdown>
                             <Dropdown.Toggle className="d-flex align-items-center" variant="primary" id="dropdown-basic"
                                              style={{background: (type!=="electronics" && type!=="book" && type!=="household" && type!=="") ? '#2d3648' :' #717D96' , borderStyle: 'none'}}>
-                                <a style={{ borderStyle: 'none', fontWeight:'bold', fontFamily: 'Inter, sans-serif', fontSize: '14px', textAlign: 'center', maxWidth: '140px', width: 'inherit', marginRight: '5px', marginLeft: '5px' }}>Others</a>
+                                <a style={{ borderStyle: 'none', fontWeight:'bold', fontFamily: 'Inter, sans-serif', fontSize: '14px', textAlign: 'center', maxWidth: '160px', width: 'inherit', marginRight: '5px', marginLeft: '5px' }}>{otherCategory}</a>
                             </Dropdown.Toggle>
 
                             {ReactDOM.createPortal(
