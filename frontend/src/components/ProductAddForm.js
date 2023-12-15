@@ -16,6 +16,9 @@ export function ProductAddForm() {
     const [returnDate, setReturnDate] = useState();
     const [errMsg, setErrMsg] = useState("");
     const [count, setCount] = useState(0);
+    const tags = ["Electronics", "Book", "Clothing & Accessories","Toys & Games", "Household", "Sports","Art","Other"];
+    const vals = ["electronics", "book", "clothing_accessories", "toys_games", "household","sports", "art", "other"];
+    const [checked, setChecked] = useState("");
 
     useEffect(() => {
         AOS.init();
@@ -42,7 +45,6 @@ export function ProductAddForm() {
 
     }
 
-    //after submitting the form clean each form area values.
     const handleSubmit = async (e) => {
         e.preventDefault();
         console.log(category);
@@ -51,6 +53,9 @@ export function ProductAddForm() {
         product.append('title', title);
         product.append('category', category);
         product.append('description', description);
+        if(checked) {
+            product.append('product_type',checked);
+        }
         console.log(product.keys());
         if (category === "secondhand") {
             console.log("In secondhand");
@@ -82,7 +87,7 @@ export function ProductAddForm() {
         }
         catch (error) {
             if (error.status === 500) { console.log(error.response); }
-            else if (error.status === 400) { console.log(error.response); }
+            else if (error.status === 400) { console.log(error); }
         }
     }
 
@@ -91,6 +96,18 @@ export function ProductAddForm() {
         const month = String(date.getMonth() + 1).padStart(2, 0);
         const day = String(date.getDate()).padStart(2, 0);
         return `${year}-${month}-${day}`;
+    }
+
+    function handleCheck(e) {
+        setChecked(e.target.value);
+        console.log(checked);
+        // if(e.target.checked) {
+        //     setChecked([...checked, e.target.value]);
+        // }
+        // else {
+        //     setChecked((checked).filter((tag) => tag !== e.target.value));
+        // }
+        // console.log(checked);
     }
 
     return (
@@ -190,6 +207,19 @@ export function ProductAddForm() {
                                                 paddingTop: '15px',
                                             }}
                                         />
+                                    </div>
+                                    <div className="row justify-content-between text-left">
+                                        <h5 style={{ textAlign : 'left',fontFamily: 'Inter, sans-serif' }}>Choose Product Tags</h5>
+                                        {tags.map((tag,index) => {
+                                            return (
+                                                <div key={index} style={{width:'50%'}}>
+                                                    <div className="form-check">
+                                                        <input required className="form-check-input" checked={checked === vals[index]} type="radio" value={vals[index]} name={tag} id={`radio-${index}`} onChange={(e) => {handleCheck(e)}}></input>
+                                                        <label style={{textAlign:'left', fontFamily:'Inter, sans-serif'}} className="form-check-label" htmlFor={`radio-${index}`}><h6>{tag}</h6></label>
+                                                    </div>
+                                                </div>
+                                            )
+                                        }) }
                                     </div>
                                     {(category === "secondhand") ? (<div
                                         className="row justify-content-between text-left">
