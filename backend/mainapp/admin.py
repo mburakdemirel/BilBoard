@@ -95,23 +95,35 @@ class ChatAdmin(admin.ModelAdmin):
         return obj.messages.count()
 
 class MessageAdmin(admin.ModelAdmin):
-    list_display = ('id', 'author', 'timestamp', 'content')
+    list_display = ('id', 'author', 'get_timestamp', 'content')
     readonly_fields = ('id', 'timestamp',)
+
+    def get_timestamp(self, obj):
+        return obj.timestamp.strftime("%d/%m/%Y, %H:%M:%S")
 
 
 class NotificationAdmin(admin.ModelAdmin):
-    list_display = ('id', 'get_receiver', 'notification_type', 'title', 'description', 'related_item_id', 'related_item')
+    list_display = ('id', 'get_receiver', 'notification_type', 'title', 'description', 'related_item_id', 'related_item','is_read')
     readonly_fields = ('id', 'receiver', 'notification_type', 'title', 'description', 'related_item_id', 'related_item', 'timestamp', 'is_read')
 
     def get_receiver(self, obj):
         return obj.receiver.email
 
+class ComplaintAdmin(admin.ModelAdmin):
+    list_display = ('id', 'topic', 'description', 'user')
+
+
+class OnlineUserAdmin(admin.ModelAdmin):
+    list_display = ('user', 'is_online')
+
+
 admin.site.register(models.CustomUser, UserAdmin)
 admin.site.register(models.Product, ProductAdmin)
 admin.site.register(models.LostAndFoundEntry, LostAndFoundEntryAdmin)
-admin.site.register(models.ComplaintEntry)
+admin.site.register(models.ComplaintEntry, ComplaintAdmin)
 
 # Test
 admin.site.register(models.Chat, ChatAdmin)
 admin.site.register(models.Message, MessageAdmin)
 admin.site.register(models.Notification, NotificationAdmin)
+admin.site.register(models.OnlineUserModel, OnlineUserAdmin)

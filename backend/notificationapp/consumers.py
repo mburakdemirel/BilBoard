@@ -3,14 +3,34 @@ import json
 from django.contrib.auth import get_user_model
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import WebsocketConsumer
-
+from mainapp.models import Notification
 
 class NotificationConsumer(WebsocketConsumer):
+    def handle_unseen_notification(self, data):
+        user = get_user_model().objects.get(id=data["user_id"])
+        unseen_notifications = Notification.objects.filter(receiver=user, is_read=False)
+        unseen_notifications.update(is_read=True)
+        async_to_sync(self.channel_layer.group_send)(
+            self.room_group_name, {"type": "handle_unseen", "message": {"command":"marked"}}
+        )
+        # self.send(text_data=json.dumps({"command":"marked"}))
+
+    def get_notification_count(self, data):
+        user = get_user_model().objects.get(id=data["user_id"])
+        counter = Notification.objects.filter(receiver=user, is_read=False).count()
+
+        async_to_sync(self.channel_layer.group_send)(
+            self.room_group_name, {"type":"handle_count", "message":{"command":"first_get", "count": counter}}
+        )
+        # self.send(text_data=({"command":"first_get", "count": counter}))
+
+
+    commands = {
+        "mark_all": handle_unseen_notification,
+        "counter": get_notification_count,
+    }
+
     def connect(self):
-        self.user = self.scope["user"]
-        if not self.user.is_authenticated:
-            self.close()
-            return
         self.room_name = self.scope["user"].id
         self.room_group_name = f"notification_{self.room_name}"
 
@@ -32,10 +52,23 @@ class NotificationConsumer(WebsocketConsumer):
         )
 
     def receive(self, text_data):
-        pass
+        data = json.loads(text_data)
+        self.commands[data["command"]](self, data)
 
     def send_notification(self, event):
         print(f'\033[4;31;40m {event} \033[0;0m')
         data = json.loads(event["value"])
         count = data["count"]
-        self.send(text_data=json.dumps({"count": count}))
+        current_notification = data["current_notification"]
+        self.send(text_data=json.dumps({"count": count, "current_notification": current_notification}))
+
+    def handle_unseen(self, event):
+        data = event['message']
+        self.send(text_data=json.dumps(data))
+
+    def handle_count(self, event):
+        data = event['message']
+        self.send(text_data=json.dumps(data))
+
+
+

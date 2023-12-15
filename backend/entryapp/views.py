@@ -1,15 +1,37 @@
 import enum
 from django.contrib.postgres.search import TrigramSimilarity
-from mainapp.models import LostAndFoundEntry, ComplaintEntry, CustomUser
+from mainapp.models import (LostAndFoundEntry,
+                            ComplaintEntry,
+                            CustomUser,
+                            Notification,
+)
 from entryapp import serializers
-from rest_framework import viewsets 
+from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
+from mainapp.utils import notification_fields, NotificationType
 from bilboard_backend.redis_config import get_redis_instance
 from bilboard_backend.redis_config import cache
 redis_instance = get_redis_instance()
+
+def notification_util(notification_type: NotificationType, **kwargs):
+    notification_header = notification_fields(
+                notification_type=notification_type,
+                contact_name=kwargs.get("contact_name"),
+                related_item_id=kwargs.get("related_item_id"),
+                complaint_name=kwargs.get("complaint_name"),
+    )
+    notification = Notification.objects.create(
+        receiver = kwargs.get("receiver"),
+        notification_type = notification_header['notification_type'],
+        title = notification_header['title'],
+        description = notification_header['description'],
+        related_item_id = notification_header['related_item_id'],
+        related_item = notification_header['related_item'],
+    )
+
 
 class EntryType(enum.Enum):
     LOSTANDFOUND = 1
@@ -49,10 +71,10 @@ class UserLostAndFoundEntryViewSet(viewsets.ModelViewSet):
 
     def get_serializer_class(self):
         if self.action in ['create']:
-            return SerializerFactory.get_serializer(entry_type=EntryType.LOSTANDFOUND,action=ActionType.CREATE) 
+            return SerializerFactory.get_serializer(entry_type=EntryType.LOSTANDFOUND,action=ActionType.CREATE)
         elif self.action in ['retrieve']:
-            return SerializerFactory.get_serializer(entry_type=EntryType.LOSTANDFOUND,action=ActionType.RETRIEVE) 
-        return SerializerFactory.get_serializer(entry_type=EntryType.LOSTANDFOUND,action=ActionType.DEFAULT) 
+            return SerializerFactory.get_serializer(entry_type=EntryType.LOSTANDFOUND,action=ActionType.RETRIEVE)
+        return SerializerFactory.get_serializer(entry_type=EntryType.LOSTANDFOUND,action=ActionType.DEFAULT)
 
     def get_queryset(self):
         """Retrieve Lost and Found Entries for authenticated user."""
@@ -62,7 +84,7 @@ class UserLostAndFoundEntryViewSet(viewsets.ModelViewSet):
         """Create a new product."""
         serializer.save(user=self.request.user)
         cache.delete_pattern("laf_entries_*")
-        
+
     #Update yok, complaint ve laf update edilemez
 
     def perform_destroy(self, instance):
@@ -79,9 +101,9 @@ class LostAndFoundEntryViewSet(viewsets.ReadOnlyModelViewSet):
 
     def get_serializer_class(self):
         if self.action in ['retrieve']:
-            return SerializerFactory.get_serializer(entry_type=EntryType.LOSTANDFOUND,action=ActionType.RETRIEVE) 
-        return SerializerFactory.get_serializer(entry_type=EntryType.LOSTANDFOUND,action=ActionType.DEFAULT) 
-    
+            return SerializerFactory.get_serializer(entry_type=EntryType.LOSTANDFOUND,action=ActionType.RETRIEVE)
+        return SerializerFactory.get_serializer(entry_type=EntryType.LOSTANDFOUND,action=ActionType.DEFAULT)
+
     def list(self, request, *args, **kwargs):
         search_query = request.query_params.get('search', None)
         page_number = request.query_params.get('page', 1)  # Default to page 1 if no page is specified
@@ -102,7 +124,7 @@ class LostAndFoundEntryViewSet(viewsets.ReadOnlyModelViewSet):
 
         serializer = self.get_serializer(queryset, many=True)
         cached_data = serializer.data
-        cache.set(cache_key, cached_data, timeout=60*60) 
+        cache.set(cache_key, cached_data, timeout=60*60)
         return Response(cached_data)
 
     def get_queryset(self):
@@ -115,7 +137,7 @@ class LostAndFoundEntryViewSet(viewsets.ReadOnlyModelViewSet):
             ).filter(similarity__gt=0.15).order_by('-similarity', '-id')
 
         return queryset
-    
+
 
 class UserComplaintEntryViewSet(viewsets.ModelViewSet):
     """View for manage Lost and Found Entry APIs."""
@@ -126,8 +148,8 @@ class UserComplaintEntryViewSet(viewsets.ModelViewSet):
 
     def get_serializer_class(self):
         if self.action in ['create']:
-            return SerializerFactory.get_serializer(entry_type=EntryType.COMPLAINT,action=ActionType.CREATE) 
-        return SerializerFactory.get_serializer(entry_type=EntryType.COMPLAINT,action=ActionType.DEFAULT) 
+            return SerializerFactory.get_serializer(entry_type=EntryType.COMPLAINT,action=ActionType.CREATE)
+        return SerializerFactory.get_serializer(entry_type=EntryType.COMPLAINT,action=ActionType.DEFAULT)
 
     def get_queryset(self):
         """Retrieve Lost and Found Entries for authenticated user."""
@@ -170,7 +192,7 @@ class ComplaintEntryViewSet(viewsets.ReadOnlyModelViewSet):
 
         serializer = self.get_serializer(queryset, many=True)
         cached_data = serializer.data
-        cache.set(cache_key, cached_data, timeout=60*60) 
+        cache.set(cache_key, cached_data, timeout=60*60)
         return Response(cached_data)
 
     def get_queryset(self):
@@ -198,12 +220,23 @@ def vote_up_complaint(request):
         complaint = ComplaintEntry.objects.get(id=complaint_id)
         user = request.user
 
+
         # down vote a basiliyken upvote a bastim
         if user in complaint.downvoted_by.all():
             complaint.downvoted_by.remove(user)
             complaint.upvoted_by.add(user)
             complaint.vote = complaint.vote + 2
             complaint.save()
+
+            # Create upvote notification
+            notification_util(
+                notification_type=NotificationType.UPVOTE,
+                receiver=complaint.user,
+                contact_name=user.email,
+                complaint_name=complaint.topic,
+                related_item_id=complaint.id,
+            )
+
             return Response({'success': 'Successfully upvoted and withdrawn from downvote','state' : 3}, status=200)
 
         # daha onceden up oyladiysam ama butona yine bastiysam geri cek.
@@ -214,17 +247,25 @@ def vote_up_complaint(request):
             return Response({'success': 'Successfully withdrawn from upvote','state' : 2}, status=200)
 
 
-        # hic oy vermediysem buraya gir. 
+        # hic oy vermediysem buraya gir.
         elif user not in complaint.upvoted_by.all():
             complaint.upvoted_by.add(user)
             complaint.vote = complaint.vote + 1
             complaint.save()
+            # Create upvote notification
+            notification_util(
+                notification_type=NotificationType.UPVOTE,
+                receiver=complaint.user,
+                contact_name=user.email,
+                complaint_name=complaint.topic,
+                related_item_id=complaint.id,
+            )
 
 
         return Response({'success': 'Successfully upvoted','state' : 3}, status=200)
     except ComplaintEntry.DoesNotExist:
         return Response({'error': 'Complaint with specified id not found'}, status=404)
-    
+
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -244,6 +285,16 @@ def vote_down_complaint(request):
             complaint.downvoted_by.add(user)
             complaint.vote = complaint.vote - 2
             complaint.save()
+
+            # Create downvote notification
+            notification_util(
+                notification_type=NotificationType.DOWNVOTE,
+                receiver=complaint.user,
+                contact_name=user.email,
+                complaint_name=complaint.topic,
+                related_item_id=complaint.id,
+            )
+
             return Response({'success': 'Successfully downvoted and withdrawn from upvote','state' : 1}, status=200)
 
         #daha onceden downvote oyu attigim halde tekrar downvote dedim oyumu geri cek = iki kere tiklamak
@@ -258,11 +309,19 @@ def vote_down_complaint(request):
             complaint.downvoted_by.add(user)
             complaint.vote = complaint.vote - 1
             complaint.save()
+            # Create downvote notification
+            notification_util(
+                notification_type=NotificationType.DOWNVOTE,
+                receiver=complaint.user,
+                contact_name=user.email,
+                complaint_name=complaint.topic,
+                related_item_id=complaint.id,
+            )
 
         return Response({'success': 'Successfully downvoted','state' : 1}, status=200)
     except ComplaintEntry.DoesNotExist:
         return Response({'error': 'Complaint with specified id not found'}, status=404)
-    
+
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def list_voted_complaints(request):
@@ -274,4 +333,4 @@ def list_voted_complaints(request):
     if count == 0:
         return Response({"message": "There are no voted complaint of the user", })
     else:
-        return Response({"upvoted_complaints": upvoted_complaints.data, "downvoted_complaints": downvoted_complaints.data}) 
+        return Response({"upvoted_complaints": upvoted_complaints.data, "downvoted_complaints": downvoted_complaints.data})

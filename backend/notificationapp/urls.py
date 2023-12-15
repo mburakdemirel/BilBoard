@@ -1,6 +1,10 @@
 from django.urls import path
-from . import views
+from .views import (
+    index,
+    UnreadNotificationsView,
+)
 
 urlpatterns = [
-    path("test/notification/", views.index, name="index"),
+    path("test/notification/", index, name="index"), #test
+    path("notifications/unread/", UnreadNotificationsView.as_view(), name="unread-notifications" )
 ]

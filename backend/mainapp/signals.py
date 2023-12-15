@@ -12,12 +12,12 @@ from .models import (
     Chat,
     Message,
     Notification,
+    OnlineUserModel,
 )
 from django.contrib.auth import get_user_model
 
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
-
 
 @receiver(pre_delete, sender=get_user_model(), dispatch_uid='delete_chats_of_user')
 def delete_chats_of_user(sender, instance, **kwargs):
@@ -88,12 +88,24 @@ def message_deleted(sender, instance, **kwargs):
 
 @receiver(post_save, sender=Notification, dispatch_uid='notification_sent')
 def send_notification(sender, instance, created, **kwargs):
+    print(f'\033[1;31;40m NOTIFSIGNAL {created} \033[0;0m')
     if created:
         channel_layer = get_channel_layer()
-        notification_count = Notification.objects.filter(receiver=instance.receiver, is_read=False).count()
+        notification_obj = Notification.objects.filter(receiver=instance.receiver, is_read=False)
+        notification_count = notification_obj.count()
         group_name = f"notification_{instance.receiver.id}"
+
         content = {
             "count": notification_count,
+            "current_notification": {
+                "id": instance.id,
+                "title": instance.title,
+                "description": instance.description,
+                "timestamp": str(instance.timestamp),
+                "is_read": instance.is_read,
+                "related_item_id": instance.related_item_id,
+                "related_item": instance.related_item,
+            }
         }
         async_to_sync(channel_layer.group_send)(
              group_name, {
@@ -102,3 +114,37 @@ def send_notification(sender, instance, created, **kwargs):
              }
         )
         print(f'\033[4;31;40m notification sent \033[0;0m') #test
+    else:
+        notification_obj = Notification.objects.filter(receiver=instance.receiver, is_read=False)
+        notification_count = notification_obj.count()
+        print(f'\033[1;31;40m Notification is updated, new count is {notification_count}\033[0;0m')
+
+
+# user_prev_status = None
+
+# @receiver(post_save, sender=get_user_model(), dispatch_uid='user_status_changed')
+# def user_online_status_changed(sender, instance, created, **kwargs):
+
+
+@receiver(post_save, sender=OnlineUserModel, dispatch_uid='user_status_changed')
+def user_online_status_changed(sender, instance, created, **kwargs):
+    channel_layer = get_channel_layer()
+    group_name = f"online_{instance.user.id}"
+    actual_user = instance.user
+
+    user_status = 'online' if instance.is_online else 'offline'
+
+    content = {
+        "user_id": actual_user.id,
+        "user_status": user_status,
+    }
+
+    print(f'\033[1;31;40m {user_status} \033[0;0m')
+
+    async_to_sync(channel_layer.group_send)(
+        group_name, {
+            'type': 'send_status',
+            'value': json.dumps(content),
+        }
+    )
+    print(f'\033[1;31;40m user status changed \033[0;0m')

@@ -62,6 +62,15 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     def __str__(self) -> str:
         return self.email
 
+# Bismillahirrahmanirrahim
+class OnlineUserModel(models.Model):
+    user = models.OneToOneField(
+        get_user_model(),
+        on_delete=models.CASCADE,
+        primary_key=True,
+    )
+    is_online = models.BooleanField(default=False)
+
 
 class Product(models.Model):
     CATEGORY_CHOICES = [
@@ -198,12 +207,15 @@ class Chat(models.Model):
 
 
 class Notification(models.Model):
+    """Notification model used for push notifications."""
+
     NOTIFICATION_CHOICES = [
         ('new_message', 'New Message'),
         ('upvoted_complaint', 'Upvoted Complaint'),
         ('downvoted_complaint', 'Downvoted Complaint'),
     ]
 
+    # PRODUCT and LOSTFOUND are provided for future use
     ITEM_CHOICES = [
         ('PRODUCT', 'Product'),
         ('COMPLAINT', 'ComplaintEntry'),

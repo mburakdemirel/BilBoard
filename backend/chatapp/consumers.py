@@ -7,16 +7,10 @@ from mainapp.models import (
     Message,
     Chat,
     Notification,
+    OnlineUserModel,
 )
 
-def notification_fields(contact_name, realted_item_id):
-    return {
-        'notification_type' : 'new_message',
-        'title' : 'New Message',
-        'description' : 'You have a new message from ' + str(contact_name) + '.',
-        'related_item_id' : realted_item_id,
-        'related_item' : 'CHAT',
-    }
+from mainapp.utils import notification_fields, NotificationType
 
 class ChatConsumer(WebsocketConsumer):
     notificationBoolean = True
@@ -38,14 +32,20 @@ class ChatConsumer(WebsocketConsumer):
         )
         chat.messages.add(message)
         chat.save()
+        contact = chat.participiants.exclude(id=author_user.id).first()
+        contact_online = OnlineUserModel.objects.get(user__id=contact.id)
         content = {
             "command": "new_message",
             "message": self.msg_to_json(message)
         }
 
-        if(self.notificationBoolean):
-            contact = chat.participiants.exclude(id=author_user.id).first()
-            notification_header = notification_fields(author_user.name + " " + author_user.surname, chat.id)
+        if(self.notificationBoolean and not contact_online.is_online):
+            # contact mail need to be changed to contact name
+            notification_header = notification_fields(
+                notification_type=NotificationType.NEW_MESSAGE,
+                contact_name=author_user.email,
+                realted_item_id=chat.id,
+            )
             notification = Notification.objects.create(
                 receiver = contact,
                 notification_type = notification_header['notification_type'],
@@ -56,7 +56,6 @@ class ChatConsumer(WebsocketConsumer):
             )
             self.notificationBoolean = False
         else:
-            contact = chat.participiants.exclude(id=author_user.id).first()
             print(f'\033[1;36;40m User:{author_user.email} Boolean: {self.notificationBoolean} Other: {contact.email}\033[0;0m')
         return self.send_chat_message(content)
 
@@ -111,3 +110,42 @@ class ChatConsumer(WebsocketConsumer):
 
         # Send message to WebSocket
         self.send(text_data=json.dumps(message))
+
+
+class OnlineStatusConsumer(WebsocketConsumer):
+    """Consumer for checking online status of users."""
+    def change_status(self, data):
+        print(f'\033[1;34;40mCHANGESTATUS{data}\033[0;0m')
+        # actual_user = get_user_model().objects.get(id=data["user_id"])
+        actual_user = OnlineUserModel.objects.get(user__id=data["user_id"])
+        if(data["connection"] == 'open'):
+            actual_user.is_online = True
+            actual_user.save()
+        else:
+            actual_user.is_online = False
+            actual_user.save()
+
+    def connect(self):
+        self.room_name = self.scope["user"].id
+        self.room_group_name = f'online_{self.room_name}'
+        # Join room group
+        async_to_sync(self.channel_layer.group_add)(
+            self.room_group_name, self.channel_name
+        )
+        self.accept()
+
+    def disconnect(self, code):
+        # Disconnect from room group
+        async_to_sync(self.channel_layer.group_discard)(
+            self.room_group_name, self.channel_name
+        )
+
+    def receive(self, text_data):
+        data = json.loads(text_data)
+        self.change_status(data)
+
+    def send_status(self, event):
+        data = json.loads(event['value'])
+        user_id = data['user_id']
+        user_status = data['user_status']
+        self.send(text_data=json.dumps({"user_id": user_id, "user_status": user_status}))

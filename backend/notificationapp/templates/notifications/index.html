@@ -5,9 +5,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.2.1/axios.min.js"></script>
     <title>Notification</title>
 </head>
 <body>
+    <div id="anan">
+        <button id="clear">CLEAR</button>
+        <p id="numof"></p>
+    </div>
     <div id="content">
         <h2>Notification</h2>
         <ul id="notification">
@@ -20,23 +25,80 @@
         'ws://' + window.location.host +
         '/ws/notification/' + user_id + '/');
         notificationSocket.onopen = function(e) {
-
-            console.log("Connected to notification socket")
+            console.log("Connected to notification socket" + user_id)
+            notificationSocket.send(JSON.stringify({
+                "command": "counter",
+                "user_id": user_id,
+            }))
         }
 
         notificationSocket.onmessage = function(e) {
             var data = JSON.parse(e.data);
-            var message = data['count'];
-            var notification = document.createElement('li');
-            var pTag = document.createElement('p');
-            pTag.textContent = "You have " + message + " new notifications";
-            notification.appendChild(pTag);
-            document.querySelector('#notification').appendChild(notification);
+            if(data['command'] === 'marked'){
+                updateNotificationCount(0)
+            }
+            else if(data['command'] === 'first_get'){
+                updateNotificationCount(data['count'])
+            }
+            else{
+                notificationCount = data['count']
+                updateNotificationCount(notificationCount)
+                addNotification(data)
+            }
         }
 
         notificationSocket.onclose = function(e) {
             console.error("Notification socket closed unexpectedly")
         }
+
+        document.querySelector('#clear').onclick = function(e) {
+            updateNotificationCount(0)
+            document.getElementById('notification').innerHTML = ""
+            notificationSocket.send(JSON.stringify({
+                "command": "mark_all",
+                "user_id": user_id,
+            }));
+        }
+
+        function updateNotificationCount(count){
+            document.getElementById('numof').innerText = count
+        }
+
+        function addNotification(data){
+            var notification = document.createElement('li');
+
+            var pIdTag = document.createElement('p');
+            pIdTag.textContent = data['current_notification']['id'];
+            notification.appendChild(pIdTag);
+
+            var pTitleTag = document.createElement('p');
+            pTitleTag.textContent = data['current_notification']['title'];
+            notification.appendChild(pTitleTag);
+
+            var pDescriptionTag = document.createElement('p');
+            pDescriptionTag.textContent = data['current_notification']['description'];
+            notification.appendChild(pDescriptionTag);
+
+            var pTimestampTag = document.createElement('p');
+            pTimestampTag.textContent = data['current_notification']['timestamp'];
+            notification.appendChild(pTimestampTag);
+
+            var pIsReadTag = document.createElement('p');
+            pIsReadTag.textContent = data['current_notification']['is_read'];
+            notification.appendChild(pIsReadTag);
+
+            var pRelatedItemTag = document.createElement('p');
+            pRelatedItemTag.textContent = data['current_notification']['related_item'];
+            notification.appendChild(pRelatedItemTag);
+
+            var pRelatedItemIdTag = document.createElement('p');
+            pRelatedItemIdTag.textContent = data['current_notification']['related_item_id'];
+            notification.appendChild(pRelatedItemIdTag);
+
+            document.querySelector('#notification').appendChild(notification);
+        }
+
+
     </script>
 </body>
 </html>

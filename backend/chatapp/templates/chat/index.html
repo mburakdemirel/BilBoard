@@ -22,6 +22,8 @@
     <input id="room-name-submit" type="button" value="Enter">
 
     <script>
+        var timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        document.cookie = "django_timezone=" + timezone;
         var activeChats = [];
 
         document.querySelector('#email').onkeyup = function(e) {

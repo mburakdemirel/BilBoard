@@ -34,7 +34,7 @@ urlpatterns = [
     path('api/', include('productapp.urls')),
     path('api/', include('entryapp.urls')),
     path('chat/', include("chatapp.urls")), #test chat app
-    path('notification/', include("notificationapp.urls")), #test notification app
+    path('api/', include("notificationapp.urls")), #test notification app
 
 ]
 
