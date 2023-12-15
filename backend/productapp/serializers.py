@@ -1,5 +1,7 @@
 from rest_framework import serializers
 from mainapp.models import Product, CustomUser, ProductImage
+import os
+from mainapp.helpers import validate_image_safety
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -28,7 +30,7 @@ class ProductCreateSerializer(serializers.ModelSerializer):
         """Check category and set price, return_date fields."""
         category = data.get('category')
         price = data.get('price')
-        return_date = data.get('return_date')
+        return_date = data.get('return_date')  
 
         #Frontend engellemeli çünkü return_date'i de girebilir adam o field gözükmemeli
         if category == 'secondhand':
@@ -43,7 +45,13 @@ class ProductCreateSerializer(serializers.ModelSerializer):
             if 'price' in data:
                 raise serializers.ValidationError("Price should not be included for borrow products.")
 
-        return data
+        product_photos = data.get('product_photo', [])
+        i = 1
+        for image in product_photos:
+            validate_image_safety(image, i)
+            i = i + 1
+
+        return data      
 
     def create(self, validated_data):
         product_photo = validated_data.pop("product_photo")
