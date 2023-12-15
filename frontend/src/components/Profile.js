@@ -13,6 +13,7 @@ import {set} from "react-hook-form";
 import {json} from "react-router";
 import ContextApi from "../context/ContextApi";
 import AOS from "aos";
+import ProfilePlaceholder from "./assets/img/default_profile.webp";
 
 //There are two kinds of profiles and they are rendered according to the value of myProfile boolean.
 //Probably myProfile will take its value from a context. Or we might directly pass is as props.
@@ -91,36 +92,76 @@ function Profile() {
 
 
 function Products({myProfile, func, editMode}) {
-    const [uploadedOrFavorites, setUploadedOrFavorites] = useState('uploaded');
+    const [uploadedOrFavorites, setUploadedOrFavorites] = useState();
     const [filteredProductsType, setFilteredProductsType] = useState('secondhand');
     const [products, setProducts] = useState([]);
+    const [lafEntrys, setLafEntrys] = useState([]);
+    const [complaintEntrys, setComplaintEntrys] = useState([]);
+    const [rowOrColumn, setRowOrColumn] = useState(false);
     const [favorites,setFavorites] = useState(JSON.parse(localStorage.getItem('favoritesObjects')));
     const [showedProducts, setShowedProducts] = useState([]);
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
     useEffect(()=>{
+        AOS.init();
         uploadMyProducts();
     },[])
 
-    useEffect(() => {
-        console.log(uploadedOrFavorites)
-        if(uploadedOrFavorites==="uploaded"){
-            setShowedProducts(products);
-        }
-        else{
-            setShowedProducts(favorites);
-        }
-    }, [uploadedOrFavorites,loading,favorites]);
+    useEffect( () => {
+        setShowed();
+    }, [uploadedOrFavorites,favorites,filteredProductsType]);
 
-    const uploadMyProducts = async () => {
+    const setShowed  = async () =>{
+        console.log(uploadedOrFavorites)
+        if (filteredProductsType === "lostandfound") {
+            setUploadedOrFavorites("uploaded");
+        }
+
+        if (uploadedOrFavorites === "uploaded") {
+            if (filteredProductsType === "lostandfound") {
+                setRowOrColumn(true);
+
+                await uploadMyProducts("laf-entry");
+
+            } else if (filteredProductsType === "complaints") {
+                setRowOrColumn(true);
+                await uploadMyProducts("complaint-entry");
+
+            } else {
+                setRowOrColumn(false);
+                setShowedProducts(products.filter(product => product.category === filteredProductsType));
+            }
+
+        } else {
+            setShowedProducts(favorites.filter(favorite => favorite.category === filteredProductsType));
+        }
+        console.log(rowOrColumn);
+    }
+
+
+    const uploadMyProducts = async (category) => {
 
         try{
             setLoading(true);
             axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
-            const {data} = await axios.get('http://127.0.0.1:8000/api/user/product/');
-            console.log("my products ",data);
+
+            let productData;
+            if(category){
+                productData = await axios.get('http://127.0.0.1:8000/api/user/'+ category +'/');
+            }
+            else{
+                productData = await axios.get('http://127.0.0.1:8000/api/user/product/');
+            }
+            console.log("my products ",productData.data);
             console.log("favorites", JSON.parse(localStorage.getItem('favoritesObjects')));
-            setProducts(data.results);
+
+            if(category){
+                setShowedProducts(productData.data.results)
+            }
+            else{
+                setProducts(productData.data.results);
+
+            }
         }
         catch (error){
             if (error.response) {
@@ -132,10 +173,20 @@ function Products({myProfile, func, editMode}) {
             }
         }
         setLoading(false);
+        setUploadedOrFavorites("uploaded");
     }
 
-    const sendProductDetailPage = (index,pageType) => {
-        navigate('/product_detail/' + pageType + '/' + index);
+    const sendProductDetailPage = (index,pageType,name) => {
+        if(pageType==="secondhand" || pageType==="borrow" || pageType==="donation"){
+            navigate('/product_detail/' + pageType + '/' + index);
+        }
+        else if(pageType==="lost" || pageType==="found"){
+            navigate("/main_page/lost&found/" + name);
+        }
+        else{
+            navigate("/main_page/complaint/" + name);
+        }
+
     }
 
     const deleteProduct = async (product) => {
@@ -153,15 +204,19 @@ function Products({myProfile, func, editMode}) {
                 // do update operations
                 if(product.category === "secondhand" || product.category === "borrow" || product.category === "donation"){
                     await axios.delete('http://127.0.0.1:8000/api/user/product/' +  product.id + '/');
+                    await uploadMyProducts();
+                    setShowed();
                 }
-                else if(product.category === "lostandfound"){
+                else if(product.category === "lost" || product.category === "found"){
                     await axios.delete('http://127.0.0.1:8000/api/user/laf-entry/' +  product.id + '/');
+                    uploadMyProducts("laf-entry");
                 }
                 else{
                     await axios.delete('http://127.0.0.1:8000/api/user/complaint-entry/' +  product.id + '/');
+                    uploadMyProducts("complaint-entry");
                 }
 
-                uploadMyProducts();
+
             }
             catch (error){
             }
@@ -171,7 +226,8 @@ function Products({myProfile, func, editMode}) {
 
     const deleteFav = async (product) => {
         console.log("removed");
-        const {data} = await axios.post('http://127.0.0.1:8000/api/product/remove-favorites/', {product_id: product.id}) ;
+        debugger;
+        const {data} = await axios.post('http://127.0.0.1:8000/api/product/clicked-favorites/', {product_id: product.id}) ;
         console.log(data)
         setFavorites((current) =>
             current.filter((favorite) => favorite.id !== product.id)
@@ -235,15 +291,13 @@ function Products({myProfile, func, editMode}) {
                         </ul>
                     </div>
 
-                <div
-                    className="card-group d-flex flex-row justify-content-start "
-                    style={{ maxHeight: '80%', overflow: 'auto', width:'93%'}}>
+
+                <div className='card-group d-flex  justify-content-start' style={{ maxHeight: '80%', overflow: 'auto', width:'93%', flexWrap: rowOrColumn ? 'nowrap' : 'wrap', flexDirection: rowOrColumn ? 'column' : 'row' }}>
                     {loading ? <div style={{width:'100%'}}><span className="spinner-border spinner-border" aria-hidden="true" ></span></div>
                     :
                         <>
-
                             {showedProducts && Array(showedProducts.length).fill().map((_, index) => {
-                                if (showedProducts[index] && showedProducts[index].category === filteredProductsType) {
+                                if (filteredProductsType === "secondhand" || filteredProductsType === "borrow" || filteredProductsType === "donation") {
                                     return(
                                         <div className="card d-flex align-items-center" key={index} id="product" style={{width: '168px', height: '168px', borderRadius: '10px', borderStyle: 'none', borderBottomStyle: 'none', padding: '5px',maxHeight:'168px',minHeight:'168px' ,minWidth: '168px', maxWidth: '168px',}}
                                              data-aos="zoom-in" data-aos-duration="600">
@@ -269,13 +323,56 @@ function Products({myProfile, func, editMode}) {
                                             </div>
                                         </div>)
                                 }
+                                else if(filteredProductsType == "lostandfound" || filteredProductsType == "complaints" ){
+                                    return(
+
+                                        <div className="card d-flex" style={{ borderStyle: 'none', background: '#A0ABC0', margin:'5px',flex: '1', borderRadius:'10px'}} >
+                                            <div className="card-body d-flex align-items-center w-100" style={{ borderStyle: 'none',  height: '100px', padding:'10px' }}
+                                                 onClick={()=>sendProductDetailPage(showedProducts[index].id,showedProducts[index].category,showedProducts[index].topic)}>
+                                                <div className="d-flex flex-column justify-content-between" style={{ width: '100%', height: '90%', margin: '0.7%'}}>
+
+                                                        <div className="d-flex justify-content-between">
+                                                            <h1 className="d-flex text-start text-truncate" style={{ fontFamily: 'Inter, sans-serif', fontWeight: 'bold', margin: '0px', fontSize: '16px', width: '75%' }}>{showedProducts[index].topic}</h1>
+
+                                                            {editMode &&
+                                                                <button
+                                                                    className="btn btn-primary position-relative d-flex align-items-center justify-content-center rounded-circle"
+                                                                    type="button"
+                                                                    onClick={(event) => {
+                                                                        event.stopPropagation(); // This will prevent the event from bubbling up to parent elements
+                                                                        deleteProduct(showedProducts[index]);
+                                                                    }}
+                                                                    style={{height: '28px', width: '28px', marginRight:'3px', background: '#2d3648', borderStyle: 'none', position:'relative'}}>
+                                                                    <i className="bi bi-trash-fill" style={{fontSize:'12px'}}></i>
+                                                                </button>
+                                                            }
+
+                                                            <div className="d-flex justify-content-center align-items-center" style={{ height: '28px', minWidth: '15%', background: '#717D96', borderRadius: '10px' }}>
+                                                                <span className="d-flex" style={{ fontSize: '12px', fontFamily: 'Inter, sans-serif', fontWeight: 'bold', textAlign: 'center', color: 'rgb(255,255,255)' }}>{filteredProductsType==="lostandfound" ? showedProducts[index].category : showedProducts[index].vote}</span>
+                                                            </div>
+
+                                                        </div>
+                                                        <h4 className="d-flex text-truncate text-start " style={{ fontSize: '13px', marginTop: '0px', paddingTop: '5px', whiteSpace: 'normal', height: '68.5938px' }}>
+                                                            {showedProducts[index].description}
+                                                        </h4>
+
+
+
+
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+                                    )
+                                }
+
+
                             })}
                         </>
 
                     }
-                    {/** this is for testing purposes normally we should use result.map(product => (<div> ...) where result is the result of the http
-                 * request and we should use product's data in ... part
-                */}
+
 
                 </div>
             </div>

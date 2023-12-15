@@ -15,7 +15,7 @@ function EntryMainPage2(){
     const{sendNewMessage} = useContext(ContextApi);
     const navigate = useNavigate();
     const {pageType,searchText} = useParams();
-
+    const myProfile = JSON.parse(localStorage.getItem('myProfile'));
     const [loading, setLoading] = useState(true);
     const [messagesLoading, setMesagesLoading] = useState(false);
     const [page, setPage] = useState();
@@ -107,7 +107,6 @@ function EntryMainPage2(){
 
 
     const goToProfile =  (id) => {
-        let myProfile = JSON.parse(localStorage.getItem('myProfile'));
         if(id==myProfile.id){
             navigate('/profile');
         }
@@ -131,6 +130,30 @@ function EntryMainPage2(){
         });
         navigate("/messages");
     }
+
+
+    const deleteProduct = async (e,product) => {
+        e.preventDefault();
+        let confirmed;
+        if (window.confirm("Do you confirm deleting the product?")) {
+            confirmed = true;
+        } else {
+            confirmed = false;
+        }
+
+        if(confirmed){
+            setLoading(true);
+            try{
+                await axios.delete('http://127.0.0.1:8000/api/user/laf-entry/' +  product.id + '/');
+                setProducts([]);
+                setPage(1);
+            }
+            catch (error){
+
+            }
+        }
+
+    };
 
     return (
         <div  className="d-flex flex-column">
@@ -161,11 +184,19 @@ function EntryMainPage2(){
                                                             </h4>
                                                         </div>
                                                         <div className="d-flex  justify-content-end align-items-center ">
-                                                            <button className="btn btn-primary d-flex justify-content-center align-items-center" type="button" style={{ width: '36%', height: '100%', fontWeight: 'bold', background: '#2d3648', borderStyle: 'none', borderColor: '#2d3648', marginRight: '1%', minWidth: '120px' }}
-                                                                    onClick={(e)=>sendMessage(e,item)}>
-                                                                <i className="bi bi-send-fill" style={{ fontSize: '12px', color:'white', marginRight:'5px' }}  ></i>
-                                                                <span className="d-flex" style={{ fontSize: '11px', fontFamily: 'Inter, sans-serif', fontWeight: 'bold', textAlign: 'center' }}>Send Message</span>
-                                                            </button>
+                                                            {item.user.id==myProfile.id ?
+                                                                <button disabled={loading} className="btn btn-primary align-items-center" type="button" style={{ width: '40px', fontWeight: 'bold', background: '#2d3648', borderStyle: 'none', borderColor: '#2d3648', height: '100%' }}
+                                                                onClick={(e)=>deleteProduct(e,item)}>
+                                                                        <i className="bi bi-trash"></i>
+                                                                </button>
+                                                                :
+                                                                <button disabled={messagesLoading} className="btn btn-primary d-flex justify-content-center align-items-center" type="button" style={{ width: '36%', height: '100%', fontWeight: 'bold', background: '#2d3648', borderStyle: 'none', borderColor: '#2d3648', marginRight: '1%', minWidth: '120px' }}
+                                                                        onClick={(e)=>sendMessage(e,item)}>
+                                                                    <i className="bi bi-send-fill" style={{ fontSize: '12px', color:'white', marginRight:'5px' }}  ></i>
+                                                                    <span className="d-flex" style={{ fontSize: '11px', fontFamily: 'Inter, sans-serif', fontWeight: 'bold', textAlign: 'center' }}>Send Message</span>
+                                                                </button>
+                                                            }
+
                                                             {/* ...other buttons... */}
                                                         </div>
                                                     </div>
@@ -203,11 +234,10 @@ function EntryMainPage2(){
                                                             </h4>
                                                         </div>
                                                         <div className="d-flex  justify-content-end align-items-center ">
-                                                            <button className="btn btn-primary d-flex justify-content-center align-items-center" type="button" style={{ width: '36%', height: '100%', fontWeight: 'bold', background: '#2d3648', borderStyle: 'none', borderColor: '#2d3648', marginRight: '1%', minWidth: '120px' }}
-                                                                onClick={(e)=>sendMessage(e,item)}>
+                                                            <button disabled={messagesLoading} className="btn btn-primary d-flex justify-content-center align-items-center" type="button" style={{ width: '36%', height: '100%', fontWeight: 'bold', background: '#2d3648', borderStyle: 'none', borderColor: '#2d3648', marginRight: '1%', minWidth: '120px' }}
+                                                                    onClick={(e)=>sendMessage(e,item)}>
                                                                 <i className="bi bi-send-fill" style={{ fontSize: '12px', color:'white', marginRight:'5px' }}  ></i>
                                                                 <span className="d-flex" style={{ fontSize: '11px', fontFamily: 'Inter, sans-serif', fontWeight: 'bold', textAlign: 'center' }}>Send Message</span>
-
                                                             </button>
                                                         </div>
                                                     </div>

@@ -189,11 +189,11 @@ function Products({allMessages, pull_data, deleteMessage, loading, activeIndex, 
                         <ul className="list-group" style={{ width: '100%', height: '100%', overflow: 'scroll' }}>
                             {Array(allMessages.length).fill().map((_,index) => (
                                 <li key={index} className="list-group-item" onClick={()=>pull_active_index(index)} style={{ padding: '0px', paddingBottom: '10px', borderStyle: 'none'}}  data-aos="fade-right" data-aos-duration="600" data-aos-delay={index*100}>
-                                <div className="card d-flex justify-content-center" style={{ minHeight:'100px', maxHeight:'100px', borderStyle: 'none',  background: index===activeIndex? '#346fad' : '#EDF0F7'}} onClick={()=>{messageClick(allMessages[index].id, allMessages[index].participiants)}}>
+                                <div className="card d-flex justify-content-center" style={{ minHeight:'90px', maxHeight:'90px', borderStyle: 'none',  background: index===activeIndex? '#346fad' : '#EDF0F7'}} onClick={()=>{messageClick(allMessages[index].id, allMessages[index].participiants)}}>
                                     <div className="d-flex flex-row align-items-center " style={{ height: '20%', minHeight: '80px', paddingTop: '5px', paddingBottom: '5px', borderStyle: 'none', paddingLeft: '20px', paddingRight: '6px' }}>
-                                        <div className="d-flex flex-column " style={{ width: '50%', height: '100%' }}>
-                                            <h4 className="text-truncate" style={{width:'fit-content', fontSize: '18px', marginBottom: '5px', fontFamily: 'Inter, sans-serif', color: index===activeIndex? '#ffffff' : '#000000' }}>{allMessages[index].product_name}</h4>
-                                            <h3 className="text-truncate" style={{width:'fit-content', paddingTop: '0px', margin: '0px', marginTop: '5px', fontSize: '18px', fontFamily:'Inter, sans-serif', fontWeight:'bold' ,color: index===activeIndex? '#ffffff' : '#000000' }}>{allMessages[index] && (allMessages[index].participiants.contact_name + " " + allMessages[index].participiants.contact_surname)}</h3>
+                                        <div className="d-flex flex-column align-items-start " style={{ width: '50%', height: '100%' }}>
+                                            <h4 className="d-flex text-start" style={{width:'fit-content', fontSize: '18px', marginBottom: '5px', fontFamily: 'Inter, sans-serif', color: index===activeIndex? '#ffffff' : '#000000' }}>{allMessages[index].product_name}</h4>
+                                            <h3 className="d-flex text-start" style={{width:'fit-content', paddingTop: '0px', margin: '0px', marginTop: '5px', fontSize: '18px', fontFamily:'Inter, sans-serif', fontWeight:'bold' ,color: index===activeIndex? '#ffffff' : '#000000' }}>{allMessages[index] && (allMessages[index].participiants.contact_name + " " + allMessages[index].participiants.contact_surname)}</h3>
                                         </div>
                                         <div className="d-flex justify-content-end align-items-center" style={{ width: '50%', height: '100%' }}>
                                             <button className="rounded-circle btn btn-primary d-flex justify-content-center align-items-center" style={{ width: '32px', fontWeight: 'bold', background: '#2d3648', borderStyle: 'none', borderColor: '#2d3648', height: '32px' }}
@@ -201,8 +201,8 @@ function Products({allMessages, pull_data, deleteMessage, loading, activeIndex, 
                                                 <i className="bi bi-trash"></i>
                                             </button>
                                             <span style={{ width: '12px' }}></span>
-                                            <div className="d-flex justify-content-center align-items-center" style={{ height:'90px', width: '35%', margin: '0px', padding: '0px' }}>
-                                                <img className="d-block w-100" style={{ borderRadius: '8px', height: '95%', objectFit: 'cover' }} src={typeof allMessages[index].image_url === "null" ? Placeholder: allMessages[index].image_url }
+                                            <div className="d-flex justify-content-center align-items-center" style={{ height:'80px', width: '80px', margin: '0px', padding: '0px' }}>
+                                                <img className="d-block w-100" style={{ borderRadius: '8px', height: '95%', objectFit: 'cover' }} src={allMessages[index].image_url == null ? Placeholder: allMessages[index].image_url }
                                                     onClick={(e)=>goToItem(allMessages[index].category, allMessages[index].product_id,allMessages[index].product_name)}/>
                                             </div>
 

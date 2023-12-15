@@ -10,7 +10,8 @@ import AOS from "aos";
 
 function EntryMainPage(){
     const {pageType,searchText} = useParams();
-
+    const navigate = useNavigate();
+    const myProfile = JSON.parse(localStorage.getItem('myProfile'));
     const [loading, setLoading] = useState(true);
     const [page, setPage] = useState();
     const [products, setProducts] = useState([]);
@@ -180,14 +181,23 @@ function EntryMainPage(){
         setProducts(sortedProducts);
     }
 
+    const goToProfile =  (id) => {
+        if(id==myProfile.id){
+            navigate('/profile');
+        }
+        else{
+            navigate('/profile/' + id);
+        }
+    }
+
     return (
         <div className="d-flex flex-column">
 
         <section className="d-flex flex-grow-1 py-5 justify-content-center" style={{ background: '#edf0f7', minHeight: '91vh' }}>
             {loading ? <div style={{height:'50px'}}><span className="spinner-border spinner-border" aria-hidden="true" ></span></div>
                 :
-            <div className="container d-flex h-100">
-                <div className="row gx-1 gy-3 d-flex h-100" style={{ margin: '0px', width: '100%', marginTop: '-21px' }}>
+            <div className="container d-flex h-100 justify-content-center">
+                <div className="row gx-1 gy-3 d-flex h-100" style={{ margin: '0px', width: '90%', marginTop: '-21px' }}>
                     <div className="col" data-aos="fade" data-aos-duration="500" >
                         <div className="d-flex flex-column col-xl-6" style={{ background: 'var(--bs-white)', borderRadius: '10px', height: '100%', width: '100%', padding: '2%' }} data-bs-smooth-scroll="true">
                                 <InfiniteScroll
@@ -200,9 +210,9 @@ function EntryMainPage(){
                                     <ul className="list-group" style={{ width: '100%', height: '100%', overflow: 'scroll' }} data-bs-smooth-scroll="true">
                                         {Array(products.length).fill().map((_, index) => {
                                             return (
-                                                <li key={index} className="list-group-item" style={{ padding: '0px', paddingBottom: '10px', borderStyle: 'none' }} data-aos="fade-left" data-aos-duration="500"  >
+                                                <li key={index} className="list-group-item" style={{ padding: '5px', paddingBottom: '10px', borderStyle: 'none' }} data-aos="fade-left" data-aos-duration="500"  >
                                                     <div className="card" style={{ borderStyle: 'none', background: '#A0ABC0' }}>
-                                                        <div className="card-body d-flex flex-row " style={{ borderStyle: 'none', height: '11vw', minHeight: '80px', paddingLeft: '5px', paddingBottom: '5px', paddingRight: '5px', paddingTop: '5px' }}>
+                                                        <div className="card-body d-flex flex-row " style={{ borderStyle: 'none', height: '9vw', minHeight: '80px', paddingLeft: '5px', paddingBottom: '5px', paddingRight: '5px', paddingTop: '5px' }}>
                                                             <div className="d-flex flex-column justify-content-between" style={{ width: '90%', height: '90%', margin: '0.7%', minWidth: '200px' }}>
                                                                 <div>
                                                                     <div className="d-flex ">
@@ -224,9 +234,10 @@ function EntryMainPage(){
                                                                     <i className="bi bi-arrow-down" style={{ fontSize: '24px' }}></i>
                                                                 </button>
                                                             </div>
-                                                            <div className="d-flex flex-column justify-content-center align-items-center" style={{ height: '90%', margin: '0.7%', width: '13%', minWidth: '60px', background: '#EDF0F7', borderRadius: '10px' }}>
+                                                            <div className="d-flex flex-column justify-content-center align-items-center" style={{ height: '90%', margin: '0.7%', width: '13%', minWidth: '60px', background: '#EDF0F7', borderRadius: '10px' }}
+                                                                 onClick={(e)=> goToProfile(products[index].user.id)}>
                                                                 <img className="rounded-circle" src={products[index].user.profile_photo ? products[index].user.profile_photo : PlaceHolder} style={{ height: '70%', width: '70%', marginTop: '5%', marginBottom: '5%' }} />
-                                                                <h1 className="d-flex justify-content-center" style={{ fontFamily: 'Inter, sans-serif', fontSize: '16px', width: '95%' }}>{`${products[index].user.name} ${products[index].user.surname}`}</h1>
+                                                                <h1 className="d-flex justify-content-center" style={{ fontFamily: 'Inter, sans-serif', fontSize: '14px', width: '95%' }}>{`${products[index].user.name} ${products[index].user.surname}`}</h1>
                                                             </div>
                                                         </div>
                                                     </div>
