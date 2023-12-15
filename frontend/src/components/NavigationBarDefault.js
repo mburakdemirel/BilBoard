@@ -23,6 +23,18 @@ function NavigationBarDefault() {
     const favoritesIdList = [];
     const [myProfile, setMyProfile] = useState(JSON.parse(localStorage.getItem('myProfile')));
 
+
+    const {pageType,searchText} = useParams();
+    console.log("pagetype in nav" + pageType);
+    const navigate = useNavigate();
+    const [searchInput, setSearchInput] = useState('');
+    const{isImageViewerOpen, changeIsImageViewerOpen} = useContext(ContextApi);
+
+
+    useEffect(() => {
+        setSearchInput('');
+    }, [pageType]);
+
     useEffect(() => {
         AOS.init();
         getProfile();
@@ -86,17 +98,14 @@ function NavigationBarDefault() {
         setTarget(event.target);
     };
 
-    const {pageType,searchText} = useParams();
-    console.log("pagetype in nav" + pageType);
-    const navigate = useNavigate();
-    const [searchInput, setSearchInput] = useState('');
-    const{isImageViewerOpen, changeIsImageViewerOpen} = useContext(ContextApi);
+
 
     const enterClick = (e) => {
         if(pageType){
             if(e.key === "Enter") {
                 console.log("Enter Click")
-                navigate('/main_page/' + pageType + '/' + searchInput);
+                navigate(window.location.pathname +  '?search=' + searchInput);
+
             }
         }
     }
@@ -129,7 +138,7 @@ function NavigationBarDefault() {
                         <li type="button"  className="nav-item"><a onClick={() => {navigate('/main_page/complaint')}} className="nav-link" style={{ textDecoration: pageType==="complaint" ? 'underline': '', color: pageType==="complaint" ? '#2d3647': '' }}>Complaint</a></li>
                     </nav>
                     <div className="me-4" style={{ maxWidth: '200px', height: '40px' }}>
-                        <input className="d-flex justify-content-xxl-center" onKeyDown={enterClick} onChange={(e)=> setSearchInput(e.target.value)}
+                        <input className="d-flex justify-content-xxl-center" onKeyDown={enterClick} onChange={(e)=> setSearchInput(e.target.value)} value={searchInput}
                              type="search" disabled={!pageType} style={{ width: '100%', height: '100%', borderRadius: '6px', border: '2px solid var(--bs-navbar-active-color)', paddingLeft: '5px', paddingRight: '5px', fontFamily: 'Inter, sans-serif', textAlign: 'center' }} placeholder="Search" />
                     </div>
                     <Dropdown>

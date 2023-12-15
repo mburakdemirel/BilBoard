@@ -1,4 +1,4 @@
-import React from 'react';
+import React from 'react'
 import './assets/bootstrap/css/bootstrap.min.css';
 import PlaceHolder from './assets/img/WF Image Placeholder.png';
 import {useEffect, useState} from "react";
@@ -15,7 +15,7 @@ import AOS from "aos";
 function ProductMainPage() {
     const navigate = useNavigate();
 
-    let {pageType,searchText} = useParams();
+    let {pageType} = useParams();
 
     console.log("pageType in mainpage" + pageType);
     const [loading, setLoading] = useState(true);
@@ -24,6 +24,14 @@ function ProductMainPage() {
     const [products, setProducts] = useState([]);
     const [hasMore, setHasMore] = useState(true);
 
+    const urlParams = new URLSearchParams(window.location.search);
+    console.log("query string "+urlParams);
+
+    const searchText = urlParams.get('search');
+    const minPrice = urlParams.get('min_price');
+    const maxPrice = urlParams.get('max_price');
+    const productType = urlParams.get('product_type');
+    console.log(searchText, " ", minPrice, " ", maxPrice," ", productType);
 
 
 
@@ -34,7 +42,7 @@ function ProductMainPage() {
         setPage(1);
         setHasMore(true);
         // Messages in the selected index will be opened on the right side
-    },[pageType,searchText])
+    },[pageType,searchText,minPrice,maxPrice,productType])
 
     useEffect(() => {
         console.log("page use effect" + page);
@@ -47,28 +55,42 @@ function ProductMainPage() {
 
     const uploadProducts = async () => {
         try{
+
             axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
-
             if(pageType){
+                if(searchText || minPrice!=null || maxPrice!=null || productType!=null){
+                    let url = 'http://127.0.0.1:8000/api/product/' + pageType;
+                    debugger;
+                    if (searchText !== null && searchText !== "undefined") {
+                        url += `?search=${searchText}`;
+                    }
 
-                if(searchText){
+                    if (minPrice !== null && minPrice !== "undefined") {
+                        url += url.includes('?') ? `&min_price=${minPrice}` : `?min_price=${minPrice}`;
+                    }
 
-                    try {
-                        const {data} = await axios.get('http://127.0.0.1:8000/api/product/' + pageType + `?search=${searchText}`);
-                        const productData = data.results ? data.results : data;
-                        if(productData) {
-                            setProducts(prevProducts => [...prevProducts, ...productData]);
-                            setPage(prevPage => prevPage + 1);
-                            setHasMore(productData.length >= 16);
+                    if (maxPrice !== null && maxPrice !== "undefined") {
+                        url += url.includes('?') ? `&max_price=${maxPrice}` : `?max_price=${maxPrice}`;
+                    }
+
+                    if (productType !== null && productType !== "undefined") {
+                        url += url.includes('?') ? `&product_type=${productType}` : `?product_type=${productType}`;
+                    }
+                        try {
+                            const {data} = await axios.get(url);
+                            const productData = data.results ? data.results : data;
+                            if(productData) {
+                                setProducts(prevProducts => [...prevProducts, ...productData]);
+                                setPage(prevPage => prevPage + 1);
+                                setHasMore(productData.length >= 16);
+                            }
+                            else {
+                                setHasMore(false);
+                            }
                         }
-                        else {
+                        catch (e){
                             setHasMore(false);
                         }
-                    }
-                    catch (e){
-                        setHasMore(false);
-                    }
-
 
                 }
                 else{
@@ -123,11 +145,11 @@ function ProductMainPage() {
 
 
 
-                <section className="d-flex py-4 align-items-start justify-content-center" style={{ background: '#edf0f7', minHeight: '91vh' }}  >
+                <section className="d-flex py-4 align-items-start justify-content-center" style={{background: '#edf0f7', minHeight: '91vh'}}  >
 
                     {loading ? <div style={{height:'50px'}}><span className="spinner-border spinner-border" aria-hidden="true" ></span></div>
                         :
-                        <InfiniteScroll style={{minHeight:'300px'}}
+                        <InfiniteScroll style={{minHeight:'300px',position: '', zIndex: 1}}
                             dataLength={products.length}
                             next={uploadProducts}
                             hasMore={hasMore}
@@ -141,7 +163,7 @@ function ProductMainPage() {
                                         if (true) {
                                             return(<div key={index} className="col-md-3" style={{ minWidth:'150px', maxWidth: '18vw', padding: '1%' }}
                                                         onClick={()=>sendProductDetailPage(products[index].id)}  data-aos="zoom-out" data-aos-duration="700" >
-                                                    <div  className="card" style={{ maxHeight:'35vw', height:'230px', borderRadius: '10px', borderStyle: 'none', padding: '5px', background: 'transparent', margin: '2%' }} >
+                                                    <div  className="card" style={{maxHeight:'35vw', height:'230px', borderRadius: '10px', borderStyle: 'none', padding: '5px', background: 'transparent', margin: '2%' }} >
                                                         <div className="card-body" style={{ width: '100%', height: '100%', padding: '0px' }}>
                                                             <img style={{ width: '100%', height: '100%', borderRadius:'10px'}} src={products[index].images && products[index].images.length > 0 ? products[index].images[0].image : Placeholder} width="247" height="247" />
                                                             <div className="div-special" style={{ height: '45px', width: '100%', marginTop: '-45px', background: '#21252955', position: 'relative', borderBottomRightRadius: '10px', borderBottomLeftRadius: '10px', paddingTop: '3px', paddingBottom: '3px', paddingRight: '5px', paddingLeft: '5px' }}>
@@ -150,7 +172,7 @@ function ProductMainPage() {
                                                                 <h1 className="text-center text-truncate d-flex d-xxl-flex justify-content-start align-items-start justify-content-xxl-start"
                                                                     style={{ width: '100%', fontSize: '14px', fontFamily: 'Inter, sans-serif', marginBottom: '0px', color: '#EDF0F7' }}>
 
-                                                                    {products[index].price && products[index].price + "₺"}</h1>
+                                                                    {products[index].price && products[index].price + "₺"} {products[index].return_date && products[index].return_date}</h1>
                                                             </div>
                                                         </div>
                                                     </div>

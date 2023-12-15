@@ -6,12 +6,6 @@ import AOS from 'aos';
 
 function LoginPage() {
 
-    /*console.log(window.location.href)
-    console.log(window.location.search)
-    const urlSearchParams = new URLSearchParams(window.location.search);
-    console.log(urlSearchParams.get("token"));
-    const token = urlSearchParams.get("token");
-*/
     const navigate = useNavigate();
 
     // User variables

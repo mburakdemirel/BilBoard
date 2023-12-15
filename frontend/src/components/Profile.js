@@ -109,7 +109,7 @@ function Products({myProfile, func, editMode}) {
 
     useEffect( () => {
         setShowed();
-    }, [uploadedOrFavorites,favorites,filteredProductsType]);
+    }, [uploadedOrFavorites,favorites,filteredProductsType,products]);
 
     const setShowed  = async () =>{
         console.log(uploadedOrFavorites)
@@ -120,7 +120,6 @@ function Products({myProfile, func, editMode}) {
         if (uploadedOrFavorites === "uploaded") {
             if (filteredProductsType === "lostandfound") {
                 setRowOrColumn(true);
-
                 await uploadMyProducts("laf-entry");
 
             } else if (filteredProductsType === "complaints") {
@@ -133,7 +132,15 @@ function Products({myProfile, func, editMode}) {
             }
 
         } else {
-            setShowedProducts(favorites.filter(favorite => favorite.category === filteredProductsType));
+            if(filteredProductsType==="complaints"){
+                setRowOrColumn(true);
+                await uploadMyProducts("list-my-voted-complaints");
+            }
+            else{
+                setShowedProducts(favorites.filter(favorite => favorite.category === filteredProductsType));
+            }
+
+
         }
         console.log(rowOrColumn);
     }
@@ -155,8 +162,16 @@ function Products({myProfile, func, editMode}) {
             console.log("my products ",productData.data);
             console.log("favorites", JSON.parse(localStorage.getItem('favoritesObjects')));
 
+            debugger;
             if(category){
-                setShowedProducts(productData.data.results)
+                if(category==="list-my-voted-complaints"){
+                    console.log(productData.data);
+                    setShowedProducts(productData.data.downvoted_complaints.concat(productData.data.upvoted_complaints));
+                }
+                else{
+                    setShowedProducts(productData.data.results);
+                }
+
             }
             else{
                 setProducts(productData.data.results);
@@ -173,7 +188,12 @@ function Products({myProfile, func, editMode}) {
             }
         }
         setLoading(false);
-        setUploadedOrFavorites("uploaded");
+
+        if(category!=="list-my-voted-complaints"){
+            setUploadedOrFavorites("uploaded");
+        }
+
+
     }
 
     const sendProductDetailPage = (index,pageType,name) => {
@@ -204,8 +224,7 @@ function Products({myProfile, func, editMode}) {
                 // do update operations
                 if(product.category === "secondhand" || product.category === "borrow" || product.category === "donation"){
                     await axios.delete('http://127.0.0.1:8000/api/user/product/' +  product.id + '/');
-                    await uploadMyProducts();
-                    setShowed();
+                    uploadMyProducts();
                 }
                 else if(product.category === "lost" || product.category === "found"){
                     await axios.delete('http://127.0.0.1:8000/api/user/laf-entry/' +  product.id + '/');
