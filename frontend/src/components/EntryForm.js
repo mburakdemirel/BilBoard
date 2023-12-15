@@ -102,7 +102,7 @@ export function EntryForm({ isComplaint }) {
                                         >
                                         </input>
                                     </div>
-                                    <div className="form-group row justify-content-between text-center">
+                                    {isComplaint ? <div className="form-group row justify-content-between text-center">
                                         <label className="form-control-label" style={{textAlign: 'left',fontFamily: 'Inter, sans-serif', marginTop: '2%',marginBottom:'2%'}}><h5>Target Email</h5></label>
                                         <input onChange={(e)=>{setTargetMail(e.target.value);console.log(e.target.value)}} type="email" placeholder="Target Email"
                                             name="email"
@@ -119,7 +119,7 @@ export function EntryForm({ isComplaint }) {
                                             }}
                                         >
                                         </input>
-                                    </div>
+                                    </div> : <></>}
 
                                     {!isComplaint ? <div className="form-group row justify-content-between text-center">
                                         <label className="form-control-label" htmlFor="Category" style={{ textAlign: 'left',fontFamily: 'Inter, sans-serif',marginTop: '2%',marginBottom:'2%' }} ><h5>Choose Category</h5></label>
@@ -159,7 +159,7 @@ export function EntryForm({ isComplaint }) {
                                     </div>
                                     <div style={{ paddingTop: '20px' }} className="row justify-content-between text-left">
                                         <div className="col-xl-6 flex-column d-flex">
-                                            <button onClick={() => { navigate("/main_page/secondhand") }} className="btn btn-primary d-block w-100 mb-3" style={{ background: '#2d3648', border: 'none', fontFamily: 'Inter, sans-serif', height: '40px' }}>Cancel</button>
+                                            <button onClick={() => { navigate("/main_page/secondhand") }} className="btn btn-primary d-block w-100 mb-3" style={{ background: '#ffffff', border: 'solid #0558b0', fontFamily: 'Inter, sans-serif', height: '40px', color:'#0558b0' }}>Cancel</button>
                                         </div>
                                         <div className="col-xl-6 flex-column d-flex">
                                             <button className="btn btn-primary d-block w-100 mb-3" type="submit" style={{ background: '#0558b0', border: 'none', fontFamily: 'Inter, sans-serif', height: '40px' }}>Post</button>

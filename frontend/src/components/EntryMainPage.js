@@ -1,10 +1,11 @@
 import React, {useEffect, useState} from 'react';
-import Burak from './assets/img/burak.png';
+import { useNavigate } from 'react-router-dom';
 import PlaceHolder from './assets/img/WF Image Placeholder.png'
-import {useNavigate, useParams} from "react-router-dom";
+import { useParams} from "react-router-dom";
 import axios from "axios";
 import InfiniteScroll from 'react-infinite-scroll-component';
 import AOS from "aos";
+import {Collapse, Button} from 'react-bootstrap';
 
 
 
@@ -18,6 +19,10 @@ function EntryMainPage(){
     const [hasMore, setHasMore] = useState(true);
     const [upvotes,setUpvotes] = useState([]);
     const [downvotes, setDownvotes] = useState([]);
+    const [isChanged, setIsChanged] = useState(true);
+    const [currentPage, setCurrentPage] = useState(0);
+    const maxComplaintLength = 100;
+    const [expand, setExpand] = useState([]);
     const baseurl = 'http://127.0.0.1:8000';
 
     useEffect(()=>{
@@ -49,7 +54,7 @@ function EntryMainPage(){
        .catch((error) => {
         console.log("Error getting complaints: ", error);
        })
-    }, [products]);
+    }, [isChanged]);
 
     const uploadProducts = async () => {
         try{
@@ -65,8 +70,11 @@ function EntryMainPage(){
                         const entryData = data.results ? data.results : data;
                         console.log("entry data: ", entryData);
                         if(entryData) {
-                            setProducts(prevProducts => [...prevProducts, ...entryData]);
+                            const newEntries = [...products, ...entryData];
+                            newEntries.sort((a, b) => parseInt(b.vote, 10) - parseInt(a.vote,10));
+                            setProducts(newEntries);
                             setPage(prevPage => prevPage + 1);
+                            setCurrentPage(prevPage => prevPage + 1);
                             setHasMore(entryData.length >= 16);
                         }
                         else{
@@ -88,8 +96,14 @@ function EntryMainPage(){
                         const entryData = data.results ? data.results : data;
                         console.log("entry data: ", entryData);
                         if(entryData) {
-                            setProducts(prevProducts => [...prevProducts, ...entryData]);
+                            const newEntries = [...products, ...entryData];
+                            newEntries.sort((a, b) => parseInt(b.vote, 10) - parseInt(a.vote,10));
+                            if(newEntries.length > expand.length) {
+                                setExpand(prev => [...prev, ...Array(entryData.length).fill(false)]);
+                            }
+                            setProducts(newEntries);
                             setPage(prevPage => prevPage + 1);
+                            setCurrentPage(currentPage + 1);
                             setHasMore(entryData.length >= 16);
                         }
                         else{
@@ -118,67 +132,79 @@ function EntryMainPage(){
         }
     }
 
-    function containsComplaint(upvotedOrDownvoted, id) {
-        if(upvotedOrDownvoted === "upvoted") {
-            if(upvotes && upvotes.some(complaint => complaint.id === id)) {
-                return true;
-            }
-            return false;
+    function containsComplaint(id) {
+        if(upvotes && upvotes.some(complaint => complaint.id === id)) {
+            return "upvotes";
         }
-        if(upvotedOrDownvoted === "downvoted") {
-            if(downvotes && downvotes.some(complaint => complaint.id === id)) {
-                return true;
-            }
-            return false;
+        else if(downvotes && downvotes.some(complaint => complaint.id === id)) {
+            return "downvotes";
         }
+        return "none";
     }
 
-    function handleUpvote(id) {
+    function handleUpvote(id, index) {
         console.log("handling upvote");
         axios.post(`${baseurl}/api/complaint/vote-up/`, {complaint_id: id})
         .then((response) => {
             console.log(response);
-            setComplaintData(id);
+            setIsChanged(!isChanged);
+
+            if(containsComplaint(id)==="upvotes"){
+                products[index].vote= (parseInt(products[index].vote, 10) - 1).toString();
+            }
+            else if(containsComplaint(id)==="downvotes"){
+                products[index].vote= (parseInt(products[index].vote, 10) + 2).toString();
+            }
+            else{
+                products[index].vote= (parseInt(products[index].vote, 10) + 1).toString();
+            }
+            setExpand(Array(expand.length).fill(false));
+            products.sort((a, b) => parseInt(b.vote, 10) - parseInt(a.vote, 10));
         })
         .catch((error) => {
             console.log(error);
         })
     }
 
-    function handleDownvote(id) {
+    function handleDownvote(id, index) {
         console.log("handling downvote");
         axios.post(`${baseurl}/api/complaint/vote-down/`, {complaint_id: id})
         .then((response) => {
             console.log(response);
-            setComplaintData(id);
+            setIsChanged(!isChanged);
+            if(containsComplaint(id)==="upvotes"){
+                products[index].vote= (parseInt(products[index].vote, 10) - 2).toString();
+            }
+            else if(containsComplaint(id)==="downvotes"){
+                products[index].vote= (parseInt(products[index].vote, 10) + 1).toString();
+            }
+            else{
+                products[index].vote= (parseInt(products[index].vote, 10) - 1).toString();
+            }
+            setExpand(Array(expand.length).fill(false));
+            products.sort((a, b) => parseInt(b.vote, 10) - parseInt(a.vote, 10));
+            // squeeze all expanded complaints while sorting.
+            
         })
         .catch((error) => {
             console.log(error);
         })
     }
-
-    function setComplaintData(complaintId) {
-        axios.get(`${baseurl}/api/entry/complaint-entry/${complaintId}/`)
-        .then((response) => {
-            console.log("complaint data: ", response.data);
-            for (let i = 0; i < products.length; i++) {
-                if(products[i].id === complaintId) {
-                    products[i].vote = response.data.vote;
-                    sortProducts();
-                    break;
-                }
+    
+    function toggleExpand(e,index) {
+        console.log(index);
+        let vals = [...expand];
+        for (let i = 0; i < vals.length; i++) {
+            const element = vals[i];
+            if(i === index) {
+                console.log("before: ", vals[i]);
+                vals[i] = !element;
+                console.log("after: ", vals[i]);
+                break;
             }
-        })
-        .catch((error) => {
-            console.log(error.response);
-        })
-    }
-
-
-    function sortProducts() {
-        console.log("in sortProducts");
-        const sortedProducts = [...products].sort((a,b) => b.vote - a.vote);
-        setProducts(sortedProducts);
+        }
+        console.log(vals);
+        setExpand(vals);
     }
 
     const goToProfile =  (id) => {
@@ -190,6 +216,7 @@ function EntryMainPage(){
         }
     }
 
+
     return (
         <div className="d-flex flex-column">
 
@@ -199,39 +226,59 @@ function EntryMainPage(){
             <div className="container d-flex h-100 justify-content-center">
                 <div className="row gx-1 gy-3 d-flex h-100" style={{ margin: '0px', width: '90%', marginTop: '-21px' }}>
                     <div className="col" data-aos="fade" data-aos-duration="500" >
-                        <div className="d-flex flex-column col-xl-6" style={{ background: 'var(--bs-white)', borderRadius: '10px', height: '100%', width: '100%', padding: '2%' }} data-bs-smooth-scroll="true">
+                        <div className="d-flex flex-column col-xl-6" style={{ background: 'var(--bs-white)', borderRadius: '10px', height: '100%', width: '75%', padding: '2%', display:'block', margin:'auto' }} data-bs-smooth-scroll="true">
                                 <InfiniteScroll
                                     dataLength={products.length}
                                     next={uploadProducts}
-                                    hasMore={hasMore} // Replace with a condition based on your data source
+                                    hasMore={hasMore}
                                     loader={<div style={{height:'50px'}}><span className="spinner-border spinner-border" aria-hidden="true" ></span></div>}
                                     endMessage={<p></p>}>
 
                                     <ul className="list-group" style={{ width: '100%', height: '100%', overflow: 'scroll' }} data-bs-smooth-scroll="true">
                                         {Array(products.length).fill().map((_, index) => {
                                             return (
-                                                <li key={index} className="list-group-item" style={{ padding: '5px', paddingBottom: '10px', borderStyle: 'none' }} data-aos="fade-left" data-aos-duration="500"  >
-                                                    <div className="card" style={{ borderStyle: 'none', background: '#A0ABC0' }}>
-                                                        <div className="card-body d-flex flex-row " style={{ borderStyle: 'none', height: '9vw', minHeight: '80px', paddingLeft: '5px', paddingBottom: '5px', paddingRight: '5px', paddingTop: '5px' }}>
+                                                <li key={index} className="list-group-item" style={{ padding: '0px', paddingBottom: '10px', borderStyle: 'none' }} data-aos="fade-left" data-aos-duration="500"  >
+                                                    <div className="card" style={{ borderStyle: 'none', background: '#d9e9fa' }}>
+                                                        <div className="card-body d-flex flex-row " style={{ borderStyle: 'none', minHeight: '12vw', minHeight: '80px', paddingLeft: '5px', paddingBottom: '5px', paddingRight: '5px', paddingTop: '5px' }}>
                                                             <div className="d-flex flex-column justify-content-between" style={{ width: '90%', height: '90%', margin: '0.7%', minWidth: '200px' }}>
                                                                 <div>
                                                                     <div className="d-flex ">
                                                                         <h1 className="d-flex align-items-center" style={{ fontFamily: 'Inter, sans-serif', fontWeight: 'bold', margin: '0px', fontSize: '20px', width: '70%' }}>{products[index].topic}</h1>
-                                                                        {products[index].target_mail ?  <button className="btn btn-primary d-flex justify-content-center align-items-center " type="button" style={{ width: '30%', height: '100%', fontWeight: 'bold', background: '#717D96', borderStyle: 'none', borderColor: '#2d3648', marginRight: '0px', minWidth: '120px' }}>
+                                                                        {products[index].target_mail ?  <button className="btn btn-primary d-flex justify-content-center align-items-center " type="button" style={{ width: 'fit-content', height: '100%', fontWeight: 'bold', background: '#6cb1f5', borderStyle: 'none', marginRight: '0px', minWidth: '120px' }}>
                                                                             <span className="d-flex" style={{ fontSize: '12px', fontFamily: 'Inter, sans-serif', fontWeight: 'bold', textAlign: 'center', marginRight: '-' }}>{products[index].target_mail}</span>
                                                                         </button> : <></>}
-                                                                    </div>
-                                                                    <h4 className="d-flex text-truncate text-start" style={{ fontFamily: 'Inter, sans-serif',fontSize: '13px', marginTop: '0px', paddingTop: '5px', whiteSpace: 'normal', height: '68.5938px' }}>{products[index].description}<br /><br /></h4>
+                                                                    </div>                                                                    
+                                                                    {
+                                                                        products[index].description.length > maxComplaintLength ?
+                                                                        <div style={{height: 'fit-content', marginTop:"2%"}}>
+                                                                            <h6 style={{ fontFamily: 'Inter, sans-serif',fontSize: '13px', marginTop: '0px', paddingTop: '5px', whiteSpace: 'normal', textAlign:'left' }} className="d-flex text-truncate text-start">{products[index].description.substring(0,maxComplaintLength)}{expand[index] ? products[index].description.substring(maxComplaintLength,products[index].description.length):"..."}</h6>
+                                                                            <button style={{ width: 'fit-content', height: '33%', background: '#0558b0', borderRadius: '10px', borderStyle: 'none'}} className="btn btn-primary d-flex justify-content-center align-items-center" type="button"  onClick={(e) => toggleExpand(e,index)}>{(!expand[index]) ? "Read more" : "Show less"}</button>
+                                                                        </div>:
+                                                                        <div>
+                                                                            <h6 style={{ fontFamily: 'Inter, sans-serif',fontSize: '13px', marginTop: '0px', paddingTop: '5px', whiteSpace: 'normal', textAlign:'left' }} className="d-flex text-truncate text-start">{products[index].description}</h6>
+                                                                        </div>
+                                                                    }
                                                                 </div>
                                                             </div>
                                                             <div className="d-flex flex-column" style={{ width: '6%', height: '90%', minWidth: '26px', margin: '0.7%' }}>
-                                                                {/** buraları düzeltmem gerekiyor!!! */}
-                                                                <button onClick={() => handleUpvote(products[index].id)} className="btn btn-primary d-flex justify-content-center align-items-center" type="button" style={containsComplaint("upvoted", products[index].id) ? clickedState : nonClickedState}>
-                                                                    <i className="bi bi-arrow-up" style={{ fontSize: '24px' }}></i>
+                                                                <button onClick={() => handleUpvote(products[index].id,index)} className="btn btn-primary d-flex justify-content-center align-items-center" type="button"
+                                                                        style={{ width: '100%', height: '33%', background: '#0558b0', borderRadius: '10px', borderStyle: 'none', borderBottomLeftRadius: '0px', borderBottomRightRadius: '0px',  borderTopLeftRadius: '10px',  borderTopRightRadius: '10px'}}>
+                                                                    {containsComplaint(products[index].id)==="upvotes" ?
+                                                                        <i className="bi bi-caret-up-fill" style={{ fontSize: '24px' }}></i>
+                                                                        :
+                                                                        <i className="bi bi-caret-up" style={{ fontSize: '24px' }}></i>
+                                                                    }
                                                                 </button>
-                                                                <h4 className="text-center d-flex justify-content-center align-items-center" style={{  fontSize: '18px', margin: '0px', height: '20%', color: 'white', fontFamily: 'Inter, sans-serif' }}>{products[index].vote}</h4>
-                                                                <button onClick={() => handleDownvote(products[index].id)} className="btn btn-primary d-flex justify-content-center align-items-center" type="button" style={containsComplaint("downvoted", products[index].id) ? clickedState:nonClickedState}>
-                                                                    <i className="bi bi-arrow-down" style={{ fontSize: '24px' }}></i>
+                                                                <div className=" d-flex justify-content-center align-items-center " style={{width: '100%', height: '33%', background: '#0558b0', borderStyle: 'none', borderRadius:'0px'}}>
+                                                                    <h4 className="text-center d-flex justify-content-center align-items-center" style={{  fontSize: '18px', margin: '0px', height: '20%', color: 'white', fontFamily: 'Inter, sans-serif' }}>{products[index].vote}</h4>
+                                                                </div>
+                                                                <button onClick={() => handleDownvote(products[index].id,index)} className="btn btn-primary d-flex justify-content-center align-items-center" type="button"
+                                                                        style={{ width: '100%', height: '33%', background: '#0558b0', borderBottomLeftRadius: '10px', borderBottomRightRadius: '10px',  borderTopLeftRadius: '0px',  borderTopRightRadius: '0px',  borderStyle: 'none' }}>
+                                                                    {containsComplaint(products[index].id)==="downvotes" ?
+                                                                        <i className="bi bi-caret-down-fill" style={{ fontSize: '24px' }}></i>
+                                                                        :
+                                                                        <i className="bi bi-caret-down" style={{ fontSize: '24px' }}></i>
+                                                                    }
                                                                 </button>
                                                             </div>
                                                             <div className="d-flex flex-column justify-content-center align-items-center" style={{ height: '90%', margin: '0.7%', width: '13%', minWidth: '60px', background: '#EDF0F7', borderRadius: '10px' }}
@@ -263,21 +310,5 @@ function EntryMainPage(){
     );
 
 };
-
-const clickedState = {
-    width: '100%',
-    height: '40%',
-    background: '#545f75',
-    borderRadius: '10px',
-    borderStyle: 'none' 
-}
-
-const nonClickedState = {
-    width: '100%',
-    height: '40%',
-    background: '#131924',
-    borderRadius: '10px',
-    borderStyle: 'none'
-}
 
 export default EntryMainPage;

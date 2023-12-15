@@ -16,9 +16,10 @@ export function ProductAddForm() {
     const [returnDate, setReturnDate] = useState();
     const [errMsg, setErrMsg] = useState("");
     const [count, setCount] = useState(0);
-    const tags = ["Electronics", "Book", "Clothing & Accessories","Toys & Games", "Household", "Sports","Art","Other"];
-    const vals = ["electronics", "book", "clothing_accessories", "toys_games", "household","sports", "art", "other"];
-    const [checked, setChecked] = useState("");
+    // const tags = ["Electronics", "Book", "Clothing & Accessories","Toys & Games", "Household", "Sports","Art","Other"];
+    // const vals = ["electronics", "book", "clothing_accessories", "toys_games", "household","sports", "art", "other"];
+    // const [checked, setChecked] = useState("");
+    const [type, setType] = useState("book")
 
     useEffect(() => {
         AOS.init();
@@ -53,9 +54,10 @@ export function ProductAddForm() {
         product.append('title', title);
         product.append('category', category);
         product.append('description', description);
-        if(checked) {
-            product.append('product_type',checked);
-        }
+        product.append("product_type", type);
+        // if(checked) {
+        //     product.append('product_type',checked);
+        // }
         console.log(product.keys());
         if (category === "secondhand") {
             console.log("In secondhand");
@@ -98,17 +100,17 @@ export function ProductAddForm() {
         return `${year}-${month}-${day}`;
     }
 
-    function handleCheck(e) {
-        setChecked(e.target.value);
-        console.log(checked);
-        // if(e.target.checked) {
-        //     setChecked([...checked, e.target.value]);
-        // }
-        // else {
-        //     setChecked((checked).filter((tag) => tag !== e.target.value));
-        // }
-        // console.log(checked);
-    }
+    // function handleCheck(e) {
+    //     setChecked(e.target.value);
+    //     console.log(checked);
+    //     // if(e.target.checked) {
+    //     //     setChecked([...checked, e.target.value]);
+    //     // }
+    //     // else {
+    //     //     setChecked((checked).filter((tag) => tag !== e.target.value));
+    //     // }
+    //     // console.log(checked);
+    // }
 
     return (
         <section id="section" className="d-flex d-xxl-flex flex-grow-1 justify-content-center align-items-start align-items-xl-start justify-content-xxl-center align-items-xxl-start py-4 py-xl-5" style={{ background: '#edf0f7', display: 'inline-block' }}>
@@ -118,7 +120,7 @@ export function ProductAddForm() {
                         className="col-xl-7 col-lg-8 col-md-9 col-11 text-center"
                         data-aos="fade-left"
                         data-aos-duration="600"
-                        style={{ width: 'fit-content', height: 'fit-content', minHeight: '450px', minWidth: "60%" }}
+                        style={{  height: 'fit-content', minHeight: '450px', minWidth: "60%" }}
                     >
                         <div id="formCard"
                             className="card"
@@ -210,7 +212,7 @@ export function ProductAddForm() {
                                     </div>
                                     <div className="row justify-content-between text-left">
                                         <h5 style={{ textAlign : 'left',fontFamily: 'Inter, sans-serif' }}>Choose Product Tags</h5>
-                                        {tags.map((tag,index) => {
+                                        {/* {tags.map((tag,index) => {
                                             return (
                                                 <div key={index} style={{width:'50%'}}>
                                                     <div className="form-check">
@@ -219,7 +221,28 @@ export function ProductAddForm() {
                                                     </div>
                                                 </div>
                                             )
-                                        }) }
+                                        }) } */}
+                                        <select value={type} onChange={(e) => { setType(e.target.value); console.log(e.target.value)}} className="form-control"
+                                            style={{
+                                                width: '100%',
+                                                fontFamily: 'Inter, sans-serif',
+                                                marginBottom: '15px',
+                                                height: '100%',
+                                                background: text_field_background,
+                                                borderRadius: '10px',
+                                                paddingLeft: '15px',
+
+                                            }}
+                                        >
+                                            <option value={"book"}>Book</option>
+                                            <option value={"art"}>Art</option>
+                                            <option value={"toys_games"}>Toys & Games</option>
+                                            <option value={"electronics"}>Electronics</option>
+                                            <option value={"clothing_accessories"}>Clothing & Accessories</option>
+                                            <option value={"household"}>Household</option>
+                                            <option value={"sports"}>Sports</option>
+                                            <option value={"other"}>Other</option>
+                                        </select>
                                     </div>
                                     {(category === "secondhand") ? (<div
                                         className="row justify-content-between text-left">
