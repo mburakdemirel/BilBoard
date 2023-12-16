@@ -100,10 +100,10 @@ function EntryMainPage(){
                         const {data} = await axios.get('http://127.0.0.1:8000/api/entry/complaint-entry/' + specific)
                         console.log(data);
 
-                        const entryData = data;
+                        const entryData = data.results ? data.results : data;
                         console.log("entry data: ", entryData);
                         if(entryData) {
-                            setProducts(entryData);
+                            setProducts([entryData]);
                             setExpand([false]);
                             setPage(prevPage => prevPage + 1);
                             setHasMore(false);

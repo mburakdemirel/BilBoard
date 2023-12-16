@@ -357,7 +357,7 @@ export function ProductAddForm({changeMode}) {
                                     {(category === "secondhand") ? (<div
                                         className="row justify-content-between text-left">
                                         <label className="form-control-label" style={{ textAlign : 'left',fontFamily: 'Inter, sans-serif'}}><h5>Price<small style={{color:'darkred', fontSize:'15px'}}> *</small></h5></label>
-                                        <input required={category === "secondhand"} readOnly={category !== "secondhand"} value={price} onChange={(e) => setPrice(e.target.value)} min={1} placeholder="Enter Price (in Turkish Liras)" type="number"
+                                        <input required={category === "secondhand"} readOnly={category !== "secondhand"} value={price} onChange={(e) => setPrice(e.target.value)} min={1} placeholder="Enter Price (in Turkish Liras)" step="0.01" max={1000000} type="number"
                                             className="form-control"
                                             style={{
                                                 width: '100%',
