@@ -19,6 +19,7 @@ redis_instance = get_redis_instance()
 def notification_util(notification_type: NotificationType, **kwargs):
     notification_header = notification_fields(
                 notification_type=notification_type,
+                category="complaint"
                 contact_name=kwargs.get("contact_name"),
                 related_item_id=kwargs.get("related_item_id"),
                 complaint_name=kwargs.get("complaint_name"),

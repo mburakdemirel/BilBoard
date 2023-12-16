@@ -97,6 +97,7 @@ def send_notification(sender, instance, created, **kwargs):
 
         content = {
             "id": instance.id,
+            "title": instance.title,
             "description": instance.description,
             "timestamp": str(instance.timestamp),
             "related_item_id": instance.related_item_id,

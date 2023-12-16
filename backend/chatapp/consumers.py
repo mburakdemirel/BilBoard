@@ -43,6 +43,7 @@ class ChatConsumer(WebsocketConsumer):
         if(self.notificationBoolean and not contact_online.is_online):
             notification_header = notification_fields(
                 notification_type=NotificationType.NEW_MESSAGE,
+                category=chat.category,
                 contact_name=author_user.name + ' ' + author_user.surname,
                 realted_item_id=chat.id,
             )
