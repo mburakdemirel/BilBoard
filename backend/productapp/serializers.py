@@ -87,6 +87,13 @@ class ProductUpdateSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         """Check category and set price, return_date fields."""
+        if data.get('product_photo') is not None:
+            product_photos = data.get('product_photo', [])
+            i = 1
+            for image in product_photos:
+                validate_image_safety(image, i)
+                i = i + 1
+        
         if self.instance:
             category = self.instance.category
         if category == 'secondhand':
