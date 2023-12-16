@@ -13,6 +13,8 @@ function EntryMainPage(){
     const urlParams = new URLSearchParams(window.location.search);
     const {pageType} = useParams();
     const searchText = urlParams.get('search');
+    const specific = urlParams.get('specific');
+
     const navigate = useNavigate();
     const myProfile = JSON.parse(localStorage.getItem('myProfile'));
     const [loading, setLoading] = useState(true);
@@ -31,9 +33,9 @@ function EntryMainPage(){
         AOS.init();
         console.log("pageType in entry page " + pageType);
         setProducts([]);
-        setPage(1)
+        setPage(1);
         // Messages in the selected index will be opened on the right side
-    },[pageType,searchText])
+    },[pageType,searchText,specific])
 
     useEffect(() => {
         console.log("page use effect" + page);
@@ -62,14 +64,14 @@ function EntryMainPage(){
         try{
             axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
             if(pageType){
-
+                debugger;
                 if(searchText){
 
                     try {
                         const {data} = await axios.get('http://127.0.0.1:8000/api/entry/complaint-entry/' + `?search=${searchText}`)
-                        console.log(data.results);
+                        console.log(data);
                         console.log(hasMore);
-                        const entryData = data.results ? data.results : data;
+                        const entryData = data;
                         console.log("entry data: ", entryData);
                         if(entryData) {
                             const newEntries = [...products, ...entryData];
@@ -88,6 +90,28 @@ function EntryMainPage(){
                         setHasMore(false);
                     }
 
+                }
+                else if(specific){
+                    try {
+                        const {data} = await axios.get('http://127.0.0.1:8000/api/entry/complaint-entry/' + specific)
+                        console.log(data);
+
+                        const entryData = data;
+                        console.log("entry data: ", entryData);
+                        if(entryData) {
+                            setProducts([entryData]);
+                            setPage(prevPage => prevPage + 1);
+                            setHasMore(false);
+
+                        }
+                        else{
+                            setHasMore(false);
+                        }
+
+                    }
+                    catch (e){
+                        setHasMore(false);
+                    }
                 }
                 else{
                     try {
@@ -234,7 +258,7 @@ function EntryMainPage(){
                                     next={uploadProducts}
                                     hasMore={hasMore}
                                     loader={<div style={{height:'50px'}}><span className="spinner-border spinner-border" aria-hidden="true" ></span></div>}
-                                    endMessage={<p></p>}>
+                                    >
 
                                     <ul className="list-group" style={{ width: '100%', height: '100%', overflow: 'scroll' }} data-bs-smooth-scroll="true">
                                         {Array(products.length).fill().map((_, index) => {

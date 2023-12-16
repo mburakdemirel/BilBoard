@@ -17,6 +17,7 @@ function EntryMainPage2(){
     const urlParams = new URLSearchParams(window.location.search);
     const {pageType} = useParams();
     const searchText = urlParams.get('search');
+    const specific = urlParams.get('specific');
     const myProfile = JSON.parse(localStorage.getItem('myProfile'));
     const [loading, setLoading] = useState(true);
     const [messagesLoading, setMesagesLoading] = useState(false);
@@ -30,7 +31,7 @@ function EntryMainPage2(){
         setProducts([]);
         setPage(1);
         // Messages in the selected index will be opened on the right side
-    },[searchText])
+    },[searchText,specific])
 
     useEffect(() => {
         console.log("page use effect" + page);
@@ -69,6 +70,29 @@ function EntryMainPage2(){
                     }
 
                 }
+                else if(specific){
+                    try {
+                        const {data} = await axios.get('http://127.0.0.1:8000/api/entry/laf-entry/' + specific)
+                        console.log(data);
+
+                        const lafEntries = data;
+                        console.log("lafdata data: ", lafEntries);
+                        if(lafEntries) {
+                            setProducts([lafEntries]);
+                            setPage(prevPage => prevPage + 1);
+                            setHasMore(false);
+
+                        }
+                        else{
+                            setHasMore(false);
+                        }
+
+                    }
+                    catch (e){
+                        setHasMore(false);
+                    }
+                }
+
                 else{
                     try {
                         const {data} = await axios.get('http://127.0.0.1:8000/api/entry/laf-entry/' + `?page=${page}`);
@@ -167,7 +191,7 @@ function EntryMainPage2(){
                 <div className="container d-flex justify-content-center align-items-center h-100">
                     <div className="row gx-1 gy-3 h-100" style={{ margin: '0px', width: '100%', marginTop: '-21px' }}>
 
-                        <div className="col shadow-sm p-0 " style={{ width: '45%', margin: '1%' }}  data-aos="fade-right" data-aos-duration="600">
+                        <div className="col shadow-sm p-0 " style={{ width: '45%', margin: '1%', height:'inherit' }}  data-aos="fade-right" data-aos-duration="600">
                             <div className="d-flex flex-column" style={{ background: 'var(--bs-white)', fontSize: '12px', borderRadius: '10px', height: '100%', width: '100%', padding: '2%' }} data-bs-smooth-scroll="true">
                                 <ul className="list-group" style={{ width: '100%', height: '100%', overflow: 'scroll' }} data-bs-smooth-scroll="true">
                                     {products.filter(item =>item.category==="lost").map((item,index) => (

@@ -124,7 +124,7 @@ function NavigationBarDefault() {
             navigate("/messages/" + notification.related_item_id);
         }
         else{
-            navigate("/complaints/" + notification.title);
+            navigate("/main_page/complaint/?search=" + notification.title);
             markSingle(notification.id,index);
         }
     }

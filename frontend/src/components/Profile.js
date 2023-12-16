@@ -205,10 +205,10 @@ function Products({myProfile, func, editMode}) {
             navigate('/product_detail/' + pageType + '/' + index);
         }
         else if(pageType==="lost" || pageType==="found"){
-            navigate("/main_page/lost&found/" + name);
+            navigate("/main_page/lost&found/?specific=" + name);
         }
         else{
-            navigate("/main_page/complaint/" + name);
+            navigate("/main_page/complaint/?specific=" + name);
         }
 
     }
@@ -351,7 +351,7 @@ function Products({myProfile, func, editMode}) {
 
                                         <div className="card d-flex" style={{ borderStyle: 'none', background: '#A0ABC0', margin:'5px',flex: '1', borderRadius:'10px'}} >
                                             <div className="card-body d-flex align-items-center w-100" style={{ borderStyle: 'none',  height: '100px', padding:'10px' }}
-                                                 onClick={()=>sendProductDetailPage(showedProducts[index].id,showedProducts[index].category,showedProducts[index].topic)}>
+                                                 onClick={()=>sendProductDetailPage(showedProducts[index].id,showedProducts[index].category,showedProducts[index].id)}>
                                                 <div className="d-flex flex-column justify-content-between" style={{ width: '100%', height: '90%', margin: '0.7%'}}>
 
                                                         <div className="d-flex justify-content-between">
