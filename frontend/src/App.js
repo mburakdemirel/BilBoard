@@ -4,7 +4,7 @@ import LandingPage from "./components/LandingPage";
 import LoginPage from "./components/LoginPage";
 import RegisterPage from "./components/RegisterPage";
 import ProductDetailPage from "./components/ProductDetailPage";
-import {Routes, Route} from 'react-router';
+import {Routes, Route, Router} from 'react-router';
 import NavigationBarLanding from './components/NavigationBarLanding';
 import Footer from './components/Footer';
 import NavigationBarDefault from "./components/NavigationBarDefault";
@@ -17,6 +17,7 @@ import {useState, useEffect} from "react";
 import { ProductAddForm } from './components/ProductAddForm';
 import { EntryForm } from './components/EntryForm';
 import EntryMainPage from "./components/EntryMainPage";
+import ProtectedRoutes from './components/ProtectedRoutes';
 
 import MainPage from "./components/MainPage";
 import ProfileOther from "./components/ProfileOther";
@@ -52,25 +53,28 @@ function App() {
           <div className="App">
 
               <Routes>
+                
                   <Route path='/' element={<><NavigationBarLanding/><LandingPage/></>}></Route>
                   <Route path='/login' element={<><NavigationBarLanding/><LoginPage/></>}></Route>
                   <Route path='/register' element={<><NavigationBarLanding/><RegisterPage/></>}></Route>
                   <Route path='/change_password' element={<><NavigationBarLanding/><ForgotPasswordPage/></>}></Route>
                   <Route path='/about' element={<><NavigationBarLanding/><AboutPage/></>}></Route>
                   {/** We will probably add a new component called <ProtectedRoute> or something for pages that should be seen after authentication */}
-                  <Route path='/profile' element={<><NavigationBarDefault/><Profile/></>}></Route>
-                  <Route path='/profile/:id' element={<><NavigationBarDefault/><ProfileOther/></>}></Route>
-                  <Route path='/messages/:chatId?' element={<><NavigationBarDefault/><MessagePage/></>}></Route>
-                  <Route path='/product_detail/:pageType/:id' element={<><NavigationBarDefault/><ProductDetailPage/></>}></Route>
+                  
+                  <Route path='/profile' element={<ProtectedRoutes><NavigationBarDefault/><Profile/></ProtectedRoutes>}></Route>
+                  <Route path='/profile/:id' element={<ProtectedRoutes><NavigationBarDefault/><ProfileOther/></ProtectedRoutes>}></Route>
+                  <Route path='/messages/:chatId?' element={<ProtectedRoutes><NavigationBarDefault/><MessagePage/></ProtectedRoutes>}></Route>
+                  <Route path='/product_detail/:pageType/:id' element={<ProtectedRoutes><NavigationBarDefault/><ProductDetailPage/></ProtectedRoutes>}></Route>
 
-                  <Route path='/main_page/:pageType/:searchText?' element={<><NavigationBarDefault/><MainPage/></>}> </Route>
-                  <Route path='/entry' element={<><NavigationBarDefault/><EntryForm/></>}> </Route>
-                  <Route path='/complaints' element={<><NavigationBarDefault/> <EntryMainPage/></>}> </Route>
+                  <Route path='/main_page/:pageType/:searchText?' element={<ProtectedRoutes><NavigationBarDefault/><MainPage/></ProtectedRoutes>}> </Route>
+                  <Route path='/entry' element={<ProtectedRoutes><NavigationBarDefault/><EntryForm/></ProtectedRoutes>}> </Route>
+                  <Route path='/complaints' element={<ProtectedRoutes><NavigationBarDefault/> <EntryMainPage/></ProtectedRoutes>}> </Route>
 
-                  <Route path='/add_product' element={<><NavigationBarDefault/><ProductAddForm changeMode={false}/></>}></Route>
-                  <Route path='/post_complaint' element={<><NavigationBarDefault/><EntryForm isComplaint={true}></EntryForm></>}></Route>
-                  <Route path='/post_l&f' element={<><NavigationBarDefault/><EntryForm isComplaint={false}></EntryForm></>}></Route>
-                  <Route path='/update_product/:id' element={<><NavigationBarDefault/><ProductAddForm changeMode={true}/></>}></Route>
+                  <Route path='/add_product' element={<ProtectedRoutes><NavigationBarDefault/><ProductAddForm changeMode={false}/></ProtectedRoutes>}></Route>
+                  <Route path='/post_complaint' element={<ProtectedRoutes><NavigationBarDefault/><EntryForm isComplaint={true}></EntryForm></ProtectedRoutes>}></Route>
+                  <Route path='/post_l&f' element={<ProtectedRoutes><NavigationBarDefault/><EntryForm isComplaint={false}></EntryForm></ProtectedRoutes>}></Route>
+                  <Route path='/update_product/:id' element={<ProtectedRoutes><NavigationBarDefault/><ProductAddForm changeMode={true}/></ProtectedRoutes>}></Route>
+                
               </Routes>
 
               <Footer></Footer>

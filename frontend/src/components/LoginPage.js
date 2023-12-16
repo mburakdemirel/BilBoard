@@ -42,6 +42,8 @@ function LoginPage() {
                 setLoading(false);
             } else {
                 localStorage.clear();
+                localStorage.setItem('expiry_date', Date.now() + 10000); //this sets the expiration time to be 1 hour
+                localStorage.setItem('last_refresh', Date.now() + 20000);
                 localStorage.setItem('access_token', data.access);
                 localStorage.setItem('refresh_token', data.refresh);
                 localStorage.setItem('authorization', `Bearer ${data['access']}`)

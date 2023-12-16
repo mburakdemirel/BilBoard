@@ -20,6 +20,7 @@ export function ProductAddForm({changeMode}) {
     const [type, setType] = useState("book");
     const [prodImg, setProdImg] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [discardedImgs, setDiscardedImgs] = useState([]);
     const [loadingMsg, setLoadingMsg] = useState("");
     const baseurl = 'http://127.0.0.1:8000';
 
@@ -41,6 +42,7 @@ export function ProductAddForm({changeMode}) {
                 setProdImg(response.data.images);
                 setCount(response.data.images.length);
                 setType(response.data.product_type);
+                setErrMsg("");
                 if(response.data.return_date) {
                     setReturnDate(response.data.return_date);
                 }
@@ -64,6 +66,7 @@ export function ProductAddForm({changeMode}) {
             setReturnDate("");
             setType("book");
             setPrice();
+            setErrMsg("");
             setCount(0);
         }
     },[changeMode]);
@@ -130,23 +133,42 @@ export function ProductAddForm({changeMode}) {
             catch (error) {
                 if (error.status === 500) { console.log(error.response); }
                 else if (error.response.status === 400) { console.log(error); 
+                    setLoading(false);
                     setErrMsg("Please fill the form with appropriate values!");
                 }
             }
         }
         else {
-            axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
-            axios. patch(`${baseurl}/api/user/product/${id}/`, product, { headers: { 'Content-Type': 'multipart/form-data' } })
-            .then((response) => {
-                console.log(response);
-                navigate(`/product_detail/${category}/${id}`);
-            })
-            .catch((error) => {
-                console.log(error);
-                if(error.response.status === 400) {
+            setLoading(true);
+            setLoadingMsg("Performing image checks...");
+            axios.patch(`${baseurl}/api/user/product/${id}/`, product, {
+                headers: { 'Content-Type': 'multipart/form-data' }
+              })
+                .then((response) => {
+                  console.log("patch response: ", response);
+                  console.log("Discarded img: ", discardedImgs);
+              
+                  const deleteRequests = discardedImgs.map((img) => {
+                    return axios.delete(`${baseurl}/api/product/${id}/delete-product-photo/${img.id}/`, {
+                      headers: { 'Authorization': localStorage.getItem('authorization') }
+                    });
+                  });
+                  return Promise.all(deleteRequests);
+                })
+                .then((deleteResponses) => {
+                  deleteResponses.forEach((deleteResponse) => {
+                    console.log("delete response: ", deleteResponse);
+                  });
+                  navigate(`/product_detail/${category}/${id}`);
+                })
+                .catch((error) => {
+                  console.log(error);
+                  if (error.response && error.response.status === 400) {
+                    setLoading(false);
                     setErrMsg("Please fill the form with appropriate values!");
-                }
-            })
+                  }
+                });
+              
         }
     }
 
@@ -172,26 +194,21 @@ export function ProductAddForm({changeMode}) {
     }
 
     function removeImg(e, index) {
-        e.preventDefault();
-        console.log(id);
-        console.log(prodImg[index].id);
-        console.log(prodImg);
-        axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
-        axios.delete(`${baseurl}/api/product/${id}/delete-product-photo/${prodImg[index].id}/`)
-        .then((response) => {
-            let arr = [];
-            for (let i = 0; i < prodImg.length; i++) {
-                if(i !== index) {
-                    arr = [...arr, prodImg[i]];
-                } 
+        let stay = [];
+        let discard = [];
+        for (let i = 0; i < prodImg.length; i++) {
+            if(i === index) {
+                discard = [...discardedImgs, prodImg[i]];
             }
-            setProdImg(arr);
-            setCount(prodImg.length);
-            console.log(response);
-        })
-        .catch((error) => {
-            console.log(error);
-        })
+            else {
+                stay = [...stay, prodImg[i]];
+            }
+        }
+        setDiscardedImgs(discard);
+        console.log("discarded: ", discard);
+        console.log("stays: ", stay);
+        setProdImg(stay);
+        setCount(stay.length);
     }
 
     return (
@@ -267,25 +284,26 @@ export function ProductAddForm({changeMode}) {
                                         <input required={!changeMode} name="product_photos" onChange={(e) => { handleImage(e); }}
                                             id="FormControl" type="file" accept="image/*" multiple></input>
                                         <div style={{ display: 'flex', flexWrap: 'wrap' , marginBottom: '20px',}}>
-                                            <div>
+                                            <div style={{ display: 'flex', flexWrap: 'wrap' , marginBottom: '20px',}}>
                                             {photo ?  photo.map((imagePreview, index) => (
-                                                <div key={index} style={{ margin: '10px', textAlign: 'center' }}>
+                                                <div key={index} style={{ margin: '10px', textAlign: 'left', width: '50%' }}>
                                                     <img
                                                         src={URL.createObjectURL(imagePreview)}
                                                         alt={`Preview ${index}`}
-                                                        style={{ border: 'solid grey 1px', maxWidth: '100px', maxHeight: '100px', borderRadius: '5px', marginRight: '5%' }}
+                                                        style={{ border: 'solid grey 1px', maxWidth: '100px', maxHeight: '100px', borderRadius: '5px', marginRight: '4%' }}
                                                     />
                                                     <button onClick={(e) => discardSelectedImg(e,index)} className="btn btn-primary" type="button" style={{ marginLeft:'5px', width: '40px', fontWeight: 'bold', background: '#0558b0', borderStyle: 'none', borderColor: '#0558b0', height: '30px' }}><i className="bi bi-x-lg"></i></button> 
                                                 </div>
                                             )) : <></> }
-                                            </div> 
+                                            </div>
+                                            <div style={{ display: 'flex', flexWrap: 'wrap' , marginBottom: '20px',width:'100%'}}>
                                             {changeMode ? prodImg.map((img, index) => (
-                                            <div key={index} style={{ margin: '10px', textAlign: 'center' }}>
-                                                <img src={img.image} alt='prod_photo' style={{ border: 'solid grey 1px', maxWidth: '100px', maxHeight: '100px', borderRadius: '5px' }}></img>
-                                                <button disabled={count === 1} onClick={(e) => removeImg(e,index)} className="btn btn-primary" type="button" style={{ marginLeft:'5px', width: '40px', fontWeight: 'bold', background: '#0558b0', borderStyle: 'none', borderColor: '#0558b0', height: '30px' }}><i style={{}} className="bi bi-x-lg"></i></button> 
+                                            <div key={index} style={{ margin: '10px', textAlign: 'left', width:'50%' }}>
+                                                <img src={img.image} alt='prod_photo' style={{ border: 'solid grey 1px', maxWidth: '100px', maxHeight: '100px', borderRadius: '5px',marginRight: '4%' }}></img>
+                                                <button disabled={count === 1} onClick={(e) => removeImg(e,index)} className="btn btn-primary" type="button" style={{ marginLeft:'5px', width: '40px', fontWeight: 'bold', background: '#0558b0', borderStyle: 'none', borderColor: '#0558b0', height: '30px' }}><i className="bi bi-x-lg"></i></button> 
                                             </div>
                                             )) : <></>}
-                                                
+                                            </div>
                                             
                                         </div>
                                     </div>
@@ -371,6 +389,7 @@ export function ProductAddForm({changeMode}) {
                                 </div>
                             </form>
                             </div>}
+                            {loadingMsg ? <h4>{loadingMsg}</h4> : <></>}
                         </div>
                     </div>
                 </div>

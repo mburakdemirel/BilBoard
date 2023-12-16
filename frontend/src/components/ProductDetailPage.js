@@ -300,9 +300,9 @@ function ProductDetailPage() {
                                     className="btn btn-primary d-flex d-xxl-flex justify-content-center align-items-center justify-content-xxl-center align-items-xxl-center"
                                     type="button"
                                     style={{ marginLeft:"1%", marginRight:"1%", width: '40px', fontWeight: 'bold', background: '#2d3648', borderStyle: 'none', borderColor: '#2d3648', height: '90%' }}
-                                    onClick={(e) => {e.preventDefault(); navigate(`/update_product/${product.id}`)}}
+                                    onClick={(e) => { navigate(`/update_product/${product.id}`)}}
                                     >
-                                        <i className="bi bi-gear"></i>
+                                         <i className="bi bi-pencil-square"></i>
                                     </button>
                                     </>
                                     :
