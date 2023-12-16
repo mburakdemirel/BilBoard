@@ -38,7 +38,7 @@ function RegisterPage(){
         else{
             try{
 
-                const {data} = await axios.post('http://127.0.0.1:8000/api/user/change-password/'+ "?token="+ token, passwordData) ;
+                const {data} = await axios.post('http://127.0.0.1:8000/api/user/change-password/'+ "?token="+ token, passwordData);
                 console.log(data);
                 window.location.href = "/login";
 

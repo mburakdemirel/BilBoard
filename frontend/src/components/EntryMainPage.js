@@ -13,6 +13,7 @@ function EntryMainPage(){
     const urlParams = new URLSearchParams(window.location.search);
     const {pageType} = useParams();
     const searchText = urlParams.get('search');
+    console.log(searchText);
     const specific = urlParams.get('specific');
 
     const navigate = useNavigate();
@@ -24,12 +25,13 @@ function EntryMainPage(){
     const [upvotes,setUpvotes] = useState([]);
     const [downvotes, setDownvotes] = useState([]);
     const [isChanged, setIsChanged] = useState(true);
-    const [currentPage, setCurrentPage] = useState(0);
+
     const maxComplaintLength = 330;
     const [expand, setExpand] = useState([]);
     const baseurl = 'http://127.0.0.1:8000';
 
     useEffect(()=>{
+
         AOS.init();
         console.log("pageType in entry page " + pageType);
         setProducts([]);
@@ -64,11 +66,12 @@ function EntryMainPage(){
         try{
             axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
             if(pageType){
-                debugger;
+
                 if(searchText){
 
                     try {
                         const {data} = await axios.get('http://127.0.0.1:8000/api/entry/complaint-entry/' + `?search=${searchText}`)
+                        setPage(prevPage => prevPage + 1);
                         console.log(data);
                         console.log(hasMore);
                         const entryData = data;
@@ -77,8 +80,6 @@ function EntryMainPage(){
                             const newEntries = [...products, ...entryData];
                             newEntries.sort((a, b) => parseInt(b.vote, 10) - parseInt(a.vote,10));
                             setProducts(newEntries);
-                            setPage(prevPage => prevPage + 1);
-                            setCurrentPage(prevPage => prevPage + 1);
                             setHasMore(entryData.length >= 16);
                         }
                         else{
@@ -129,7 +130,7 @@ function EntryMainPage(){
                             }
                             setProducts(newEntries);
                             setPage(prevPage => prevPage + 1);
-                            setCurrentPage(currentPage + 1);
+
                             setHasMore(entryData.length >= 16);
                         }
                         else{
@@ -274,7 +275,7 @@ function EntryMainPage(){
                                                                     <div>
                                                                         <div className="d-flex justify-content-between">
                                                                             <h1 className="d-flex align-items-center" style={{ fontFamily: 'Inter, sans-serif', fontWeight: 'bold', margin: '0px', fontSize: '20px', width: '70%' }}>{products[index].topic}</h1>
-                                                                            <a href={`mailto:${products[index].target_mail}?subject=BilBoard: ${products[index].topic}`} style={{textDecoration:'none'}}>
+                                                                            <a  title="Send an email to Yusuf Toraman" href={`mailto:${products[index].target_mail}?subject=BilBoard: ${products[index].topic}`} style={{textDecoration:'none'}}>
                                                                                 {products[index].target_mail ?  <button className="btn btn-primary d-flex justify-content-center align-items-center " type="button" style={{ width: 'fit-content', height: '100%', fontWeight: 'bold', background: '#6cb1f5', borderStyle: 'none', marginRight: '0px', minWidth: '120px' }}>
                                                                                     <span className="d-flex" style={{ fontSize: '12px', fontFamily: 'Inter, sans-serif', fontWeight: 'bold', textAlign: 'center', color:'white' }}>{products[index].target_mail}</span>
                                                                                 </button> : <></>}

@@ -243,17 +243,25 @@ function Products({allMessages, pull_data, deleteMessage, loading, chatId,firstM
                                                 <i className="bi bi-trash"></i>
                                             </button>
                                             <span style={{ width: '12px' }}></span>
-                                            <div className="d-flex justify-content-center align-items-center" style={{ height:'80px', width: '80px', margin: '0px', padding: '0px' }}>
-                                                <img
-                                                    role="button"
-                                                    className="d-block w-100"
-                                                    style={{ borderRadius: '8px', height: '95%', objectFit: 'cover' }}
-                                                    src={allMessages[index].image_url == null ? Placeholder : allMessages[index].image_url}
-                                                    onClick={(e) => {
-                                                        e.stopPropagation(); // This will stop the event from bubbling up
-                                                        goToItem(allMessages[index].category, allMessages[index].product_id, allMessages[index].product_name);
-                                                    }}
-                                                />
+                                            <div role="button" className="d-flex justify-content-center align-items-center" style={{ height:'80px', width: '80px', margin: '0px', padding: '0px' }}
+                                                 onClick={(e) => {
+                                                     e.stopPropagation(); // This will stop the event from bubbling up
+                                                     goToItem(allMessages[index].category, allMessages[index].product_id, allMessages[index].product_name);
+                                                 }}>
+                                                {allMessages[index].category === "lost" || allMessages[index].category === "found" ?
+                                                    <div className="d-flex justify-content-center align-items-center" style={{ height: '40%', width: '100%', background: '#9ebcdb', borderRadius: '10px' }}>
+                                                        <span className="d-flex" style={{ fontSize: '12px', fontFamily: 'Inter, sans-serif', fontWeight: 'bold', textAlign: 'center', color: 'rgb(255,255,255)' }}>{allMessages[index].category}</span>
+                                                    </div>
+                                                    :
+                                                    <img
+                                                        role="button"
+                                                        className="d-block w-100"
+                                                        style={{ borderRadius: '8px', height: '95%', objectFit: 'cover' }}
+                                                        src={allMessages[index].image_url == null ? Placeholder : allMessages[index].image_url}
+
+                                                    />
+                                                }
+
                                             </div>
 
                                         </div>

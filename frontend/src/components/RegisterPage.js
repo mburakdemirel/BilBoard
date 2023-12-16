@@ -5,12 +5,14 @@ import NavigationBarLanding from "./NavigationBarLanding";
 import Footer from "./Footer";
 import {useState} from "react";
 import axios from "axios";
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 
 
 
 function RegisterPage(){
-    // User variables
+
+    const navigate = useNavigate();
+
     // User variables
     const [name, setName] = useState('');
     const [surname, setSurname] = useState('');
@@ -39,9 +41,11 @@ function RegisterPage(){
         else{
             try{
                 // Create the POST request
+                localStorage.clear();
+                axios.defaults.headers.common['Authorization'] = undefined;
                 const {data} = await axios.post('http://127.0.0.1:8000/api/user/register/', user) ;
                 console.log(data);
-                window.location.href = "/login";
+                navigate("/login?check=not_verified");
 
             } catch (error) {
                 setLoading(false);

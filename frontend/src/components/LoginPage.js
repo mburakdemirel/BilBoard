@@ -10,11 +10,14 @@ function LoginPage() {
 
     const urlParams = new URLSearchParams(window.location.search);
     const token = urlParams.get('token');
-
+    const check = urlParams.get('check');
+    console.log(token);
     // User variables
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState(null);
+    const [verified, setVerified] = useState(null);
+    const [checked, setChecked] = useState(null);
     const [loading, setLoading] = useState(false);
     const [isForgotPassword, setIsForgotPassword] = useState(false);
 
@@ -24,11 +27,38 @@ function LoginPage() {
         AOS.init();
 
         if(token){
-
-
+            verifyUser();
+        }
+        if(check==="not_verified"){
+            setChecked("Check your email to activate your account");
         }
 
     }, []);
+
+    const verifyUser = async () => {
+        try {
+            const {data} = await axios.get('http://127.0.0.1:8000/api/user/verify/'+ "?token="+ token);
+            setVerified(data.email);
+            console.log(data.email);
+        }
+        catch (error) {
+
+            if (error.response) {
+                if (error.response.status === 400) {
+                    setError(`Activation Expired or Invalid Token`);
+                } else {
+                    setError(`Server responded with status code ${error.response.status}`);
+                }
+
+            } else if (error.request) {
+                setError('No response received from the server.');
+            } else {
+                setError('An error occurred while setting up the request.');
+            }
+        }
+
+    }
+
 
     // Submit method
     const submit = async (e) => {
@@ -66,7 +96,11 @@ function LoginPage() {
             if (error.response) {
                 if (error.response.status === 401) {
                     setError(`Your email or password is wrong`);
-                } else {
+                }
+                else if(error.response.status === 400) {
+                    setError(`Email should be verified`);
+                }
+                else {
                     setError(`Server responded with status code ${error.response.status}`);
                 }
 
@@ -77,6 +111,7 @@ function LoginPage() {
             }
 
         }
+
     }
 
     const turnBack = () => {
@@ -267,6 +302,25 @@ function LoginPage() {
                                                 fontFamily: 'Inter, sans-serif',
                                                 marginRight: '5px'
                                             }}>{error}</div>}
+
+                                            {verified && <div className="alert alert-success" role="alert"  style={{
+                                                fontSize: '12px',
+                                                margin: '0px',
+                                                padding: '10px',
+                                                textAlign: 'center',
+                                                fontFamily: 'Inter, sans-serif',
+                                                marginRight: '5px'
+                                            }}>{verified}</div>}
+
+                                            {check && <div className="alert alert-info" role="alert"  style={{
+                                                fontSize: '12px',
+                                                margin: '0px',
+                                                padding: '10px',
+                                                textAlign: 'center',
+                                                fontFamily: 'Inter, sans-serif',
+                                                marginRight: '5px'
+                                            }}>{checked}</div>}
+
                                         </div>
 
                                     </div>

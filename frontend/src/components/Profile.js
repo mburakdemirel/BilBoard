@@ -551,7 +551,6 @@ function ProfileArea({myProfile,func} ) {
     const logOut = () => {
         localStorage.clear();
         navigate("/login");
-
     };
 
     return (
