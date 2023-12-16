@@ -82,7 +82,7 @@ function EntryMainPage(){
                             console.log(entryData);
                             setProducts(entryData);
                             setPage(prevPage => prevPage + 1);
-                            setCurrentPage(prevPage => prevPage + 1);
+
                             setHasMore(entryData.length >= 16);
                         }
                         else{
