@@ -326,11 +326,9 @@ def clicked_favorites(request):
 
 @api_view(['DELETE'])
 @permission_classes([IsAuthenticated])
-def delete_product_photo(request):
-    print ("LOGIMP\n\n\n\n\n")
+def delete_product_photo(request, product_id, image_id):
+    print("selam buraya gir\n\n\n")
     user = request.user
-    product_id = request.data.get('product_id')
-    image_id = request.data.get('image_id')
     try:
         product = Product.objects.get(id=product_id, user=user)
     except Product.DoesNotExist:
@@ -348,7 +346,7 @@ def delete_product_photo(request):
     image.delete()
 
     if product.category == 'secondhand':
-            cache.delete_pattern("secondhand_products_*")
+        cache.delete_pattern("secondhand_products_*")
     elif product.category == 'borrow':
         cache.delete_pattern("borrow_products_*")
     elif product.category == 'donation':

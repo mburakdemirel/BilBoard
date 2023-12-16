@@ -37,5 +37,5 @@ urlpatterns = [
     path('', include(router.urls)),
     path('products/by-id/', get_products_by_user_id, name='get-products-by-user-id'),
     path('product/clicked-favorites/', clicked_favorites, name='clicked-favorites'),
-    path('product/delete-product-photo/', views.delete_product_photo, name='delete_product_photo')
+    path('product/<int:product_id>/delete-product-photo/<int:image_id>/', views.delete_product_photo, name='delete-product-photo')
 ]
