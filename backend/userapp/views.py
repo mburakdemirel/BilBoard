@@ -41,7 +41,7 @@ class CreateUserView(generics.CreateAPIView):
         if response.status_code == 201:
             # Create Online User Model
             user = CustomUser.objects.get(email=request.data['email'])
-            online_user_model = OnlineUserModel.objects.create(user=response.data['id'])
+            online_user_model = OnlineUserModel.objects.create(user=user)
             # Send verification email
             # Change with a nice html template later on
             email_verification_token = jwt.encode({'user_id': user.id, 'email': user.email}, settings.SECRET_KEY, algorithm='HS256')
