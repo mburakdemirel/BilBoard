@@ -297,7 +297,7 @@ function Products({myProfile, func, editMode}) {
                     <div className="input-group text-center d-flex flex-row "  style={{width: '91%', borderStyle: 'none', borderBottomStyle: 'none', height: '40px', marginBottom: '10px',}}
                          data-aos="flip-down" data-aos-duration="700">
                         <ul className="nav nav-pills d-flex justify-content-between w-100">
-                            <li className="nav-item" style={{width: '48%'}}>
+                            <li className="nav-item" style={{width: filteredProductsType==="lostandfound" ? '100%' : '48%'}}>
                                 <a className="nav-link active" aria-current="page"
                                    onClick={(event) => setUploadedOrFavorites("uploaded")}
                                    style={{background: uploadedOrFavorites==="uploaded"? '#2d3648' : '#717d96' , color: '#ffffff', fontFamily: 'Inter, sans-serif', fontSize: 'inherit',fontWeight: uploadedOrFavorites==="uploaded"? 'bold':''}}>Uploaded</a>
