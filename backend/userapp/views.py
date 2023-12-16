@@ -105,7 +105,7 @@ class ManageUserView(generics.RetrieveUpdateDestroyAPIView):
 
     def get_object(self):
         return self.request.user
-    
+
     def update(self, request, *args, **kwargs):
         cache.delete_pattern("laf_entries_*")
         cache.delete_pattern("complaint_entries_*")
@@ -152,7 +152,7 @@ class ManageUserView(generics.RetrieveUpdateDestroyAPIView):
         cache.delete_pattern("laf_entries_*")
         cache.delete_pattern("complaint_entries_*")
         return Response(status=status.HTTP_204_NO_CONTENT)  # Return no content response with 204 status code
-    
+
 @api_view(['POST'])
 def ChangePassword(request):
     if request.method == 'POST':
@@ -174,10 +174,10 @@ def ChangePassword(request):
             validate_password(password, user)
         except ValidationError as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
-        
+
         if user.used_password_reset_token == token:
             return Response({'error': 'This link has already been used.'}, status=status.HTTP_400_BAD_REQUEST)
-        
+
         user.used_password_reset_token = token
         user.set_password(password)
         user.save()
@@ -218,8 +218,8 @@ def ListMyFavorites(request):
     if count == 0:
         return Response({"message": "There are no favorited products of user", })
     else:
-        return Response({"message": serializer.data})  
-    
+        return Response({"message": serializer.data})
+
 
 @api_view(['DELETE'])
 @permission_classes([IsAuthenticated])
