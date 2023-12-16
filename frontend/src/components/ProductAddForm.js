@@ -166,6 +166,7 @@ export function ProductAddForm({changeMode}) {
                   console.log(error);
                   if (error.response && error.response.status === 400) {
                     setLoading(false);
+                    setLoadingMsg("");
                     setErrMsg("Please fill the form with appropriate values!");
                   }
                 });

@@ -74,12 +74,15 @@ function EntryMainPage(){
                         setPage(prevPage => prevPage + 1);
                         console.log(data);
                         console.log(hasMore);
-                        const entryData = data;
+                        const entryData = data.results ? data.results : data;
                         console.log("entry data: ", entryData);
                         if(entryData) {
                             const newEntries = [...products, ...entryData];
                             newEntries.sort((a, b) => parseInt(b.vote, 10) - parseInt(a.vote,10));
-                            setProducts(newEntries);
+                            console.log(entryData);
+                            setProducts(entryData);
+                            setPage(prevPage => prevPage + 1);
+                            setCurrentPage(prevPage => prevPage + 1);
                             setHasMore(entryData.length >= 16);
                         }
                         else{
@@ -100,7 +103,8 @@ function EntryMainPage(){
                         const entryData = data;
                         console.log("entry data: ", entryData);
                         if(entryData) {
-                            setProducts([entryData]);
+                            setProducts(entryData);
+                            setExpand([false]);
                             setPage(prevPage => prevPage + 1);
                             setHasMore(false);
 
@@ -128,6 +132,7 @@ function EntryMainPage(){
                             if(newEntries.length > expand.length) {
                                 setExpand(prev => [...prev, ...Array(entryData.length).fill(false)]);
                             }
+                            console.log(entryData);
                             setProducts(newEntries);
                             setPage(prevPage => prevPage + 1);
 

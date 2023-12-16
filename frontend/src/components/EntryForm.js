@@ -9,6 +9,7 @@ export function EntryForm({ isComplaint }) {
     const [description, setDescription] = useState("");
     const [category, setCategory] = useState("lost");
     const [targetMail, setTargetMail] = useState();
+    const [errMsg, setErrMsg] = useState("");
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
@@ -32,6 +33,9 @@ export function EntryForm({ isComplaint }) {
                 }
             }
             catch (error) {
+                if(error.response.status === 400) {
+                    setErrMsg("Please provide appropriate values!");
+                } 
                 console.log(error.response);
             }
         }
@@ -83,7 +87,7 @@ export function EntryForm({ isComplaint }) {
                             <form onSubmit={handleSubmit} method="post" className="form-card justify-content-center align-items-center" style={{ margin: 'auto', width: '60%' }}>
 
                             {isComplaint ? <h3 className="text-center" style={{ fontFamily: 'Inter,sans-serif',marginBottom: '30px' }}>Post a New Complaint</h3> : <h3 className="text-center" style={{ fontFamily: 'Inter,sans-serif',marginBottom: '30px' }}>Post a Lost/Found Notice</h3>}
-
+                                {errMsg && <div className="alert alert-danger" role="alert">{errMsg}</div>}
                                 <div className="col-xl-6 flex-column d-flex " style={{ width: '100%' }}>
                                     <div className="form-group row justify-content-between text-center">
                                         <label className="form-control-label"style={{ textAlign: 'left',fontFamily: 'Inter, sans-serif', marginTop: '2%',marginBottom:'2%' }}><h5>Topic/Title</h5></label>
