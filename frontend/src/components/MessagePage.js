@@ -258,7 +258,6 @@ function Products({allMessages, pull_data, deleteMessage, loading, chatId,firstM
                                                         className="d-block w-100"
                                                         style={{ borderRadius: '8px', height: '95%', objectFit: 'cover' }}
                                                         src={allMessages[index].image_url == null ? Placeholder : allMessages[index].image_url}
-
                                                     />
                                                 }
 
