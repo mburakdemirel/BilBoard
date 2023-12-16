@@ -290,8 +290,8 @@ function NavigationBarDefault() {
 
                         <Dropdown.Menu>
                             <Dropdown.Item onClick={() => {navigate("/add_product")}}>Add Product</Dropdown.Item>
-                            <Dropdown.Item onClick={() => {navigate("/post_complaint")}}>Add Complaint</Dropdown.Item>
                             <Dropdown.Item onClick={() => {navigate("/post_l&f")}}>Add Lost or Found Entry</Dropdown.Item>
+                            <Dropdown.Item onClick={() => {navigate("/post_complaint")}}>Add Complaint</Dropdown.Item>
                         </Dropdown.Menu>
                     </Dropdown>
 

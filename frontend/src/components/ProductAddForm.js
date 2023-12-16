@@ -239,7 +239,7 @@ export function ProductAddForm({changeMode}) {
                             }}
                         >
                             {loading ? (<div style={{height:'50px'}}><span className="spinner-border spinner-border" aria-hidden="true" ></span></div> ):
-                            <div>
+                            <div >
                             <h3 className="text-center" style={{ fontFamily: 'Inter,sans-serif' }}>{!changeMode ? "Add a New Product":"Update Product"}</h3>
                             {errMsg && <div className="alert alert-danger" role="alert">{errMsg}</div>}
                             <form onSubmit={handleSubmit} method="post" className="form-card" style={{ height: 'fit-content', margin: 'auto', width: '60%' }}>
@@ -286,19 +286,22 @@ export function ProductAddForm({changeMode}) {
                                         <label className="form-control-label" htmlFor="FormControl" style={{ fontFamily: 'Inter, sans-serif', textAlign: 'left' }}>Choose files to upload (at most 5)</label>
                                         <input required={!changeMode} name="product_photos" onChange={(e) => { handleImage(e); }}
                                             id="FormControl" type="file" accept="image/*" multiple></input>
-                                        <div style={{ display: 'flex', flexWrap: 'wrap' , marginBottom: '20px',}}>
-                                            <div style={{ display: 'flex', flexWrap: 'wrap' , marginBottom: '20px',}}>
-                                            {photo ?  photo.map((imagePreview, index) => (
-                                                <div key={index} style={{ margin: '10px', textAlign: 'left', width: '50%' }}>
-                                                    <img
-                                                        src={URL.createObjectURL(imagePreview)}
-                                                        alt={`Preview ${index}`}
-                                                        style={{ border: 'solid grey 1px', maxWidth: '100px', maxHeight: '100px', borderRadius: '5px', marginRight: '4%' }}
-                                                    />
-                                                    <button onClick={(e) => discardSelectedImg(e,index)} className="btn btn-primary" type="button" style={{ marginLeft:'5px', width: '40px', fontWeight: 'bold', background: '#0558b0', borderStyle: 'none', borderColor: '#0558b0', height: '30px' }}><i className="bi bi-x-lg"></i></button> 
-                                                </div>
-                                            )) : <></> }
+                                        <div className="d-flex flex-row justify-content-center" style={{ width:'100%', marginBottom: '20px',}}>
+                                            <div className="d-flex flex-row">
+                                                {photo ? photo.map((imagePreview, index) => (
+                                                    <div className="d-flex flex-column align-items-center" key={index} style={{ margin: '10px', textAlign: 'left', width: '50%' }}>
+                                                        <img
+                                                            src={URL.createObjectURL(imagePreview)}
+                                                            alt={`Preview ${index}`}
+                                                            style={{ border: 'solid grey 1px', width: '100px', height: '100px', borderRadius: '5px', marginBottom: '5%' }}
+                                                        />
+                                                        <button onClick={(e) => discardSelectedImg(e,index)} className="btn btn-primary" type="button" style={{ marginLeft:'5px', width: '40px', fontWeight: 'bold', background: '#0558b0', borderStyle: 'none', borderColor: '#0558b0', height: '40px' }}>
+                                                            <i className="bi bi-x-lg"></i>
+                                                        </button>
+                                                    </div>
+                                                )) : <></> }
                                             </div>
+
                                             <div style={{ display: 'flex', flexWrap: 'wrap' , marginBottom: '20px',width:'100%'}}>
                                             {changeMode ? prodImg.map((img, index) => (
                                             <div key={index} style={{ margin: '10px', textAlign: 'left', width:'50%' }}>

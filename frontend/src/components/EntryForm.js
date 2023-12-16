@@ -60,7 +60,7 @@ export function EntryForm({ isComplaint }) {
             }
             catch (error) {
                 if(error.response.status === 400) {
-                    setErrMsg("Please porvide appropriate input values!");
+                    setErrMsg("Please provide appropriate input values!");
                 }
                 if(error.response.status === 500) {
                     setErrMsg("Internal server error");
