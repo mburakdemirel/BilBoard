@@ -34,7 +34,7 @@ function ProtectedRoutes({ children }) {
                         console.log(response);
                         token = localStorage.setItem('access_token', response.data.access);
                         refresh = localStorage.setItem('refresh_token', response.data.refresh);
-                        expire = localStorage.setItem('expiry_date', Date.now() + 20000);
+                        expire = localStorage.setItem('expiry_date', Date.now() + 3600000);
                         loggedin = true;
                     })
                     .catch((error) => {
