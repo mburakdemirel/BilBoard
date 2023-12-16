@@ -135,6 +135,7 @@ export function ProductAddForm({changeMode}) {
                 if (error.status === 500) { console.log(error.response); }
                 else if (error.response.status === 400) { console.log(error); 
                     setLoading(false);
+                    setLoadingMsg("");
                     setErrMsg("Please fill the form with appropriate values!");
                 }
             }
