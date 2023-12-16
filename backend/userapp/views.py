@@ -27,6 +27,7 @@ from django.core.exceptions import ValidationError
 from productapp import serializers
 from bilboard_backend.redis_config import get_redis_instance
 from bilboard_backend.redis_config import cache
+from mainapp.models import OnlineUserModel
 redis_instance = get_redis_instance()
 
 
@@ -38,7 +39,9 @@ class CreateUserView(generics.CreateAPIView):
         # First, let the serializer create the user
         response = super().create(request, *args, **kwargs)
         if response.status_code == 201:
+            # Create Online User Model
             user = CustomUser.objects.get(email=request.data['email'])
+            online_user_model = OnlineUserModel.objects.create(user=response.data['id'])
             # Send verification email
             # Change with a nice html template later on
             email_verification_token = jwt.encode({'user_id': user.id, 'email': user.email}, settings.SECRET_KEY, algorithm='HS256')
