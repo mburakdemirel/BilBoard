@@ -296,14 +296,15 @@ function ProductDetailPage() {
                                         {!loading &&
                                             <i className="bi bi-trash"></i>}
                                     </button>
-                                    <button
-                                    className="btn btn-primary d-flex d-xxl-flex justify-content-center align-items-center justify-content-xxl-center align-items-xxl-center"
-                                    type="button"
-                                    style={{ marginLeft:"1%", marginRight:"1%", width: '40px', fontWeight: 'bold', background: '#2d3648', borderStyle: 'none', borderColor: '#2d3648', height: '90%' }}
-                                    onClick={(e) => { navigate(`/update_product/${product.id}`)}}
-                                    >
-                                         <i className="bi bi-pencil-square"></i>
-                                    </button>
+                                    <button disabled={loading}
+                                        className="btn btn-primary d-flex d-xxl-flex justify-content-center align-items-center justify-content-xxl-center align-items-xxl-center"
+                                        type="button"
+                                        style={{ marginLeft:"1%", marginRight:"1%", width: '40px', fontWeight: 'bold', background: '#2d3648', borderStyle: 'none', borderColor: '#2d3648', height: '90%' }}
+                                        onClick={(e) => { navigate(`/update_product/${product.id}`)}}>
+                                        {!loading &&
+                                            <i className="bi bi-pencil-square"></i>}
+
+                                        </button>
                                     </>
                                     :
                                     <button onClick={ ()=>  {addFavourites(product.id)}} disabled={loading} className="btn btn-primary" type="button" style={{ width: '40px', fontWeight: 'bold', background: '#2d3648', borderStyle: 'none', borderColor: '#2d3648', height: '90%' }}>
