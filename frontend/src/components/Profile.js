@@ -628,7 +628,7 @@ function ProfileArea({myProfile,func} ) {
                             </div>
 
                             :
-                            <p style={{  marginLeft:'10px', fontFamily: 'Inter, sans-serif', fontSize: '13px' }}>{description}</p>
+                            <p style={{ textAlign:'start', marginLeft:'10px', fontFamily: 'Inter, sans-serif', fontSize: '13px' }}>{description}</p>
                         }
 
                     </div>

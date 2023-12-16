@@ -118,6 +118,7 @@ export function ProductAddForm({changeMode}) {
             }
             console.log(product.get('product_photo'));
         }
+
         console.log(product);
         if(!changeMode) {
             try {
@@ -127,7 +128,7 @@ export function ProductAddForm({changeMode}) {
                 const response = await axios.post(`${baseurl}/api/user/product/`, product, { headers: { 'Content-Type': 'multipart/form-data' } });
                 if (response.status === 200 || response.status === 201) {
                     console.log("Post was successful");
-                    navigate("/main_page/secondhand");
+                    navigate("/main_page/" + product.get('category'));
                 }
             }
             catch (error) {
