@@ -119,6 +119,7 @@ function NavigationBarDefault() {
     }
 
     const seeDetail = (notification,index) => {
+        setShow(!show);
         if(notification.related_item ==="CHAT"){
             markSingle(notification.id,index);
             navigate("/messages/" + notification.related_item_id);
