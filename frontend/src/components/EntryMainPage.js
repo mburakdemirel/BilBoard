@@ -284,11 +284,11 @@ function EntryMainPage(){
                                                                         </div>
                                                                         {products[index].description.length > maxComplaintLength ?
                                                                             <div style={{height: 'fit-content', marginTop:"0.5%"}}>
-                                                                                <h6 style={{ fontFamily: 'Inter, sans-serif',fontSize: '13px', marginTop: '0px', paddingTop: '5px', whiteSpace: 'normal', textAlign:'left' }} className="d-flex text-truncate text-start">{products[index].description.substring(0,maxComplaintLength)}{expand[index] ? products[index].description.substring(maxComplaintLength,products[index].description.length):"..."}</h6>
+                                                                                <h6 style={{ fontFamily: 'Inter, sans-serif',fontSize: '14px', marginTop: '0px', marginBlockStart: '8px', paddingTop: '5px', whiteSpace: 'normal', textAlign:'left' }} className="d-flex text-truncate text-start">{products[index].description.substring(0,maxComplaintLength)}{expand[index] ? products[index].description.substring(maxComplaintLength,products[index].description.length):"..."}</h6>
                                                                                 <button style={{ width: 'fit-content', height: '30px', background: '#0558b0', borderRadius: '10px', borderStyle: 'none', fontSize:'11px', fontFamily:'Inter, sans-serif'}} className="btn btn-primary d-flex justify-content-center align-items-center" type="button"  onClick={(e) => toggleExpand(e,index)}>{(!expand[index]) ? "Read more" : "Show less"}</button>
                                                                             </div>:
                                                                             <div>
-                                                                                <h6 style={{ fontFamily: 'Inter, sans-serif',fontSize: '13px', marginTop: '0px', paddingTop: '5px', whiteSpace: 'normal', textAlign:'left' }} className="d-flex text-truncate text-start">{products[index].description}</h6>
+                                                                                <h6 style={{ fontFamily: 'Inter, sans-serif',fontSize: '14px', marginTop: '0px', marginBlockStart: '8px', paddingTop: '5px', whiteSpace: 'normal', textAlign:'left' }} className="d-flex text-truncate text-start">{products[index].description}</h6>
                                                                             </div>
                                                                         }
                                                                     </div>
