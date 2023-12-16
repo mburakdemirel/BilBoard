@@ -19,15 +19,18 @@ def notification_fields(notification_type: NotificationType, category, **kwargs)
     if notification_type == NotificationType.NEW_MESSAGE:
         id_of_product = Chat.objects.get(id=kwargs.get('realted_item_id')).product_id
         product = None
+        product_name = None
         if category in ['secondhand', 'borrow', 'donation']:
             product = Product.objects.get(id=id_of_product)
+            product_name =product.title
         elif category in ['lost', 'found']:
             product = LostAndFoundEntry.objects.get(id=id_of_product)
+            product_name = product.topic
 
         return {
             'notification_type': NotificationType.NEW_MESSAGE.value,
-            'title': product.title,
-            'description': f'You have a new message for {product.title} from {kwargs.get("contact_name")}',
+            'title': product_name,
+            'description': f'You have a new message for {product_name} from {kwargs.get("contact_name")}',
             'related_item_id': kwargs.get('realted_item_id'),
             'related_item': 'CHAT',
         }
