@@ -41,8 +41,7 @@
                 updateNotificationCount(data['count'])
             }
             else{
-                notificationCount = data['count']
-                updateNotificationCount(notificationCount)
+                increaseNotificationCount()
                 addNotification(data)
             }
         }
@@ -64,41 +63,46 @@
             document.getElementById('numof').innerText = count
         }
 
-        function addNotification(data){
-            var notification = document.createElement('li');
-
-            var pIdTag = document.createElement('p');
-            pIdTag.textContent = data['current_notification']['id'];
-            notification.appendChild(pIdTag);
-
-            var pTitleTag = document.createElement('p');
-            pTitleTag.textContent = data['current_notification']['title'];
-            notification.appendChild(pTitleTag);
-
-            var pDescriptionTag = document.createElement('p');
-            pDescriptionTag.textContent = data['current_notification']['description'];
-            notification.appendChild(pDescriptionTag);
-
-            var pTimestampTag = document.createElement('p');
-            pTimestampTag.textContent = data['current_notification']['timestamp'];
-            notification.appendChild(pTimestampTag);
-
-            var pIsReadTag = document.createElement('p');
-            pIsReadTag.textContent = data['current_notification']['is_read'];
-            notification.appendChild(pIsReadTag);
-
-            var pRelatedItemTag = document.createElement('p');
-            pRelatedItemTag.textContent = data['current_notification']['related_item'];
-            notification.appendChild(pRelatedItemTag);
-
-            var pRelatedItemIdTag = document.createElement('p');
-            pRelatedItemIdTag.textContent = data['current_notification']['related_item_id'];
-            notification.appendChild(pRelatedItemIdTag);
-
-            document.querySelector('#notification').appendChild(notification);
+        function increaseNotificationCount(){
+            var count = parseInt(document.getElementById('numof').innerText)
+            count += 1
+            updateNotificationCount(count)
         }
 
+        function addNotification(data){
+            var notification = document.createElement('li');
+            var pIdTag = document.createElement('p');
+            pIdTag.textContent = data['id'];
+            var pDescriptionTag = document.createElement('p');
+            pDescriptionTag.textContent = data['description'];
+            var pTimestampTag = document.createElement('p');
+            pTimestampTag.textContent = data['timestamp'];
+            var pRelatedItemTag = document.createElement('p');
+            pRelatedItemTag.textContent = data['related_item'];
+            var pRelatedItemIdTag = document.createElement('p');
+            pRelatedItemIdTag.textContent = data['related_item_id'];
+            var markButton = document.createElement('button');
+            markButton.textContent = 'Mark as read';
+            markButton.onclick = function(e) {
+                notificationSocket.send(JSON.stringify({
+                    "command": "mark_single",
+                    "notification_id": data['id'],
+                    "user_id": user_id,
+                }));
+                notification.remove();
+                var count = parseInt(document.getElementById('numof').innerText)
+                count -= 1
+                updateNotificationCount(count)
+            };
 
+            notification.appendChild(pIdTag);
+            notification.appendChild(pDescriptionTag);
+            notification.appendChild(pRelatedItemIdTag);
+            notification.appendChild(pRelatedItemTag);
+            notification.appendChild(pTimestampTag);
+            notification.appendChild(markButton);
+            document.querySelector('#notification').appendChild(notification);
+        }
     </script>
 </body>
 </html>

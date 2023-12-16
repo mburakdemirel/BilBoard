@@ -96,6 +96,7 @@ def send_notification(sender, instance, created, **kwargs):
         group_name = f"notification_{instance.receiver.id}"
 
         content = {
+            "id": instance.id,
             "description": instance.description,
             "timestamp": str(instance.timestamp),
             "related_item_id": instance.related_item_id,
@@ -141,4 +142,10 @@ def user_online_status_changed(sender, instance, created, **kwargs):
             'value': json.dumps(content),
         }
     )
-    print(f'\033[1;31;40m user status changed \033[0;0m')
+    print(f'\033[1;31;40m user status changed: {actual_user.email} \033[0;0m')
+
+
+# test signal for deleting notifications
+@receiver(pre_delete, sender=Notification, dispatch_uid='notification_deleted')
+def testnotif(sender, instance, **kwargs):
+    print(f'\033[1;32;40m notification deleted: {instance} \033[0;0m')

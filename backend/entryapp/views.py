@@ -225,13 +225,14 @@ def vote_up_complaint(request):
             complaint.save()
 
             # Create upvote notification
-            notification_util(
+            if(user != complaint.user):
+                notification_util(
                 notification_type=NotificationType.UPVOTE,
                 receiver=complaint.user,
                 contact_name=user.name + ' ' + user.surname,
                 complaint_name=complaint.topic,
                 related_item_id=complaint.id,
-            )
+                )
 
             return Response({'success': 'Successfully upvoted and withdrawn from downvote','state' : 3}, status=200)
 
@@ -248,15 +249,16 @@ def vote_up_complaint(request):
             complaint.upvoted_by.add(user)
             complaint.vote = complaint.vote + 1
             complaint.save()
+
             # Create upvote notification
-            notification_util(
+            if(user != complaint.user):
+                notification_util(
                 notification_type=NotificationType.UPVOTE,
                 receiver=complaint.user,
                 contact_name=user.name + ' ' + user.surname,
                 complaint_name=complaint.topic,
                 related_item_id=complaint.id,
-            )
-
+                )
 
         return Response({'success': 'Successfully upvoted','state' : 3}, status=200)
     except ComplaintEntry.DoesNotExist:
@@ -283,13 +285,14 @@ def vote_down_complaint(request):
             complaint.save()
 
             # Create downvote notification
-            notification_util(
+            if(user != complaint.user):
+                notification_util(
                 notification_type=NotificationType.DOWNVOTE,
                 receiver=complaint.user,
                 contact_name=user.name + ' ' + user.surname,
                 complaint_name=complaint.topic,
                 related_item_id=complaint.id,
-            )
+                )
 
             return Response({'success': 'Successfully downvoted and withdrawn from upvote','state' : 1}, status=200)
 
@@ -305,14 +308,16 @@ def vote_down_complaint(request):
             complaint.downvoted_by.add(user)
             complaint.vote = complaint.vote - 1
             complaint.save()
+
             # Create downvote notification
-            notification_util(
+            if(user != complaint.user):
+                notification_util(
                 notification_type=NotificationType.DOWNVOTE,
                 receiver=complaint.user,
                 contact_name=user.name + ' ' + user.surname,
                 complaint_name=complaint.topic,
                 related_item_id=complaint.id,
-            )
+                )
 
         return Response({'success': 'Successfully downvoted','state' : 1}, status=200)
     except ComplaintEntry.DoesNotExist:

@@ -11,9 +11,32 @@ class NotificationConsumer(WebsocketConsumer):
         unseen_notifications = Notification.objects.filter(receiver=user, is_read=False)
         unseen_notifications.update(is_read=True)
         async_to_sync(self.channel_layer.group_send)(
-            self.room_group_name, {"type": "handle_unseen", "message": {"command":"marked"}}
+            self.room_group_name, {
+                "type": "handle_unseen",
+                "message": {
+                    "command":"marked"
+                }
+            }
         )
+        read_notifications = Notification.objects.filter(receiver=user, is_read=True)
+        read_notifications.delete()
         # self.send(text_data=json.dumps({"command":"marked"}))
+
+    def handle_single_unseen_notification(self, data):
+        user = get_user_model().objects.get(id=data["user_id"])
+        unseen_notification = Notification.objects.get(id=data["notification_id"])
+        unseen_notification.is_read = True
+        unseen_notification.save()
+        unseen_notification.delete()
+        async_to_sync(self.channel_layer.group_send)(
+            self.room_group_name, {
+                "type":"handle_unseen",
+                "message":{
+                    "command":"single_marked",
+                    "notification_id":data["notification_id"]
+                }
+            }
+        )
 
     def get_notification_count(self, data):
         user = get_user_model().objects.get(id=data["user_id"])
@@ -27,11 +50,12 @@ class NotificationConsumer(WebsocketConsumer):
 
     commands = {
         "mark_all": handle_unseen_notification,
+        "mark_single": handle_single_unseen_notification,
         "counter": get_notification_count,
     }
 
     def connect(self):
-        self.room_name = self.scope["url_route"]["kwargs"]["room_name"]
+        self.room_name = self.scope["url_route"]["kwargs"]["user_id"]
         self.room_group_name = f"notification_{self.room_name}"
 
         # TEST PRINTS
@@ -58,9 +82,7 @@ class NotificationConsumer(WebsocketConsumer):
     def send_notification(self, event):
         print(f'\033[4;31;40m {event} \033[0;0m')
         data = json.loads(event["value"])
-        count = data["count"]
-        current_notification = data["current_notification"]
-        self.send(text_data=json.dumps({"count": count, "current_notification": current_notification}))
+        self.send(text_data=json.dumps(data))
 
     def handle_unseen(self, event):
         data = event['message']

@@ -39,6 +39,7 @@ class ChatConsumer(WebsocketConsumer):
             "message": self.msg_to_json(message)
         }
 
+        print(f'\033[1;33;40m User:{author_user.email} selfNotificationBoolean: {self.notificationBoolean} Other: {contact_online.is_online}\033[0;0m')
         if(self.notificationBoolean and not contact_online.is_online):
             notification_header = notification_fields(
                 notification_type=NotificationType.NEW_MESSAGE,
