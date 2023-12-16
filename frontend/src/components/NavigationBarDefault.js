@@ -241,7 +241,7 @@ function NavigationBarDefault() {
                         </Dropdown.Menu>
                     </Dropdown>
 
-                    <i  className="bi bi-bell position-relative" type="button" onClick={(e) =>{handleClick(e); markAll()}} style={{ fontSize: '28px',marginRight: '15px', marginLeft: '15px'}}>
+                    <i  className="bi bi-bell position-relative" type="button" onClick={(e) =>{handleClick(e)}} style={{ fontSize: '28px',marginRight: '15px', marginLeft: '15px'}}>
                         {notificationCount!=0 &&
                             <span className="d-flex justify-content-center position-absolute top-0 start-100  translate-middle p-2 rounded-circle " style={{height:'21px', width:'21px', background:'#2d3648'}}>
                             <h1 className="d-flex justify-content-center align-items-center" style={{fontSize:'13px', fontFamily:'Inter,sans-serif', color:'white', paddingTop:'2px'}}>{notificationCount}</h1>
@@ -249,9 +249,19 @@ function NavigationBarDefault() {
                         }
                     </i>
                     <Overlay  show={show} target={target} placement="bottom" container={ref.current} containerPadding={10} >
-                        <Popover id="popover-contained" s>
-                            <Popover.Header>Notifications</Popover.Header>
+                        <Popover id="popover-contained">
+                            <Popover.Header>
+                                <div className="d-flex justify-content-between w-100"  >
+                                    <a>Notifications</a>
+                                    <button className="btn"  style={{ marginLeft:'10px' ,fontFamily: 'Inter, sans-serif', fontSize:'11px',color:'white' , background:'#2d3648'}}>
+                                        Mark All
+                                    </button>
+                                </div>
+
+
+                            </Popover.Header>
                             <Popover.Body >
+
                                 {Array(notifications.length).fill().map((_, index) => {
                                         return(
                                             <div key={index} style={{width:'240px', height:'inherit', background:'#EDF0F7', marginBottom:'10px', padding:'10px', borderRadius:'10px', border:'solid', borderWidth:'1.6px',borderColor:'#A0ABC0' }}>
