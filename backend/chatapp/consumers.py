@@ -125,7 +125,7 @@ class OnlineStatusConsumer(WebsocketConsumer):
             actual_user.save()
 
     def connect(self):
-        self.room_name = self.scope["user"].id
+        self.room_name = self.scope["url_route"]["kwargs"]["room_name"]
         self.room_group_name = f'online_{self.room_name}'
         # Join room group
         async_to_sync(self.channel_layer.group_add)(

@@ -96,16 +96,10 @@ def send_notification(sender, instance, created, **kwargs):
         group_name = f"notification_{instance.receiver.id}"
 
         content = {
-            "count": notification_count,
-            "current_notification": {
-                "id": instance.id,
-                "title": instance.title,
-                "description": instance.description,
-                "timestamp": str(instance.timestamp),
-                "is_read": instance.is_read,
-                "related_item_id": instance.related_item_id,
-                "related_item": instance.related_item,
-            }
+            "description": instance.description,
+            "timestamp": str(instance.timestamp),
+            "related_item_id": instance.related_item_id,
+            "related_item": instance.related_item,
         }
         async_to_sync(channel_layer.group_send)(
              group_name, {
