@@ -78,7 +78,7 @@ function NavigationBarDefault() {
                 }
                 else{
                     setNotificationCount((prevCount) => prevCount+1);
-                    setNotifications((prevNotifications) => [...prevNotifications, data]);
+                    setNotifications((prevNotifications) => [data, ...prevNotifications]);
                     console.log(data);
                 }
             };
@@ -127,6 +127,19 @@ function NavigationBarDefault() {
         }
     }
 
+    const getHourAndMinuteFromTime = (timestamp) => {
+        //let timestamp = "2023-12-04T13:03:48";
+        let date = new Date(timestamp);
+
+        let hours = date.getHours();
+        let minutes = date.getMinutes();
+
+
+        hours = hours < 10 ? '0' + hours : hours;
+        minutes = minutes < 10 ? '0' + minutes : minutes;
+
+        return hours + ':' + minutes;
+    };
 
 
 
@@ -262,7 +275,7 @@ function NavigationBarDefault() {
                     </Dropdown>
 
                     <i  className="bi bi-bell position-relative" type="button" onClick={(e) =>{handleClick(e)}} style={{ fontSize: '28px',marginRight: '15px', marginLeft: '15px'}}>
-                        {notificationCount!=0 &&
+                        {notifications!=0 &&
                             <span className="d-flex justify-content-center position-absolute top-0 start-100  translate-middle p-2 rounded-circle " style={{height:'21px', width:'21px', background:'#2d3648'}}>
                             <h1 className="d-flex justify-content-center align-items-center" style={{fontSize:'13px', fontFamily:'Inter,sans-serif', color:'white', paddingTop:'2px'}}>{notificationCount}</h1>
                             </span>
@@ -285,9 +298,10 @@ function NavigationBarDefault() {
                                 {Array(notifications.length).fill().map((_, index) => {
                                         return(
                                             <div key={index} style={{width:'240px', height:'inherit', background:'#EDF0F7', marginBottom:'10px', padding:'10px', borderRadius:'10px', border:'solid', borderWidth:'1.6px',borderColor:'#A0ABC0' }}>
-                                                <p style={{width:'100%',fontFamily: 'Inter, sans-serif', fontSize:'13px', marginBottom:'10px'}}>{notifications[index] && notifications[index].description}</p>
+                                                <p style={{width:'100%',fontFamily: 'Inter, sans-serif', fontSize:'13px', marginBottom:'-2px'}}>{notifications[index] && notifications[index].description}</p>
+                                                <p style={{width:'100%',fontFamily: 'Inter, sans-serif', fontSize:'10px', marginBottom:'0px', marginTop:'0px', textAlign:'end'}}>{notifications[index] && getHourAndMinuteFromTime(notifications[index].timestamp)}</p>
                                                 <div className="d-flex justify-content-between" style={{width:'100%'}}>
-                                                    <button className="btn"  style={{paddingTop:'2px', paddingBottom:'2px', fontFamily: 'Inter, sans-serif', fontSize:'11px',color:'white' , background:'#2d3648'}}>{notifications[index] && notifications[index].related_item==="CHAT" ? "See Message" : "See Complaint"}</button>
+                                                    <button className="btn" onClick={()=>seeDetail(notifications[index])} style={{paddingTop:'2px', paddingBottom:'2px', fontFamily: 'Inter, sans-serif', fontSize:'11px',color:'white' , background:'#2d3648'}}>{notifications[index] && notifications[index].related_item==="CHAT" ? "See Message" : "See Complaint"}</button>
                                                     <button className="btn" onClick={()=>markSingle(notifications[index].id,index)}  style={{paddingTop:'2px', paddingBottom:'2px',paddingLeft:'5px',paddingRight:'5px' , fontFamily: 'Inter, sans-serif', fontSize:'11px',color:'white' , background:'#2d3648'}}>
                                                         <i className="bi bi-x-circle"></i>
                                                     </button>
