@@ -6,6 +6,7 @@ from mainapp.models import (
     Product,
     LostAndFoundEntry,
     ComplaintEntry,
+    Chat,
 )
 
 class NotificationType(enum.Enum):
@@ -16,11 +17,12 @@ class NotificationType(enum.Enum):
 
 def notification_fields(notification_type: NotificationType, category, **kwargs):
     if notification_type == NotificationType.NEW_MESSAGE:
+        id_of_product = Chat.objects.get(id=kwargs.get('realted_item_id')).product_id
         product = None
-        if category in ['Secondhand', 'Borrow', 'Donation']:
-            product = Product.objects.get(id=kwargs.get('realted_item_id'))
-        elif category in ['Lost', 'Found']:
-            product = LostAndFoundEntry.objects.get(id=kwargs.get('realted_item_id'))
+        if category in ['secondhand', 'borrow', 'donation']:
+            product = Product.objects.get(id=id_of_product)
+        elif category in ['lost', 'found']:
+            product = LostAndFoundEntry.objects.get(id=id_of_product)
 
         return {
             'notification_type': NotificationType.NEW_MESSAGE.value,
