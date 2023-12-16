@@ -22,5 +22,5 @@ class UnreadNotificationsView(ListAPIView):
     def get_queryset(self):
         """Returns the queryset of unread notifications."""
         actual_user = self.request.user
-        queryset = Notification.objects.filter(receiver=actual_user, is_read=False)
+        queryset = Notification.objects.filter(receiver=actual_user, is_read=False).order_by('-timestamp')
         return queryset
