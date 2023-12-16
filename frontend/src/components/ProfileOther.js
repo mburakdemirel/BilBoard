@@ -12,12 +12,6 @@ import Placeholder from "./assets/img/WF Image Placeholder2.png"
 import {set} from "react-hook-form";
 import AOS from "aos";
 
-//There are two kinds of profiles and they are rendered according to the value of myProfile boolean.
-//Probably myProfile will take its value from a context. Or we might directly pass is as props.
-//TODO: put all style attributes in a css file
-
-
-
 function ProfileOther() {
     const location = useLocation();
     const navigate = useNavigate();
@@ -149,10 +143,6 @@ function Products({myProfile, func}) {
                 <div
                     className="card-group d-flex d-xxl-flex flex-row justify-content-start flex-sm-nowrap flex-md-nowrap flex-lg-nowrap flex-xl-nowrap align-items-xxl-start flex-xxl-wrap"
                     style={{ maxHeight: '89%', overflow: 'auto', width:'93%' }}>
-
-                    {/** this is for testing purposes normally we should use result.map(product => (<div> ...) where result is the result of the http
-                 * request and we should use product's data in ... part
-                */}
                     {loading ? <div style={{width:'100%'}}><span className="spinner-border spinner-border" aria-hidden="true" ></span></div>
                         :
                         <>
@@ -184,7 +174,6 @@ function Products({myProfile, func}) {
     );
 }
 
-{/** according to the value of myProfile boolean either the user's own profile will be shown (true) or other person's profile will be shown (false) */ }
 function ProfileArea({myProfile,func} ) {
     const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
     const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
