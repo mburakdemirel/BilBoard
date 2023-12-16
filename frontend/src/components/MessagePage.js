@@ -11,6 +11,7 @@ import {set} from "react-hook-form";
 // TODO: put all style attributes into a css file and think about the layout of this page
 // Should there be products next to the messages??
 function MessagePage() {
+    const navigate = useNavigate();
     const [allMessages, setAllMessages] = useState([]);
     const myProfile = JSON.parse(localStorage.getItem('myProfile'));
     const {chatId} = useParams();
@@ -125,8 +126,8 @@ function MessagePage() {
             try {
                 // do update operations
                 await axios.delete('http://127.0.0.1:8000/chat/' + messageId + '/delete/');
-
                 uploadAllMessages();
+                navigate("/messages");
             } catch (error) {
             }
         }
@@ -155,7 +156,11 @@ function Products({allMessages, pull_data, deleteMessage, loading, chatId,firstM
     const {newMessage} = useContext(ContextApi);
     console.log("newmessage", newMessage)
 
-
+    useEffect(()=>{
+       if(!chatId){
+           setActiveIndex(-1);
+       }
+    },[chatId])
 
     useEffect(()=>{
 
@@ -286,6 +291,7 @@ function Messages({chatId,participiant,loadingDelete,pull_first_message}) {
         setPage(1);
         setHasMore(true);
         uploadMessages();
+        setNewSendedMessage("");
 
     }, [chatId]);
 

@@ -68,16 +68,16 @@ function NavigationBarDefault() {
             };
 
             newSocket.onmessage = (event) => {
-
+                debugger;
                 const data = JSON.parse(event.data);
                 if(data['command'] === 'marked'){
                     setNotificationCount(0);
                 }
-                else if(data['command'] === 'first_get'){
-                    setNotificationCount(data['count'])
+                else if(data['command'] === 'single_marked'){
+
                 }
                 else{
-                    setNotificationCount(data['count']);
+                    setNotificationCount((prevCount) => prevCount+1);
                     setNotifications((prevNotifications) => [...prevNotifications, data]);
                     console.log(data);
                 }
@@ -93,20 +93,40 @@ function NavigationBarDefault() {
 
 
     const markAll = () => {
-        if(!open){
+            setNotificationCount(0);
             console.log("notif", notifications);
             console.log("mark all");
             socket.send(JSON.stringify({
                 "command": "mark_all",
                 "user_id": myProfile.id,
             }));
-            setOpen(true);
+            setNotifications([]);
+    }
+
+    const markSingle = (notificationId,notificationIndex) => {
+        debugger;
+        console.log("notif", notifications);
+        console.log("mark single");
+        socket.send(JSON.stringify({
+            "command": "mark_single",
+            "notification_id": notificationId,
+            "user_id": myProfile.id,
+        }));
+        setNotifications(prevNotifications =>
+            prevNotifications.filter((_, index) => index !== notificationIndex)
+        );
+        setNotificationCount((prevCount)=> prevCount-1);
+    }
+
+    const seeDetail = (notification) => {
+        if(notification.related_item ="CHAT"){
+            navigate("/messages/" + notification.related_item_id);
         }
         else{
-            setNotifications([]);
-            setOpen(false);
+            navigate("/complaints/" + notification.related_item_id);
         }
     }
+
 
 
 
@@ -251,9 +271,9 @@ function NavigationBarDefault() {
                     <Overlay  show={show} target={target} placement="bottom" container={ref.current} containerPadding={10} >
                         <Popover id="popover-contained">
                             <Popover.Header>
-                                <div className="d-flex justify-content-between w-100"  >
+                                <div className="d-flex align-items-center justify-content-between w-100"  >
                                     <a>Notifications</a>
-                                    <button className="btn"  style={{ marginLeft:'10px' ,fontFamily: 'Inter, sans-serif', fontSize:'11px',color:'white' , background:'#2d3648'}}>
+                                    <button onClick={markAll} className="btn"  style={{ marginLeft:'10px' ,fontFamily: 'Inter, sans-serif', fontSize:'11px',color:'white' , background:'#2d3648'}}>
                                         Mark All
                                     </button>
                                 </div>
@@ -268,7 +288,7 @@ function NavigationBarDefault() {
                                                 <p style={{width:'100%',fontFamily: 'Inter, sans-serif', fontSize:'13px', marginBottom:'10px'}}>{notifications[index] && notifications[index].description}</p>
                                                 <div className="d-flex justify-content-between" style={{width:'100%'}}>
                                                     <button className="btn"  style={{paddingTop:'2px', paddingBottom:'2px', fontFamily: 'Inter, sans-serif', fontSize:'11px',color:'white' , background:'#2d3648'}}>{notifications[index] && notifications[index].related_item==="CHAT" ? "See Message" : "See Complaint"}</button>
-                                                    <button className="btn"  style={{paddingTop:'2px', paddingBottom:'2px',paddingLeft:'5px',paddingRight:'5px' , fontFamily: 'Inter, sans-serif', fontSize:'11px',color:'white' , background:'#2d3648'}}>
+                                                    <button className="btn" onClick={()=>markSingle(notifications[index].id,index)}  style={{paddingTop:'2px', paddingBottom:'2px',paddingLeft:'5px',paddingRight:'5px' , fontFamily: 'Inter, sans-serif', fontSize:'11px',color:'white' , background:'#2d3648'}}>
                                                         <i className="bi bi-x-circle"></i>
                                                     </button>
                                                 </div>
