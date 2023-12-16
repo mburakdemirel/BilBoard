@@ -338,17 +338,19 @@ function Messages({chatId,participiant,loadingDelete,pull_first_message}) {
         if(participiant){
             setContact(participiant);
         }
-
+        debugger;
         const newSocket = new ReconnectingWebSocket("ws://127.0.0.1:8000/ws/chat/"+ chatId + "/");
-        setSocket(newSocket);
+
         setFirstMessage(true);
         pull_first_message(true);
         newSocket.onopen = function (e) {
+            setSocket(newSocket);
             console.log("WebSocket is connected");
         };
 
 
         newSocket.onmessage = (event) => {
+
             const data = JSON.parse(event.data);
             if(data["command"]==='new_message'){
                 console.log("message", data);
@@ -367,7 +369,7 @@ function Messages({chatId,participiant,loadingDelete,pull_first_message}) {
 
    const sendMessageCommant =  () => {
        if (newSendedMessage) {
-
+            debugger;
            socket.send(JSON.stringify({
                'command': 'new_message',
                'message': newSendedMessage,

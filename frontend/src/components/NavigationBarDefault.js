@@ -119,7 +119,7 @@ function NavigationBarDefault() {
     }
 
     const seeDetail = (selectedNotification,index) => {
-        setShow(!show);
+
         if(selectedNotification.related_item ==="CHAT"){
             notifications.forEach((notification, index) => {
                 if (notification.related_item_id == selectedNotification.related_item_id) {
@@ -139,6 +139,7 @@ function NavigationBarDefault() {
 
             navigate("/main_page/complaint/?specific=" + selectedNotification.related_item_id);
         }
+        setShow(!show);
     }
 
     const getHourAndMinuteFromTime = (timestamp) => {
@@ -295,7 +296,8 @@ function NavigationBarDefault() {
                             </span>
                         }
                     </i>
-                    <Overlay transition={true} rootClose={true} show={show} target={target} placement="bottom" container={ref.current} containerPadding={10} >
+                    <Overlay transition={true} rootClose
+                             onHide={() => setShow(false)} show={show} target={target} placement="bottom" container={ref.current} containerPadding={10} >
                         <Popover id="popover-contained">
                             <Popover.Header>
                                 <div className="d-flex align-items-center justify-content-between w-100"  >

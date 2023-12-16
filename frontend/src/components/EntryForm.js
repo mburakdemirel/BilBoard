@@ -25,7 +25,7 @@ export function EntryForm({ isComplaint }) {
                 const response = await axios.post("http://127.0.0.1:8000/api/user/laf-entry/", entry, { headers: { 'Content-Type': 'multipart/form-data' } });
                 if(response.status === 200 || response.status === 201) {
                     console.log("Post was successful");
-                    navigate("/main_page/secondhand");
+                    navigate("/main_page/lost&found");
                 }
                 else {
                     console.log(response);
@@ -45,7 +45,7 @@ export function EntryForm({ isComplaint }) {
                 const response = await axios.post("http://127.0.0.1:8000/api/user/complaint-entry/", entry, { headers: { 'Content-Type': 'multipart/form-data' } });
                 if(response.status === 200 || response.status === 201) {
                     console.log("Post was successful");
-                    navigate("/main_page/secondhand");
+                    navigate("/main_page/complaint");
                 }
                 else {
                     console.log(response);
