@@ -16,20 +16,6 @@ function Footer(){
                                 <li className="list-inline-item me-4"></li>
                             </ul>
                         </div>
-                        <div className="col">
-                            <ul className="list-inline my-2" style={{ textAlign: 'right' }}>
-                                <li className="list-inline-item">
-                                    <a className="link-secondary" href="#" style={{ fontFamily: 'Inter, sans-serif' }}>
-                                        Privacy Policy
-                                    </a>
-                                </li>
-                                <li className="list-inline-item">
-                                    <a className="link-secondary" href="#" style={{ fontFamily: 'Inter, sans-serif' }}>
-                                        Terms of Use
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
                     </div>
                 </div>
             </footer>
