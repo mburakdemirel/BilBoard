@@ -129,8 +129,9 @@ function EntryMainPage2(){
             const newMessage = {chat_id:response.data.id, contact_name:item.user.name, contact_surname:item.user.surname, contact_id:item.user.id};
             sendNewMessage(newMessage);
             setMesagesLoading(false);
+            navigate("/messages/" + response.data.id);
         });
-        navigate("/messages");
+
     }
 
 

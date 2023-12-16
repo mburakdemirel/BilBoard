@@ -18,9 +18,7 @@ function LoginPage() {
 
     useEffect(() => {
         AOS.init();
-        if (localStorage.getItem('access_token')) {
-            navigate("/main_page/secondhand");
-        }
+
     }, []);
 
     // Submit method

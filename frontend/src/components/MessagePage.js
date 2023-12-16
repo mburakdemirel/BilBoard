@@ -6,40 +6,64 @@ import ReconnectingWebSocket from "reconnecting-websocket";
 import InfiniteScroll from 'react-infinite-scroll-component';
 import Placeholder from "./assets/img/WF Image Placeholder2.png"
 import AOS from "aos";
-import {useNavigate} from "react-router-dom";
+import {useLocation, useNavigate, useParams} from "react-router-dom";
 import {set} from "react-hook-form";
 // TODO: put all style attributes into a css file and think about the layout of this page
 // Should there be products next to the messages??
 function MessagePage() {
     const [allMessages, setAllMessages] = useState([]);
-    const [messages, setMessages] = useState("");
-    const [chatId, setChatId] = useState();
+    const myProfile = JSON.parse(localStorage.getItem('myProfile'));
+    const {chatId} = useParams();
     const [participiant, setParticipiant] = useState();
     const [loading, setLoading] = useState(true);
     const [firstMessage, setFirstMessage] = useState(true);
     const {newMessage} = useContext(ContextApi);
-    const [activeIndex, setActiveIndex] = useState(-1);
+    const id = myProfile.id;
+    const location = useLocation();
+    let notificationSocket;
+
+    useEffect(()=>{
+        console.log("fucking my progile id", id);
+
+        notificationSocket  = new ReconnectingWebSocket("ws://127.0.0.1:8000/ws/chat/status/" + id + "/");
+
+        notificationSocket.onopen =  (e) => {
+            console.log("WebSocket Notification is connected");
+            notificationSocket.send(JSON.stringify({
+                'user_id': myProfile.id,
+                'connection': 'open'
+            }));
+        };
+
+        notificationSocket.onclose =  (e) => {
+            console.log("WebSocket Notification is closed");
+        };
+
+
+        return () => {
+            notificationSocket.send(JSON.stringify({
+                'user_id': myProfile.id,
+                'connection': 'closed'
+            }));
+            console.log("Closing WebSocket due to component unmounting");
+            notificationSocket.close();
+        };
+
+    },[])
+
+
 
     useEffect(()=>{
         AOS.init();
-
-        if(newMessage){
-            setChatId(newMessage.chat_id);
-        }
         // User messages will be uploaded when page first open
         setLoading(true);
-
         uploadAllMessages();
 
     },[])
 
     useEffect(() => {
-
         if(!firstMessage){
-            uploadAllMessages().then(response=>{
-                setActiveIndex(0);
-            });
-
+            uploadAllMessages();
         }
     }, [firstMessage]);
 
@@ -75,22 +99,14 @@ function MessagePage() {
 
 
     const pull_data = (id, participiants) => {
-        console.log("chat id " + id); // LOGS DATA FROM CHILD (My name is Dean Winchester... &)
+        console.log("chat id " + id);
         console.log("participiant ", participiants);
-        setChatId(id);
         setParticipiant(participiants);
     }
-
     const pull_first_message = (firstMessage) => {
         console.log("firstMessage" + firstMessage);
         setFirstMessage(firstMessage);
     }
-
-    const pull_active_index = (activeIndex) => {
-        console.log("active Index " + activeIndex); // LOGS DATA FROM CHILD (My name is Dean Winchester... &)
-        setActiveIndex(activeIndex);
-    }
-
 
 
     const deleteMessage = async (e,messageId) => {
@@ -109,7 +125,7 @@ function MessagePage() {
             try {
                 // do update operations
                 await axios.delete('http://127.0.0.1:8000/chat/' + messageId + '/delete/');
-                setChatId(null);
+
                 uploadAllMessages();
             } catch (error) {
             }
@@ -123,7 +139,7 @@ function MessagePage() {
             <div className="container">
                 <div className="row gx-1 gy-3 justify-content-center" style={{ width: '100%', marginTop: '-21px' }}>
                     {/* I think this should not be here this page should be more like a pop-up page */}
-                    <Products allMessages={allMessages} pull_data={pull_data} deleteMessage={deleteMessage} loading={loading}  activeIndex={activeIndex} pull_active_index={pull_active_index}></Products>
+                    <Products allMessages={allMessages} pull_data={pull_data} deleteMessage={deleteMessage} loading={loading}  chatId={chatId} firstMessage={firstMessage}></Products>
                     <Messages  chatId={chatId} participiant={participiant} pull_first_message={pull_first_message} loadingDelete={loading}></Messages>
                 </div>
             </div>
@@ -132,16 +148,16 @@ function MessagePage() {
 }
 
 
-function Products({allMessages, pull_data, deleteMessage, loading, activeIndex, pull_active_index}) {
+function Products({allMessages, pull_data, deleteMessage, loading, chatId,firstMessage}) {
     const navigate = useNavigate();
     const [firstOpen, setFirstOpen] = useState(0);
+    const [activeIndex, setActiveIndex] = useState(-1);
     const {newMessage} = useContext(ContextApi);
     console.log("newmessage", newMessage)
 
 
 
     useEffect(()=>{
-
 
         findActiveIndex();
         console.log("all messages", allMessages.length);
@@ -150,9 +166,12 @@ function Products({allMessages, pull_data, deleteMessage, loading, activeIndex, 
     },[allMessages])
 
 
-    const messageClick = (chatId, participiants) => {
+    const messageClick = (chatId, participiants,index) => {
         console.log("message index", chatId, participiants);
         pull_data(chatId, participiants);
+
+        setActiveIndex(index);
+
     };
 
     const goToItem = (category, id, name) => {
@@ -167,22 +186,32 @@ function Products({allMessages, pull_data, deleteMessage, loading, activeIndex, 
 
 
     const findActiveIndex = () => {
-        debugger;
-        if(newMessage){
-            for(let i=0; i<allMessages.length;i++){
-                if(allMessages[i].id == newMessage.chat_id){
-                    pull_active_index(i);
-                    pull_data(allMessages[i].id, allMessages[i].participiants);
+
+        if(!firstMessage){
+            setActiveIndex(0);
+        }
+        else{
+            if(newMessage){
+                for(let i=0; i<allMessages.length;i++){
+                    if(allMessages[i].id == newMessage.chat_id){
+                        setActiveIndex(i);
+                        console.log("active index", activeIndex);
+                        pull_data(allMessages[i].id, allMessages[i].participiants);
+                    }
+                }
+            }
+
+            else{
+                for(let i=0; i<allMessages.length;i++){
+                    if(allMessages[i].id == chatId){
+                        setActiveIndex(i);
+                        console.log("active index", activeIndex);
+                        pull_data(allMessages[i].id, allMessages[i].participiants);
+                    }
                 }
             }
         }
-        else if(firstOpen<=1){
-            pull_active_index(-1);
-            setFirstOpen(firstOpen+1);
-        }
-        else{
-            pull_active_index(0);
-        }
+
     };
 
 
@@ -196,8 +225,8 @@ function Products({allMessages, pull_data, deleteMessage, loading, activeIndex, 
                         :
                         <ul className="list-group" style={{ width: '100%', height: '100%', overflow: 'scroll' }}>
                             {Array(allMessages.length).fill().map((_,index) => (
-                                <li key={index} className="list-group-item" onClick={()=>pull_active_index(index)} style={{ padding: '0px', paddingBottom: '10px', borderStyle: 'none'}}  data-aos="fade-right" data-aos-duration="600" data-aos-delay={index*100}>
-                                <div className="card d-flex justify-content-center" style={{ minHeight:'90px', maxHeight:'90px', borderStyle: 'none',  background: index===activeIndex? '#346fad' : '#EDF0F7'}} onClick={()=>{messageClick(allMessages[index].id, allMessages[index].participiants)}}>
+                                <li key={index} className="list-group-item" onClick={()=>navigate("/messages/" + allMessages[index].id)} style={{ padding: '0px', paddingBottom: '10px', borderStyle: 'none'}}  data-aos="fade-right" data-aos-duration="600" data-aos-delay={index*100}>
+                                <div className="card d-flex justify-content-center" style={{ minHeight:'90px', maxHeight:'90px', borderStyle: 'none',  background: index===activeIndex? '#346fad' : '#EDF0F7'}} onClick={()=>{messageClick(allMessages[index].id, allMessages[index].participiants, index)}}>
                                     <div className="d-flex flex-row align-items-center " style={{ height: '20%', minHeight: '80px', paddingTop: '5px', paddingBottom: '5px', borderStyle: 'none', paddingLeft: '20px', paddingRight: '6px' }}>
                                         <div className="d-flex flex-column align-items-start " style={{ width: '50%', height: '100%' }}>
                                             <h4 className="d-flex text-start" style={{width:'fit-content', fontSize: '18px', marginBottom: '5px', fontFamily: 'Inter, sans-serif', color: index===activeIndex? '#ffffff' : '#000000' }}>{allMessages[index].product_name}</h4>
@@ -313,7 +342,7 @@ function Messages({chatId,participiant,loadingDelete,pull_first_message}) {
             }
         };
 
-        // Clean up the WebSocket connection when the component unmounts
+
         return () => {
             newSocket.close();
         };

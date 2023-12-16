@@ -60,7 +60,7 @@ function App() {
                   {/** We will probably add a new component called <ProtectedRoute> or something for pages that should be seen after authentication */}
                   <Route path='/profile' element={<><NavigationBarDefault/><Profile/></>}></Route>
                   <Route path='/profile/:id' element={<><NavigationBarDefault/><ProfileOther/></>}></Route>
-                  <Route path='/messages' element={<><NavigationBarDefault/><MessagePage/></>}></Route>
+                  <Route path='/messages/:chatId?' element={<><NavigationBarDefault/><MessagePage/></>}></Route>
                   <Route path='/product_detail/:pageType/:id' element={<><NavigationBarDefault/><ProductDetailPage/></>}></Route>
 
                   <Route path='/main_page/:pageType/:searchText?' element={<><NavigationBarDefault/><MainPage/></>}> </Route>

@@ -88,9 +88,10 @@ function ProductDetailPage() {
                 const newMessage = {chat_id:response.data.id, contact_name:product.user.name, contact_surname:product.user.surname, contact_id:product.user.id};
                 sendNewMessage(newMessage);
                 setMesagesLoading(false);
+                navigate("/messages/" + response.data.id);
             });
 
-        navigate("/messages");
+
     }
     const checkContains = (index) => {
 

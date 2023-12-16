@@ -137,7 +137,9 @@ function Products({myProfile, func, editMode}) {
                 await uploadMyProducts("list-my-voted-complaints");
             }
             else{
-                setShowedProducts(favorites.filter(favorite => favorite.category === filteredProductsType));
+                if(favorites){
+                    setShowedProducts(favorites.filter(favorite => favorite.category === filteredProductsType));
+                }
             }
 
 

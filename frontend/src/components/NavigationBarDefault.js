@@ -12,10 +12,10 @@ import axios from "axios";
 import {Dropdown} from 'react-bootstrap';
 import Profile from "./Profile";
 import AOS from "aos";
+import ReconnectingWebSocket from "reconnecting-websocket";
 
 function NavigationBarDefault() {
-    const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
-    const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
+
     const {sendNewMessage, isProfileChanged, changeProfile} = useContext(ContextApi);
     const [show, setShow] = useState(false);
     const [target, setTarget] = useState(null);
@@ -29,7 +29,10 @@ function NavigationBarDefault() {
     const navigate = useNavigate();
     const [searchInput, setSearchInput] = useState('');
     const{isImageViewerOpen, changeIsImageViewerOpen} = useContext(ContextApi);
-
+    const [socket, setSocket] = useState();
+    const [notifications, setNotifications] = useState([]);
+    const [notificationCount, setNotificationCount] = useState();
+    const [open, setOpen] = useState(false);
 
     useEffect(() => {
         setSearchInput('');
@@ -45,6 +48,87 @@ function NavigationBarDefault() {
 
     }, [favoritesIdList,myProfile,isProfileChanged]);
 
+
+
+    useEffect(() => {
+        getNotifications();
+
+        //Web Socket
+
+        if(myProfile){
+            const newSocket  = new ReconnectingWebSocket("ws://127.0.0.1:8000/ws/notification/"+ myProfile.id + "/");
+
+            newSocket.onopen =  (e) => {
+                console.log("WebSocket Notification is connected");
+                setSocket(newSocket);
+            };
+
+            newSocket.onclose =  (e) => {
+                console.log("WebSocket Notification is closed");
+            };
+
+            newSocket.onmessage = (event) => {
+
+                const data = JSON.parse(event.data);
+                if(data['command'] === 'marked'){
+                    setNotificationCount(0);
+                }
+                else if(data['command'] === 'first_get'){
+                    setNotificationCount(data['count'])
+                }
+                else{
+                    setNotificationCount(data['count']);
+                    setNotifications((prevNotifications) => [...prevNotifications, data]);
+                    console.log(data);
+                }
+            };
+
+            return () => {
+                newSocket.close();
+            };
+
+        }
+
+    }, []);
+
+
+    const markAll = () => {
+        if(!open){
+            console.log("notif", notifications);
+            console.log("mark all");
+            socket.send(JSON.stringify({
+                "command": "mark_all",
+                "user_id": myProfile.id,
+            }));
+            setOpen(true);
+        }
+        else{
+            setNotifications([]);
+            setOpen(false);
+        }
+    }
+
+
+
+    const getNotifications = async () => {
+        try {
+            axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
+            const {data} = await axios.get('http://127.0.0.1:8000/api/notifications/unread/');
+            console.log("notifications",data.results);
+            setNotifications(data.results);
+            setNotificationCount(data.results.length);
+
+        } catch (error) {
+            if (error.response) {
+                console.log(error.response.data);
+            } else if (error.request) {
+                console.log('No response received from the server.');
+            } else {
+                console.log('An error occurred while setting up the request.');
+            }
+        }
+
+    }
 
     const getProfile = async () =>{
 
@@ -141,10 +225,10 @@ function NavigationBarDefault() {
                         <input className="d-flex justify-content-xxl-center" onKeyDown={enterClick} onChange={(e)=> setSearchInput(e.target.value)} value={searchInput}
                              type="search" disabled={!pageType} style={{ width: '100%', height: '100%', borderRadius: '6px', border: '2px solid var(--bs-navbar-active-color)', paddingLeft: '5px', paddingRight: '5px', fontFamily: 'Inter, sans-serif', textAlign: 'center' }} placeholder="Search" />
                     </div>
-                    <Dropdown>
-                        <Dropdown.Toggle variant="primary" id="dropdown-basic" style={{ background: '#2d3648', borderStyle: 'none', height: '40px', width: '90.6875px', padding: '0px', marginTop: '5px', marginBottom: '5px' }}>
+                    <Dropdown  >
+                        <Dropdown.Toggle  variant="primary" id="dropdown-basic" style={{ background: '#2d3648', borderStyle: 'none', height: '40px', width: '90.6875px', padding: '0px', marginTop: '5px', marginBottom: '5px' }}>
                             Add
-                            <svg className="bi bi-plus-circle" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" style={{ marginLeft: '7px', fontSize: '20px' }}>
+                            <svg  className="bi bi-plus-circle" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" style={{ marginLeft: '7px', fontSize: '20px' }}>
                                 <path d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 1 8 0a8 8 0 0 1 0 16z"></path>
                                 <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"></path>
                             </svg>
@@ -156,23 +240,25 @@ function NavigationBarDefault() {
                             <Dropdown.Item onClick={() => {navigate("/post_l&f")}}>Add Lost or Found Entry</Dropdown.Item>
                         </Dropdown.Menu>
                     </Dropdown>
-                    <i className="bi bi-bell position-relative" type="button" onClick={handleClick} style={{ fontSize: '28px',marginRight: '15px', marginLeft: '15px'}}>
-                        <span className="d-flex justify-content-center position-absolute top-0 start-100 bg-danger translate-middle p-2 rounded-circle " style={{height:'20px', width:'20px'}}>
-                            <h1 className="d-flex justify-content-center align-items-center" style={{fontSize:'14px', fontFamily:'Inter,sans-serif'}}>9</h1>
-                      </span>
 
+                    <i  className="bi bi-bell position-relative" type="button" onClick={(e) =>{handleClick(e); markAll()}} style={{ fontSize: '28px',marginRight: '15px', marginLeft: '15px'}}>
+                        {notificationCount!=0 &&
+                            <span className="d-flex justify-content-center position-absolute top-0 start-100  translate-middle p-2 rounded-circle " style={{height:'21px', width:'21px', background:'#2d3648'}}>
+                            <h1 className="d-flex justify-content-center align-items-center" style={{fontSize:'13px', fontFamily:'Inter,sans-serif', color:'white', paddingTop:'2px'}}>{notificationCount}</h1>
+                            </span>
+                        }
                     </i>
                     <Overlay  show={show} target={target} placement="bottom" container={ref.current} containerPadding={10} >
                         <Popover id="popover-contained" s>
                             <Popover.Header>Notifications</Popover.Header>
                             <Popover.Body >
-                                {Array(5).fill().map((_, index) => {
+                                {Array(notifications.length).fill().map((_, index) => {
                                         return(
                                             <div key={index} style={{width:'240px', height:'inherit', background:'#EDF0F7', marginBottom:'10px', padding:'10px', borderRadius:'10px', border:'solid', borderWidth:'1.6px',borderColor:'#A0ABC0' }}>
-                                                <p style={{width:'100%',fontFamily: 'Inter, sans-serif', fontSize:'13px', marginBottom:'5px'}}>Burak Demirel “McQueen Yatak az yatılmış” adlı ürününüz için mesaj gönderdi.</p>
+                                                <p style={{width:'100%',fontFamily: 'Inter, sans-serif', fontSize:'13px', marginBottom:'10px'}}>{notifications[index] && notifications[index].description}</p>
                                                 <div className="d-flex justify-content-between" style={{width:'100%'}}>
-                                                    <button className="btn" href="#" style={{paddingTop:'2px', paddingBottom:'2px', fontFamily: 'Inter, sans-serif', fontSize:'11px',color:'white' , background:'#2d3648'}}>See Message</button>
-                                                    <button className="btn" href="#" style={{paddingTop:'2px', paddingBottom:'2px',paddingLeft:'5px',paddingRight:'5px' , fontFamily: 'Inter, sans-serif', fontSize:'11px',color:'white' , background:'#2d3648'}}>
+                                                    <button className="btn"  style={{paddingTop:'2px', paddingBottom:'2px', fontFamily: 'Inter, sans-serif', fontSize:'11px',color:'white' , background:'#2d3648'}}>{notifications[index] && notifications[index].related_item==="CHAT" ? "See Message" : "See Complaint"}</button>
+                                                    <button className="btn"  style={{paddingTop:'2px', paddingBottom:'2px',paddingLeft:'5px',paddingRight:'5px' , fontFamily: 'Inter, sans-serif', fontSize:'11px',color:'white' , background:'#2d3648'}}>
                                                         <i className="bi bi-x-circle"></i>
                                                     </button>
                                                 </div>
