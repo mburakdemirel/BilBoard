@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { Form, useNavigate, useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import "../ChooseFileInput.css"
@@ -6,27 +6,67 @@ import AOS from "aos";
 
 const text_field_background = "#d9e9fa";
 
-export function ProductAddForm() {
+export function ProductAddForm({changeMode}) {
     const navigate = useNavigate();
     const [title, setTitle] = useState("");
-    const [price, setPrice] = useState(0);
+    const [price, setPrice] = useState();
     const [description, setDescription] = useState("");
     const [category, setCategory] = useState("donation");
     const [photo, setPhoto] = useState([]);
     const [returnDate, setReturnDate] = useState();
     const [errMsg, setErrMsg] = useState("");
     const [count, setCount] = useState(0);
-    // const tags = ["Electronics", "Book", "Clothing & Accessories","Toys & Games", "Household", "Sports","Art","Other"];
-    // const vals = ["electronics", "book", "clothing_accessories", "toys_games", "household","sports", "art", "other"];
-    // const [checked, setChecked] = useState("");
-    const [type, setType] = useState("book")
+    const {id} = useParams();
+    const [type, setType] = useState("book");
+    const [prodImg, setProdImg] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [loadingMsg, setLoadingMsg] = useState("");
+    const baseurl = 'http://127.0.0.1:8000';
 
     useEffect(() => {
         AOS.init();
-        setPrice(0);
+        //setPrice(0);
     }, [category]);
 
-
+    useEffect(() => {
+        if(changeMode) {
+            setLoading(true);
+            axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
+            axios.get(`${baseurl}/api/user/product/${id}/`)
+            .then((response) => {
+                console.log(response);
+                setTitle(response.data.title);
+                setCategory(response.data.category);
+                setDescription(response.data.description);
+                setProdImg(response.data.images);
+                setCount(response.data.images.length);
+                setType(response.data.product_type);
+                if(response.data.return_date) {
+                    setReturnDate(response.data.return_date);
+                }
+                if(response.data.price) {
+                    setPrice(response.data.price);
+                }
+                setPhoto([]);
+                setLoading(false);
+            })
+            .catch((error) => {
+                console.log(error);
+            })
+        }
+        else {
+            console.log("hereeee");
+            setTitle("");
+            setCategory("donation");
+            setDescription("");
+            setPhoto([]);
+            setProdImg([]);
+            setReturnDate("");
+            setType("book");
+            setPrice();
+            setCount(0);
+        }
+    },[changeMode]);
 
     function handleImage(e) {
         console.log(count);
@@ -55,14 +95,11 @@ export function ProductAddForm() {
         product.append('category', category);
         product.append('description', description);
         product.append("product_type", type);
-        // if(checked) {
-        //     product.append('product_type',checked);
-        // }
         console.log(product.keys());
         if (category === "secondhand") {
             console.log("In secondhand");
             product.append('price', price);
-            console.log({ title: title, category: category, description: description, price: price, product_photo: photo });
+            //console.log({ title: title, category: category, description: description, price: price, product_photo: photo });
         }
         else if (category === "borrow") {
             console.log("in borrow");
@@ -79,17 +116,37 @@ export function ProductAddForm() {
             console.log(product.get('product_photo'));
         }
         console.log(product);
-        try {
-            axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
-            const response = await axios.post('http://127.0.0.1:8000/api/user/product/', product, { headers: { 'Content-Type': 'multipart/form-data' } });
-            if (response.status === 200 || response.status === 201) {
-                console.log("Post was successful");
-                navigate("/main_page/secondhand");
+        if(!changeMode) {
+            try {
+                setLoading(true);
+                setLoadingMsg("Performing image checks...");
+                axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
+                const response = await axios.post(`${baseurl}/api/user/product/`, product, { headers: { 'Content-Type': 'multipart/form-data' } });
+                if (response.status === 200 || response.status === 201) {
+                    console.log("Post was successful");
+                    navigate("/main_page/secondhand");
+                }
+            }
+            catch (error) {
+                if (error.status === 500) { console.log(error.response); }
+                else if (error.response.status === 400) { console.log(error); 
+                    setErrMsg("Please fill the form with appropriate values!");
+                }
             }
         }
-        catch (error) {
-            if (error.status === 500) { console.log(error.response); }
-            else if (error.status === 400) { console.log(error); }
+        else {
+            axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
+            axios. patch(`${baseurl}/api/user/product/${id}/`, product, { headers: { 'Content-Type': 'multipart/form-data' } })
+            .then((response) => {
+                console.log(response);
+                navigate(`/product_detail/${category}/${id}`);
+            })
+            .catch((error) => {
+                console.log(error);
+                if(error.response.status === 400) {
+                    setErrMsg("Please fill the form with appropriate values!");
+                }
+            })
         }
     }
 
@@ -100,21 +157,48 @@ export function ProductAddForm() {
         return `${year}-${month}-${day}`;
     }
 
-    // function handleCheck(e) {
-    //     setChecked(e.target.value);
-    //     console.log(checked);
-    //     // if(e.target.checked) {
-    //     //     setChecked([...checked, e.target.value]);
-    //     // }
-    //     // else {
-    //     //     setChecked((checked).filter((tag) => tag !== e.target.value));
-    //     // }
-    //     // console.log(checked);
-    // }
+    function discardSelectedImg(e,index) {
+        e.preventDefault();
+        let arr = [];
+        for (let i = 0; i < photo.length; i++) {
+            if(i !== index) {
+                arr = [...arr, photo[i]];
+            }
+            
+        }
+        setCount(arr.length);
+        console.log(arr);
+        setPhoto(arr);
+    }
+
+    function removeImg(e, index) {
+        e.preventDefault();
+        console.log(id);
+        console.log(prodImg[index].id);
+        console.log(prodImg);
+        axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
+        axios.delete(`${baseurl}/api/product/${id}/delete-product-photo/${prodImg[index].id}/`)
+        .then((response) => {
+            let arr = [];
+            for (let i = 0; i < prodImg.length; i++) {
+                if(i !== index) {
+                    arr = [...arr, prodImg[i]];
+                } 
+            }
+            setProdImg(arr);
+            setCount(prodImg.length);
+            console.log(response);
+        })
+        .catch((error) => {
+            console.log(error);
+        })
+    }
 
     return (
         <section id="section" className="d-flex d-xxl-flex flex-grow-1 justify-content-center align-items-start align-items-xl-start justify-content-xxl-center align-items-xxl-start py-4 py-xl-5" style={{ background: '#edf0f7', display: 'inline-block' }}>
+            
             <div className="container-fluid px-1 py-5 mx-auto">
+            
                 <div className="row d-flex justify-content-center" style={{ height: 'fit-content', margin: '0px', width: '100%', marginTop: '-21px' }}>
                     <div
                         className="col-xl-7 col-lg-8 col-md-9 col-11 text-center"
@@ -134,12 +218,14 @@ export function ProductAddForm() {
                                 padding: '7%',
                             }}
                         >
-                            <h3 className="text-center" style={{ fontFamily: 'Inter,sans-serif' }}>Add a New Product</h3>
+                            {loading ? (<div style={{height:'50px'}}><span className="spinner-border spinner-border" aria-hidden="true" ></span></div> ):
+                            <div>
+                            <h3 className="text-center" style={{ fontFamily: 'Inter,sans-serif' }}>{!changeMode ? "Add a New Product":"Update Product"}</h3>
                             {errMsg && <div className="alert alert-danger" role="alert">{errMsg}</div>}
                             <form onSubmit={handleSubmit} method="post" className="form-card" style={{ height: 'fit-content', margin: 'auto', width: '60%' }}>
                                 <div className="form-group col-xl-6 flex-column d-flex" style={{ width: '100%', paddingTop: '30px' }}>
                                     <div className="row justify-content-between text-left">
-                                    <label className="form-control-label" style={{ textAlign: 'left',fontFamily: 'Inter, sans-serif' }}><h5>Title</h5></label>
+                                    <label className="form-control-label" style={{ textAlign: 'left',fontFamily: 'Inter, sans-serif' }}><h5>Title<small style={{color:'darkred', fontSize:'15px'}}> *</small></h5></label>
                                         <input value={title} onChange={(e) => { setTitle(e.target.value); }} required type="text" placeholder="Title"
                                             className="form-control"
                                             style={{
@@ -154,10 +240,9 @@ export function ProductAddForm() {
                                         >
                                         </input>
                                     </div>
-                                    <div
-                                        className="row justify-content-between text-left">
-                                        <label required className="form-control-label" htmlFor='postTypeSelect'style={{ textAlign: 'left' ,fontFamily: 'Inter, sans-serif'}}><h5>Select a Product Type</h5></label>
-                                        <select value={category} onChange={(e) => { setCategory(e.target.value); console.log(category) }} className="form-control"
+                                    {!changeMode ? <div className="row justify-content-between text-left">
+                                        <label className="form-control-label" htmlFor='postTypeSelect'style={{ textAlign: 'left' ,fontFamily: 'Inter, sans-serif'}}><h5>Select a Product Type<small style={{color:'darkred', fontSize:'15px'}}> *</small></h5></label>
+                                        <select required value={category} onChange={(e) => { setCategory(e.target.value); console.log(category) }} className="form-control"
                                             style={{
                                                 width: '100%',
                                                 fontFamily: 'Inter, sans-serif',
@@ -174,27 +259,38 @@ export function ProductAddForm() {
                                             <option value={"secondhand"}>Secondhand Product</option>
 
                                         </select>
-                                    </div>
+                                    </div> : <></>}
 
                                     <div className="row justify-content-between text-left">
-                                        <h5 style={{ textAlign: 'left' , fontFamily: 'Inter, sans-serif', }}>Photos</h5>
+                                        <h5 style={{ textAlign: 'left' , fontFamily: 'Inter, sans-serif', }}>Photos<small style={{color:'darkred', fontSize:'15px'}}> *</small></h5>
                                         <label className="form-control-label" htmlFor="FormControl" style={{ fontFamily: 'Inter, sans-serif', textAlign: 'left' }}>Choose files to upload (at most 5)</label>
-                                        <input required name="product_photos" onChange={(e) => { handleImage(e); }}
+                                        <input required={!changeMode} name="product_photos" onChange={(e) => { handleImage(e); }}
                                             id="FormControl" type="file" accept="image/*" multiple></input>
                                         <div style={{ display: 'flex', flexWrap: 'wrap' , marginBottom: '20px',}}>
-                                            {photo.map((imagePreview, index) => (
+                                            <div>
+                                            {photo ?  photo.map((imagePreview, index) => (
                                                 <div key={index} style={{ margin: '10px', textAlign: 'center' }}>
                                                     <img
                                                         src={URL.createObjectURL(imagePreview)}
                                                         alt={`Preview ${index}`}
-                                                        style={{ border: 'solid grey 1px', maxWidth: '100px', maxHeight: '100px', borderRadius: '5px' }}
+                                                        style={{ border: 'solid grey 1px', maxWidth: '100px', maxHeight: '100px', borderRadius: '5px', marginRight: '5%' }}
                                                     />
+                                                    <button onClick={(e) => discardSelectedImg(e,index)} className="btn btn-primary" type="button" style={{ marginLeft:'5px', width: '40px', fontWeight: 'bold', background: '#0558b0', borderStyle: 'none', borderColor: '#0558b0', height: '30px' }}><i className="bi bi-x-lg"></i></button> 
                                                 </div>
-                                            ))}
+                                            )) : <></> }
+                                            </div> 
+                                            {changeMode ? prodImg.map((img, index) => (
+                                            <div key={index} style={{ margin: '10px', textAlign: 'center' }}>
+                                                <img src={img.image} alt='prod_photo' style={{ border: 'solid grey 1px', maxWidth: '100px', maxHeight: '100px', borderRadius: '5px' }}></img>
+                                                <button disabled={count === 1} onClick={(e) => removeImg(e,index)} className="btn btn-primary" type="button" style={{ marginLeft:'5px', width: '40px', fontWeight: 'bold', background: '#0558b0', borderStyle: 'none', borderColor: '#0558b0', height: '30px' }}><i style={{}} className="bi bi-x-lg"></i></button> 
+                                            </div>
+                                            )) : <></>}
+                                                
+                                            
                                         </div>
                                     </div>
                                     <div className="row justify-content-between text-left">
-                                        <label className="form-control-label" htmlFor="description" style={{ textAlign : 'left',fontFamily: 'Inter, sans-serif' }}><h5>Enter your Description</h5></label>
+                                        <label className="form-control-label" htmlFor="description" style={{ textAlign : 'left',fontFamily: 'Inter, sans-serif' }}><h5>Enter Description</h5></label>
                                         <textarea value={description} onChange={(e) => setDescription(e.target.value)}
                                             id="description"
                                             placeholder="Description"
@@ -211,18 +307,8 @@ export function ProductAddForm() {
                                         />
                                     </div>
                                     <div className="row justify-content-between text-left">
-                                        <h5 style={{ textAlign : 'left',fontFamily: 'Inter, sans-serif' }}>Choose Product Tags</h5>
-                                        {/* {tags.map((tag,index) => {
-                                            return (
-                                                <div key={index} style={{width:'50%'}}>
-                                                    <div className="form-check">
-                                                        <input required className="form-check-input" checked={checked === vals[index]} type="radio" value={vals[index]} name={tag} id={`radio-${index}`} onChange={(e) => {handleCheck(e)}}></input>
-                                                        <label style={{textAlign:'left', fontFamily:'Inter, sans-serif'}} className="form-check-label" htmlFor={`radio-${index}`}><h6>{tag}</h6></label>
-                                                    </div>
-                                                </div>
-                                            )
-                                        }) } */}
-                                        <select value={type} onChange={(e) => { setType(e.target.value); console.log(e.target.value)}} className="form-control"
+                                        <label className="form-control-label"style={{ textAlign : 'left',fontFamily: 'Inter, sans-serif'}}><h5 style={{ textAlign : 'left',fontFamily: 'Inter, sans-serif' }}>Choose a Product Tag<small style={{color:'darkred', fontSize:'15px'}}> *</small></h5></label>
+                                        <select required value={type} onChange={(e) => { setType(e.target.value); console.log(e.target.value)}} className="form-control"
                                             style={{
                                                 width: '100%',
                                                 fontFamily: 'Inter, sans-serif',
@@ -246,8 +332,8 @@ export function ProductAddForm() {
                                     </div>
                                     {(category === "secondhand") ? (<div
                                         className="row justify-content-between text-left">
-                                        <label className="form-control-label"style={{ textAlign : 'left',fontFamily: 'Inter, sans-serif'}}><h5>Price</h5></label>
-                                        <input required={category === "secondhand"} readOnly={category !== "secondhand"} value={price} onChange={(e) => setPrice(e.target.value)} min={0} placeholder="Enter Price (in Turkish Liras)" type="number"
+                                        <label className="form-control-label" style={{ textAlign : 'left',fontFamily: 'Inter, sans-serif'}}><h5>Price<small style={{color:'darkred', fontSize:'15px'}}> *</small></h5></label>
+                                        <input required={category === "secondhand"} readOnly={category !== "secondhand"} value={price} onChange={(e) => setPrice(e.target.value)} min={1} placeholder="Enter Price (in Turkish Liras)" type="number"
                                             className="form-control"
                                             style={{
                                                 width: '100%',
@@ -263,8 +349,8 @@ export function ProductAddForm() {
                                         </input>
                                     </div>) : <></>}
                                     {(category === "borrow") ? (<div className="row justify-content-between text-left">
-                                        <label htmlFor="date" className="form-control-label"><h5>Return Date</h5></label>
-                                        <input readOnly={category !== "borrow"} required={category === "borrow"} onChange={(e) => { setReturnDate(e.target.value); console.log(e.target.value) }} id="date" className="form-control" style={{
+                                        <label htmlFor="date" className="form-control-label" style={{ textAlign : 'left',fontFamily: 'Inter, sans-serif'}}><h5>Return Date<small style={{color:'darkred', fontSize:'15px'}}> *</small></h5></label>
+                                        <input value={returnDate} readOnly={category !== "borrow"} required={category === "borrow"} onChange={(e) => { setReturnDate(e.target.value); console.log(e.target.value) }} id="date" className="form-control" style={{
                                             fontFamily: 'Inter, sans-serif',
                                             background: text_field_background,
                                             borderRadius: '10px',
@@ -276,15 +362,15 @@ export function ProductAddForm() {
                                     </div>) : <></>}
                                     <div style={{ paddingTop: '20px' }} className="row justify-content-between text-left">
                                         <div className="col-xl-6 flex-column d-flex">
-                                            <button onClick={() => { navigate("/main_page/secondhand") }} className="btn btn-primary d-block w-100 mb-3" style={{ background: '#ffffff', color: '#0558b0', border: 'solid #0558b0', fontFamily: 'Inter, sans-serif', height: '40px' }}>Cancel</button>
+                                            <button onClick={() => { changeMode ? navigate(`/product_detail/${category}/${id}`) : navigate("/main_page/secondhand") }} className="btn btn-primary d-block w-100 mb-3" style={{ background: '#ffffff', color: '#0558b0', border: 'solid #0558b0', fontFamily: 'Inter, sans-serif', height: '40px' }}>Cancel</button>
                                         </div>
                                         <div className="col-xl-6 flex-column d-flex">
-                                            <button className="btn btn-primary d-block w-100 mb-3" type="submit" style={{ background:'#0558b0', border: 'none', fontFamily: 'Inter, sans-serif', height: '40px' }}>Post</button>
+                                            <button className="btn btn-primary d-block w-100 mb-3" type="submit" style={{ background:'#0558b0', border: 'none', fontFamily: 'Inter, sans-serif', height: '40px' }}>{changeMode ? "Update" : "Post"}</button>
                                         </div>
                                     </div>
                                 </div>
                             </form>
-
+                            </div>}
                         </div>
                     </div>
                 </div>

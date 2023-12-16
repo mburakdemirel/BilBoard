@@ -128,7 +128,9 @@ function Products({myProfile, func, editMode}) {
 
             } else {
                 setRowOrColumn(false);
-                setShowedProducts(products.filter(product => product.category === filteredProductsType));
+                if(products) {
+                    setShowedProducts(products.filter(product => product.category === filteredProductsType));
+                }
             }
 
         } else {

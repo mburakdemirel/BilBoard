@@ -67,9 +67,10 @@ function App() {
                   <Route path='/entry' element={<><NavigationBarDefault/><EntryForm/></>}> </Route>
                   <Route path='/complaints' element={<><NavigationBarDefault/> <EntryMainPage/></>}> </Route>
 
-                  <Route path='/add_product' element={<><NavigationBarDefault/><ProductAddForm/></>}></Route>
+                  <Route path='/add_product' element={<><NavigationBarDefault/><ProductAddForm changeMode={false}/></>}></Route>
                   <Route path='/post_complaint' element={<><NavigationBarDefault/><EntryForm isComplaint={true}></EntryForm></>}></Route>
                   <Route path='/post_l&f' element={<><NavigationBarDefault/><EntryForm isComplaint={false}></EntryForm></>}></Route>
+                  <Route path='/update_product/:id' element={<><NavigationBarDefault/><ProductAddForm changeMode={true}/></>}></Route>
               </Routes>
 
               <Footer></Footer>
