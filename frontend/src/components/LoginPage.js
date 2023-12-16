@@ -8,6 +8,9 @@ function LoginPage() {
 
     const navigate = useNavigate();
 
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get('token');
+
     // User variables
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -16,8 +19,14 @@ function LoginPage() {
     const [isForgotPassword, setIsForgotPassword] = useState(false);
 
 
+
     useEffect(() => {
         AOS.init();
+
+        if(token){
+
+
+        }
 
     }, []);
 

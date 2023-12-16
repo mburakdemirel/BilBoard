@@ -96,26 +96,32 @@ function NavigationBarDefault() {
             setNotificationCount(0);
             console.log("notif", notifications);
             console.log("mark all");
-            socket.send(JSON.stringify({
-                "command": "mark_all",
-                "user_id": myProfile.id,
-            }));
-            setNotifications([]);
+            if(socket){
+                socket.send(JSON.stringify({
+                    "command": "mark_all",
+                    "user_id": myProfile.id,
+                }));
+                setNotifications([]);
+            }
+
     }
 
     const markSingle = (notificationId,notificationIndex) => {
         debugger;
         console.log("notif", notifications);
         console.log("mark single");
-        socket.send(JSON.stringify({
-            "command": "mark_single",
-            "notification_id": notificationId,
-            "user_id": myProfile.id,
-        }));
-        setNotifications(prevNotifications =>
-            prevNotifications.filter((_, index) => index !== notificationIndex)
-        );
-        setNotificationCount((prevCount)=> prevCount-1);
+        if(socket){
+            socket.send(JSON.stringify({
+                "command": "mark_single",
+                "notification_id": notificationId,
+                "user_id": myProfile.id,
+            }));
+            setNotifications(prevNotifications =>
+                prevNotifications.filter((_, index) => index !== notificationIndex)
+            );
+            setNotificationCount((prevCount)=> prevCount-1);
+        }
+
     }
 
     const seeDetail = (selectedNotification,index) => {
