@@ -26,7 +26,7 @@ function Profile() {
     const navigate = useNavigate();
 
     const {id} = useParams();
-    console.log(id);
+
     const [error, setError] = useState(null);
     const [myProfile, setMyProfile] = useState();
     const [editMode, setEditMode] = useState(false);
@@ -37,18 +37,17 @@ function Profile() {
     },[])
 
      const pull_data = (data) => {
-        console.log("edit mode " + data); // LOGS DATA FROM CHILD (My name is Dean Winchester... &)
+
          setEditMode(data);
     }
 
     const onLoad = async () => {
         setMyProfile(JSON.parse(localStorage.getItem('myProfile')));
-        console.log("user on load", myProfile);
+
                 try{
                     // Create the GET request
                     axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
                     const {data} = await axios.get('http://127.0.0.1:8000/api/user/me/') ;
-                    //console.log(data);
                     setMyProfile(data);
                 }
                 catch (error){
@@ -112,7 +111,7 @@ function Products({myProfile, func, editMode}) {
     }, [uploadedOrFavorites,favorites,filteredProductsType,products]);
 
     const setShowed  = async () =>{
-        console.log(uploadedOrFavorites)
+
         if (filteredProductsType === "lostandfound") {
             setUploadedOrFavorites("uploaded");
         }
@@ -146,7 +145,7 @@ function Products({myProfile, func, editMode}) {
 
 
         }
-        console.log(rowOrColumn);
+
     }
 
 
@@ -163,13 +162,12 @@ function Products({myProfile, func, editMode}) {
             else{
                 productData = await axios.get('http://127.0.0.1:8000/api/user/product/');
             }
-            console.log("my products ",productData.data);
-            console.log("favorites", JSON.parse(localStorage.getItem('favoritesObjects')));
+
 
             debugger;
             if(category){
                 if(category==="list-my-voted-complaints"){
-                    console.log(productData.data);
+
                     setShowedProducts(productData.data.downvoted_complaints.concat(productData.data.upvoted_complaints));
                 }
                 else{
@@ -248,10 +246,9 @@ function Products({myProfile, func, editMode}) {
     };
 
     const deleteFav = async (product) => {
-        console.log("removed");
-        debugger;
+
         const {data} = await axios.post('http://127.0.0.1:8000/api/product/clicked-favorites/', {product_id: product.id}) ;
-        console.log(data)
+
         setFavorites((current) =>
             current.filter((favorite) => favorite.id !== product.id)
         );
@@ -408,7 +405,6 @@ function ProfileArea({myProfile,func} ) {
     const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
     const navigate = useNavigate();
     const location = useLocation();
-    console.log(myProfile);
     const {isProfileChanged, changeProfile} = useContext(ContextApi);
 
     const [loading, setLoading] = useState(false);
@@ -435,7 +431,7 @@ function ProfileArea({myProfile,func} ) {
             // do update operations
             const {data} = await axios.patch('http://127.0.0.1:8000/api/user/me/', user, { headers: { 'Content-Type': 'multipart/form-data' } });
             localStorage.setItem('myProfile', JSON.stringify(data));
-            console.log(data);
+
             myProfile = data;
             setNameSurname(data.name + " " + data.surname)
             setEmail(data.email);
@@ -469,7 +465,7 @@ function ProfileArea({myProfile,func} ) {
                         
                         if(profileImg) {
                             user = {...user, profile_photo: profileImg};
-                            console.log(user);
+
                         }
                         user.append('name', newName);
                         user.append('surname', newSurname);
@@ -478,8 +474,7 @@ function ProfileArea({myProfile,func} ) {
                         if(chosenImg) {
                             user.append("profile_photo", chosenImg, chosenImg.name);
                         }
-                        console.log("in change password");
-                        console.log(user);
+
                         updateUser(user);
                     } else {
                         window.alert("Passwords are not same!")
@@ -497,8 +492,7 @@ function ProfileArea({myProfile,func} ) {
                     user.append("profile_photo", chosenImg, chosenImg.name);
                     user.append("name", newName);
                     user.append("surname", newSurname);
-                    console.log("changing the profile photo");
-                    console.log(...user);
+
                     updateUser(user);  
             }
             else{

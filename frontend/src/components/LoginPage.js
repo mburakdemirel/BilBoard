@@ -11,7 +11,7 @@ function LoginPage() {
     const urlParams = new URLSearchParams(window.location.search);
     const token = urlParams.get('token');
     const check = urlParams.get('check');
-    console.log(token);
+
     // User variables
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -39,7 +39,7 @@ function LoginPage() {
         try {
             const {data} = await axios.get('http://127.0.0.1:8000/api/user/verify/'+ "?token="+ token);
             setVerified(data.email);
-            console.log(data.email);
+
         }
         catch (error) {
 
@@ -72,10 +72,7 @@ function LoginPage() {
         try {
             // Create the POST request
             const {data} = await axios.post('http://127.0.0.1:8000/api/user/token/', user);
-            //const {data} = await axios.get('http://127.0.0.1:8000/api/user/verify/'+ "?token="+ token);
 
-
-            console.log(data);
             if (!data.is_verified) {
                 setError('Email is not verified');
                 setLoading(false);
@@ -122,25 +119,20 @@ function LoginPage() {
         e.preventDefault();
         setLoading(true);
         if (isForgotPassword) {
-
-            console.log(isForgotPassword)
-
             try {
-                console.log(email);
                 const forgotData = {
                     email: email
                 }
                 const {data} = await axios.post('http://127.0.0.1:8000/api/user/forget-password/', forgotData);
-                console.log(data);
                 setIsForgotPassword(false);
+
             } catch (error) {
 
             }
-            console.log(isForgotPassword);
+
             setLoading(false);
         } else {
             setIsForgotPassword(true)
-            console.log(isForgotPassword)
             setLoading(false);
         }
 

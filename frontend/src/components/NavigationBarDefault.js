@@ -23,15 +23,8 @@ function NavigationBarDefault() {
     const favoritesIdList = [];
     const [myProfile, setMyProfile] = useState(JSON.parse(localStorage.getItem('myProfile')));
 
-
-    const urlParams = new URLSearchParams(window.location.search);
-    const minPrice = urlParams.get('min_price');
-    const maxPrice = urlParams.get('max_price');
-    const productType = urlParams.get('product_type')
-
-
     const {pageType,searchText} = useParams();
-    console.log("pagetype in nav" + pageType);
+
     const navigate = useNavigate();
     const [searchInput, setSearchInput] = useState('');
     const{isImageViewerOpen, changeIsImageViewerOpen} = useContext(ContextApi);
@@ -85,7 +78,7 @@ function NavigationBarDefault() {
                 else{
                     setNotificationCount((prevCount) => prevCount+1);
                     setNotifications((prevNotifications) => [data, ...prevNotifications]);
-                    console.log(data);
+
                 }
             };
 
@@ -100,8 +93,7 @@ function NavigationBarDefault() {
 
     const markAll = () => {
             setNotificationCount(0);
-            console.log("notif", notifications);
-            console.log("mark all");
+
             if(socket){
                 socket.send(JSON.stringify({
                     "command": "mark_all",
@@ -113,9 +105,7 @@ function NavigationBarDefault() {
     }
 
     const markSingle = (notificationId,notificationIndex) => {
-        debugger;
-        console.log("notif", notifications);
-        console.log("mark single");
+
         if(socket){
             socket.send(JSON.stringify({
                 "command": "mark_single",
@@ -174,7 +164,6 @@ function NavigationBarDefault() {
         try {
             axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
             const {data} = await axios.get('http://127.0.0.1:8000/api/notifications/unread/');
-            console.log("notifications",data.results);
             setNotifications(data.results);
             setNotificationCount(data.results.length);
 
@@ -195,9 +184,8 @@ function NavigationBarDefault() {
         if(!myProfile || isProfileChanged){
             try{
                 axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
-
                 const {data} = await axios.get('http://127.0.0.1:8000/api/user/me/') ;
-                console.log(data);
+
                 localStorage.setItem('myProfile', JSON.stringify(data));
                 setMyProfile(JSON.parse(localStorage.getItem('myProfile')));
             }
@@ -219,10 +207,9 @@ function NavigationBarDefault() {
 
             axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
             const {data} = await axios.get('http://127.0.0.1:8000/api/user/my-favorites/');
-            console.log("favorites from backend " , data.message);
             data.message.forEach((product) => favoritesIdList.push(product.id));
             localStorage.setItem('favoritesObjects', JSON.stringify(data.message));
-            console.log(favoritesIdList);
+
             localStorage.setItem('favorites', JSON.stringify(favoritesIdList));
         }
         catch (error){
@@ -247,9 +234,7 @@ function NavigationBarDefault() {
     const enterClick = (e) => {
         if(pageType){
             if(e.key === "Enter") {
-                console.log("Enter Click")
-                navigate(window.location.pathname +  '?search=' + searchInput + '&&min_price=' + minPrice + '&&max_price' + maxPrice + '&&product_type=' + productType);
-
+                navigate(window.location.pathname +  '?search=' + searchInput);
             }
         }
     }

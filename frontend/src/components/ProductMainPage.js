@@ -37,7 +37,7 @@ function ProductMainPage() {
 
     useEffect(()=>{
         AOS.init();
-        console.log("In use effect" + searchText);
+
         setProducts([]);
         setPage(1);
         setHasMore(true);
@@ -45,7 +45,7 @@ function ProductMainPage() {
     },[pageType,searchText,minPrice,maxPrice,productType])
 
     useEffect(() => {
-        console.log("page use effect" + page);
+
         if (page === 1) {
             setLoading(true);
             uploadProducts();
@@ -58,7 +58,7 @@ function ProductMainPage() {
 
             axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
             if(pageType){
-                if(searchText || minPrice!=null || maxPrice!=null || productType!=null){
+                if(searchText!=null || minPrice!=null || maxPrice!=null || productType!=null){
                     let url = 'http://127.0.0.1:8000/api/product/' + pageType;
                     debugger;
                     if (searchText !== null && searchText !== "undefined") {
@@ -77,6 +77,7 @@ function ProductMainPage() {
                         url += url.includes('?') ? `&product_type=${productType}` : `?product_type=${productType}`;
                     }
                         try {
+                        debugger;
                             const {data} = await axios.get(url);
                             const productData = data.results ? data.results : data;
                             if(productData) {
@@ -97,7 +98,7 @@ function ProductMainPage() {
 
                    try {
                        const {data} = await axios.get('http://127.0.0.1:8000/api/product/' + pageType + `?page=${page}`);
-                       console.log(data);
+
                        const productData = data.results ? data.results : data;
                        if(productData) {
                            setProducts(prevProducts => [...prevProducts, ...productData]);

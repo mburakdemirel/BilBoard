@@ -27,14 +27,14 @@ function EntryMainPage2(){
 
     useEffect(()=>{
         AOS.init();
-        console.log("pageType in entry page " + pageType);
+
         setProducts([]);
         setPage(1);
         // Messages in the selected index will be opened on the right side
     },[searchText,specific])
 
     useEffect(() => {
-        console.log("page use effect" + page);
+
         if (page === 1) {
             setLoading(true);
             uploadProducts();
@@ -52,12 +52,11 @@ function EntryMainPage2(){
 
                     try {
                         const {data} = await axios.get('http://127.0.0.1:8000/api/entry/laf-entry/' + `?search=${searchText}`)
-                        console.log(data.results);
-                        console.log(hasMore);
+
                         const lafEntries = data.results ? data.results : data;
                         if(lafEntries) {
                             setProducts(prevProducts => [...prevProducts, ...lafEntries]);
-                            console.log("search products", products);
+
                             setPage(prevPage => prevPage + 1);
                             setHasMore(lafEntries.length >= 16);
                         }
@@ -73,10 +72,8 @@ function EntryMainPage2(){
                 else if(specific){
                     try {
                         const {data} = await axios.get('http://127.0.0.1:8000/api/entry/laf-entry/' + specific)
-                        console.log(data);
-
                         const lafEntries = data;
-                        console.log("lafdata data: ", lafEntries);
+
                         if(lafEntries) {
                             setProducts([lafEntries]);
                             setPage(prevPage => prevPage + 1);
@@ -96,9 +93,6 @@ function EntryMainPage2(){
                 else{
                     try {
                         const {data} = await axios.get('http://127.0.0.1:8000/api/entry/laf-entry/' + `?page=${page}`);
-                        console.log("laf data is heree ",  data);
-                        console.log("products", data.results);
-                        console.log(hasMore);
                         const lafEntries = data.results ? data.results : data;
                         if(lafEntries) {
                             setProducts(prevProducts => [...prevProducts, ...lafEntries]);
@@ -145,11 +139,9 @@ function EntryMainPage2(){
     const sendMessage = async (e,item) => {
         e.preventDefault();
         setMesagesLoading(true);
-        console.log("item", item)
         axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
         await axios.post("http://127.0.0.1:8000/chat/create/",
             {participiants: [item.user.id], category: item.category, product_id: item.id}).then(response => {
-            console.log("new Chat", response.data);
             const newMessage = {chat_id:response.data.id, contact_name:item.user.name, contact_surname:item.user.surname, contact_id:item.user.id};
             sendNewMessage(newMessage);
             setMesagesLoading(false);

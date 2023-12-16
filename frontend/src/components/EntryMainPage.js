@@ -33,14 +33,14 @@ function EntryMainPage(){
     useEffect(()=>{
 
         AOS.init();
-        console.log("pageType in entry page " + pageType);
+
         setProducts([]);
         setPage(1);
         // Messages in the selected index will be opened on the right side
     },[pageType,searchText,specific])
 
     useEffect(() => {
-        console.log("page use effect" + page);
+
         if (page === 1) {
             setLoading(true);
             uploadProducts();
@@ -49,16 +49,16 @@ function EntryMainPage(){
     }, [page]);
 
     useEffect(() => {
-       console.log("getting vote data");
+
        axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
        axios.get(`${baseurl}/api/user/list-my-voted-complaints/`)
        .then((response) => {
-        console.log("upvotes and downvotes ", response.data);
+
         if(response.data.upvoted_complaints) {setUpvotes(response.data.upvoted_complaints);}
         if(response.data.downvoted_complaints) {setDownvotes(response.data.downvoted_complaints);}
        })
        .catch((error) => {
-        console.log("Error getting complaints: ", error);
+
        })
     }, [isChanged]);
 
@@ -72,14 +72,13 @@ function EntryMainPage(){
                     try {
                         const {data} = await axios.get('http://127.0.0.1:8000/api/entry/complaint-entry/' + `?search=${searchText}`)
                         setPage(prevPage => prevPage + 1);
-                        console.log(data);
-                        console.log(hasMore);
+
                         const entryData = data.results ? data.results : data;
-                        console.log("entry data: ", entryData);
+
                         if(entryData) {
                             const newEntries = [...products, ...entryData];
                             newEntries.sort((a, b) => parseInt(b.vote, 10) - parseInt(a.vote,10));
-                            console.log(entryData);
+
                             setProducts(entryData);
                             setPage(prevPage => prevPage + 1);
 
@@ -98,10 +97,10 @@ function EntryMainPage(){
                 else if(specific){
                     try {
                         const {data} = await axios.get('http://127.0.0.1:8000/api/entry/complaint-entry/' + specific)
-                        console.log(data);
+
 
                         const entryData = data.results ? data.results : data;
-                        console.log("entry data: ", entryData);
+
                         if(entryData) {
                             setProducts([entryData]);
                             setExpand([false]);
@@ -121,18 +120,16 @@ function EntryMainPage(){
                 else{
                     try {
                         const {data} = await axios.get('http://127.0.0.1:8000/api/entry/complaint-entry/' + `?page=${page}`);
-                        console.log(data);
-                        console.log(data.results);
-                        console.log(hasMore);
+
                         const entryData = data.results ? data.results : data;
-                        console.log("entry data: ", entryData);
+
                         if(entryData) {
                             const newEntries = [...products, ...entryData];
                             newEntries.sort((a, b) => parseInt(b.vote, 10) - parseInt(a.vote,10));
                             if(newEntries.length > expand.length) {
                                 setExpand(prev => [...prev, ...Array(entryData.length).fill(false)]);
                             }
-                            console.log(entryData);
+
                             setProducts(newEntries);
                             setPage(prevPage => prevPage + 1);
 
@@ -175,10 +172,10 @@ function EntryMainPage(){
     }
 
     function handleUpvote(id, index) {
-        console.log("handling upvote");
+
         axios.post(`${baseurl}/api/complaint/vote-up/`, {complaint_id: id})
         .then((response) => {
-            console.log(response);
+
             setIsChanged(!isChanged);
 
             if(containsComplaint(id)==="upvotes"){
@@ -199,10 +196,10 @@ function EntryMainPage(){
     }
 
     function handleDownvote(id, index) {
-        console.log("handling downvote");
+
         axios.post(`${baseurl}/api/complaint/vote-down/`, {complaint_id: id})
         .then((response) => {
-            console.log(response);
+
             setIsChanged(!isChanged);
             if(containsComplaint(id)==="upvotes"){
                 products[index].vote= (parseInt(products[index].vote, 10) - 2).toString();
@@ -224,18 +221,18 @@ function EntryMainPage(){
     }
     
     function toggleExpand(e,index) {
-        console.log(index);
+
         let vals = [...expand];
         for (let i = 0; i < vals.length; i++) {
             const element = vals[i];
             if(i === index) {
-                console.log("before: ", vals[i]);
+
                 vals[i] = !element;
-                console.log("after: ", vals[i]);
+
                 break;
             }
         }
-        console.log(vals);
+
         setExpand(vals);
     }
 

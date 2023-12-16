@@ -24,8 +24,6 @@ function MessagePage() {
     let notificationSocket;
 
     useEffect(()=>{
-        console.log("fucking my progile id", id);
-
         notificationSocket  = new ReconnectingWebSocket("ws://127.0.0.1:8000/ws/chat/status/" + id + "/");
 
         notificationSocket.onopen =  (e) => {
@@ -46,7 +44,6 @@ function MessagePage() {
                 'user_id': myProfile.id,
                 'connection': 'closed'
             }));
-            console.log("Closing WebSocket due to component unmounting");
             notificationSocket.close();
         };
 
@@ -76,14 +73,11 @@ function MessagePage() {
         try{
             axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
             await axios.get("http://127.0.0.1:8000/chat/").then(response => {
-                console.log("chat", response.data.results);
                 setAllMessages(response.data.results);
                 setLoading(false);
 
             });
 
-            //const {data} = await axios.get('http://127.0.0.1:8000/api/user/me/') ;
-            //console.log(data);
         }
         catch (error){
             if (error.response) {
@@ -100,12 +94,9 @@ function MessagePage() {
 
 
     const pull_data = (id, participiants) => {
-        console.log("chat id " + id);
-        console.log("participiant ", participiants);
         setParticipiant(participiants);
     }
     const pull_first_message = (firstMessage) => {
-        console.log("firstMessage" + firstMessage);
         setFirstMessage(firstMessage);
     }
 
@@ -139,7 +130,6 @@ function MessagePage() {
         <section className="d-flex justify-content-center align-items-center py-4" style={{ background: '#edf0f7', minHeight: '91vh' }}>
             <div className="container">
                 <div className="row gx-1 gy-3 justify-content-center" style={{ width: '100%', marginTop: '-21px' }}>
-                    {/* I think this should not be here this page should be more like a pop-up page */}
                     <Products allMessages={allMessages} pull_data={pull_data} deleteMessage={deleteMessage} loading={loading}  chatId={chatId} firstMessage={firstMessage}></Products>
                     <Messages  chatId={chatId} participiant={participiant} pull_first_message={pull_first_message} loadingDelete={loading}></Messages>
                 </div>
@@ -163,18 +153,14 @@ function Products({allMessages, pull_data, deleteMessage, loading, chatId,firstM
     },[chatId])
 
     useEffect(()=>{
-
         findActiveIndex();
-        console.log("all messages", allMessages.length);
         // Messages in the selected index will be opened on the right side
-        console.log(activeIndex);
     },[allMessages])
 
 
     const messageClick = (chatId, participiants,index) => {
-        console.log("message index", chatId, participiants);
-        pull_data(chatId, participiants);
 
+        pull_data(chatId, participiants);
         setActiveIndex(index);
 
     };
@@ -200,7 +186,6 @@ function Products({allMessages, pull_data, deleteMessage, loading, chatId,firstM
                 for(let i=0; i<allMessages.length;i++){
                     if(allMessages[i].id == newMessage.chat_id){
                         setActiveIndex(i);
-                        console.log("active index", activeIndex);
                         pull_data(allMessages[i].id, allMessages[i].participiants);
                     }
                 }
@@ -210,7 +195,6 @@ function Products({allMessages, pull_data, deleteMessage, loading, chatId,firstM
                 for(let i=0; i<allMessages.length;i++){
                     if(allMessages[i].id == chatId){
                         setActiveIndex(i);
-                        console.log("active index", activeIndex);
                         pull_data(allMessages[i].id, allMessages[i].participiants);
                     }
                 }
@@ -295,11 +279,8 @@ function Messages({chatId,participiant,loadingDelete,pull_first_message}) {
     const [firstMessage, setFirstMessage] = useState();
     const [contact, setContact] = useState();
 
-    console.log(myProfile);
-    console.log(myProfile.id);
-    axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
-    //const newSocket = new ReconnectingWebSocket("ws://127.0.0.1:8000/ws/chat/" + chatId + "/");
 
+    axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
     useEffect(() => {
 
         setLoading(true);
@@ -318,7 +299,7 @@ function Messages({chatId,participiant,loadingDelete,pull_first_message}) {
         if(chatId){
             axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
             await axios.get("http://127.0.0.1:8000/chat/" + chatId + "/").then(response => {
-                console.log("messages",response.data.messages);
+
                 if(response.data.messages){
                     setMessages(response.data.messages);
                 }
@@ -360,7 +341,6 @@ function Messages({chatId,participiant,loadingDelete,pull_first_message}) {
 
             const data = JSON.parse(event.data);
             if(data["command"]==='new_message'){
-                console.log("message", data);
                 setMessages((prevMessages) => [data.message, ...prevMessages]);
             }
         };
@@ -396,7 +376,6 @@ function Messages({chatId,participiant,loadingDelete,pull_first_message}) {
     const sendMessageWithEnter = (e) => {
 
         if(e.key === "Enter") {
-            console.log("Enter Click")
             sendMessageCommant();
         }
 

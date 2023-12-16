@@ -23,7 +23,7 @@ function ProfileOther() {
     const navigate = useNavigate();
 
     const {id} = useParams();
-    console.log("id", id);
+
     const [error, setError] = useState(null);
     const [myProfile, setMyProfile] = useState();
 
@@ -35,12 +35,11 @@ function ProfileOther() {
 
     const onLoad = async () => {
 
-        console.log("user on load", myProfile);
         try{
             // Create the GET request
             axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
             const {data} = await axios.post('http://127.0.0.1:8000/api/user/get-user-by-id/', {user_id:id}) ;
-            console.log("other profile", data);
+
             setMyProfile(data);
         }
         catch (error){
@@ -92,7 +91,7 @@ function Products({myProfile, func}) {
             setLoading(true);
             axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
             const {data} = await axios.post('http://127.0.0.1:8000/api/products/by-id/', {user_id: myProfile.id});
-            console.log(data);
+
             setProducts(data);
 
 

@@ -9,19 +9,6 @@ import FilterBar from "./FilterBar";
 function MainPage(){
     const {pageType} = useParams();
 
-
-    const favoritesIdList = [];
-
-
-/*
-
-
-    useEffect(()=>{
-        getProfile();
-    },[])*/
-    //x
-
-
     if(pageType==="secondhand" || pageType==="borrow" ||  pageType==="donation" ){
         return (<><FilterBar></FilterBar><ProductMainPage></ProductMainPage></>);
     }

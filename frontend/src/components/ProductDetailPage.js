@@ -31,7 +31,6 @@ function ProductDetailPage() {
     const [product, setProduct] = useState('');
     const [myProfile, setMyProfile] = useState(JSON.parse(localStorage.getItem('myProfile')));
     const [favorites, setFavorites] = useState(JSON.parse(localStorage.getItem('favoritesObjects')));
-    console.log("favorites in product detail", favorites);
     const [favoritesAdded, setFavoritesAdded] = useState(false);
 
     const [currentImage, setCurrentImage] = useState(0);
@@ -47,8 +46,6 @@ function ProductDetailPage() {
     },[])
 
     useEffect(() => {
-        console.log("in use effect ",favorites);
-
         localStorage.setItem('favoritesObjects', JSON.stringify(favorites));
     }, [favorites]);
 
@@ -57,12 +54,8 @@ function ProductDetailPage() {
         try{
             axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
             const {data} = await axios.get('http://127.0.0.1:8000/api/product/' + pageType + '/'+ id);
-            console.log(data);
             setProduct(data);
-
             data.images.forEach( (photo) => images.push(photo.image));
-
-            console.log(data);
             setLoading(false);
 
         }
@@ -84,7 +77,6 @@ function ProductDetailPage() {
             axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
             await axios.post("http://127.0.0.1:8000/chat/create/",
                 {participiants: [product.user.id], category: product.category, product_id: product.id}).then(response => {
-                console.log("new Chat", response.data);
                 const newMessage = {chat_id:response.data.id, contact_name:product.user.name, contact_surname:product.user.surname, contact_id:product.user.id};
                 sendNewMessage(newMessage);
                 setMesagesLoading(false);
@@ -95,7 +87,6 @@ function ProductDetailPage() {
     }
     const checkContains = (index) => {
 
-        console.log(favorites);
         if (favorites && favorites.some(favorite => favorite.id === index)) {
             return true;
         }
@@ -109,12 +100,9 @@ function ProductDetailPage() {
         setFavoritesAdded(true);
         axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization')
         const {data} = await axios.post('http://127.0.0.1:8000/api/product/clicked-favorites/', {product_id: index}) ;
-        console.log(data);
-        console.log("index " + index);
 
         if(checkContains(index)){
             setFavoritesAdded(false);
-            console.log("removed");
             setFavorites((current) =>
                 current.filter((favorite) => favorite.id !== index)
             );
@@ -166,7 +154,7 @@ function ProductDetailPage() {
 
     const openImageViewer = useCallback((index) => {
         changeIsImageViewerOpen(true);
-        console.log("opened image viewer " + index , images)
+
         setCurrentImage(index);
         setIsViewerOpen(true);
     }, []);
@@ -317,9 +305,7 @@ function ProductDetailPage() {
                                 <RWebShare data={{text: "Web Share - GfG", url: window.location.href, title: "Share",
                                     }}
                                            sites={["facebook", "twitter", "whatsapp", "telegram", "linkedin", "mail", "copy"]}
-                                    onClick={() =>
-                                        console.log("shared successfully!")
-                                    }
+
                                 >
                                     <button disabled={loading} className="btn btn-primary" type="button" style={{ width: '40px', fontWeight: 'bold', background: '#2d3648', borderStyle: 'none', borderColor: '#2d3648', height: '90%' }}>
                                         {!loading && <i className="bi bi-share-fill" ></i>}

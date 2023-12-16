@@ -17,9 +17,8 @@ function RegisterPage(){
     const [error, setError] = useState(null);
     // Create the POST request
     const urlSearchParams = new URLSearchParams(window.location.search);
-    console.log(urlSearchParams.get("token"));
     const token = urlSearchParams.get("token");
-    console.log(token);
+
 
     useEffect(() => {
         AOS.init();
@@ -39,13 +38,12 @@ function RegisterPage(){
             try{
 
                 const {data} = await axios.post('http://127.0.0.1:8000/api/user/change-password/'+ "?token="+ token, passwordData);
-                console.log(data);
+
                 window.location.href = "/login";
 
             } catch (error) {
                 setLoading(false);
                 if (error.response) {
-                    console.log(error.response.data);
                     setError(error.response.data);
 
                 } else if (error.request) {
