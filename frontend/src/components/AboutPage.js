@@ -23,21 +23,6 @@ const AboutPage = () => {
                     <li>Sıla Özel</li>
                 </ul>
 
-                <h4>Roles of Team Members</h4>
-                <p>Each member of our team will work both on the backend and frontend when needed, so the roles might change. However, the initial formation will be as follows:</p>
-                <h5>Frontend</h5>
-                <ul>
-                    <li>Sıla Özel</li>
-                    <li>Eren Arım</li>
-                </ul>
-                <h5>Backend and Database</h5>
-                <ul>
-                    <li>Burak Demirel</li>
-                    <li>Yusuf Toraman</li>
-                    <li>Dilara Mandıracı</li>
-                    <li>Eren Arım</li>
-                </ul>
-
                 <h2>About Our Web Application</h2>
                 <p>This web application, BilBoard, is a team project for our CS-319 course for the Fall 2023-2024 term. BilBoard aims to have four main features: secondhand sales, lost and found, borrow, and donation, and one additional feature: a complaint system. Each feature is aimed at solving some common problems among Bilkent University students. Also, this web application can only be used by the Bilkent students.</p>
                 {/* ... previous content ... */}
@@ -59,12 +44,6 @@ const AboutPage = () => {
 
                 <h3>Complaint System</h3>
                 <p>For our app's additional feature, we decided to do a complaint system where students can write their complaints in a formal manner. Again, students send their complaints as posts on unofficial Instagram accounts and wait to be heard or try to find other people who support them. But sometimes, their posts can be left unseen among other posts. Because of this issue, we decided to add a complaint system feature to our application. In this feature, if other people agree with the complaint, they can upvote it, or if they disagree, they can downvote it. With this, Bilkent students can share their complaints and find support more systematically.</p>
-
-                <h2>Goals</h2>
-                <p>Our primary goals for BilBoard are as follows:</p>
-                <ol>
-                    <li>Enhance the overall security and reliability of peer-to-peer transactions and interactions among Bilkent University students.</li>
-                    <li>Streamline and improve the efficiency of secondhand item sales</li></ol>
 
             </section>
         </div>
