@@ -128,7 +128,9 @@ function Products({myProfile, func, editMode}) {
 
             } else {
                 setRowOrColumn(false);
-                setShowedProducts(products.filter(product => product.category === filteredProductsType));
+                if(products) {
+                    setShowedProducts(products.filter(product => product.category === filteredProductsType));
+                }
             }
 
         } else {
@@ -137,9 +139,11 @@ function Products({myProfile, func, editMode}) {
                 await uploadMyProducts("list-my-voted-complaints");
             }
             else{
-                setShowedProducts(favorites.filter(favorite => favorite.category === filteredProductsType));
+                if(favorites) {
+                    setShowedProducts(favorites.filter(favorite => favorite.category === filteredProductsType));
+                }
+                
             }
-
 
         }
         console.log(rowOrColumn);

@@ -177,7 +177,7 @@ function ProductDetailPage() {
     };
 
     const goToProfile =  () => {
-        if(product.user.id==myProfile.id){
+        if(product.user.id===myProfile.id){
             navigate('/profile');
         }
         else{
@@ -289,11 +289,21 @@ function ProductDetailPage() {
                             }
                             <div className="d-flex flex-row justify-content-around align-items-center" style={{ height: '100%', minWidth: '90px' }}>
                                 {product.user && product.user.id === myProfile.id ?
-                                    <button disabled={loading} className="btn btn-primary" type="button" style={{ width: '40px', fontWeight: 'bold', background: '#2d3648', borderStyle: 'none', borderColor: '#2d3648', height: '90%' }}
+                                    <>
+                                         <button disabled={loading} className="btn btn-primary" type="button" style={{ width: '40px', fontWeight: 'bold', background: '#2d3648', borderStyle: 'none', borderColor: '#2d3648', height: '90%' }}
                                             onClick={(e)=>deleteProduct(e,product)}>
                                         {!loading &&
                                             <i className="bi bi-trash"></i>}
                                     </button>
+                                    <button
+                                    className="btn btn-primary d-flex d-xxl-flex justify-content-center align-items-center justify-content-xxl-center align-items-xxl-center"
+                                    type="button"
+                                    style={{ marginLeft:"1%", marginRight:"1%", width: '40px', fontWeight: 'bold', background: '#2d3648', borderStyle: 'none', borderColor: '#2d3648', height: '90%' }}
+                                    onClick={(e) => {e.preventDefault(); navigate(`/update_product/${product.id}`)}}
+                                    >
+                                        <i className="bi bi-gear"></i>
+                                    </button>
+                                    </>
                                     :
                                     <button onClick={ ()=>  {addFavourites(product.id)}} disabled={loading} className="btn btn-primary" type="button" style={{ width: '40px', fontWeight: 'bold', background: '#2d3648', borderStyle: 'none', borderColor: '#2d3648', height: '90%' }}>
                                         {!loading && !checkContains(product.id) && <i className="bi bi-heart"></i>}
