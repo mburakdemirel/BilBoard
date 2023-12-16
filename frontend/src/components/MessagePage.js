@@ -184,7 +184,7 @@ function Products({allMessages, pull_data, deleteMessage, loading, chatId,firstM
             navigate("/product_detail/" + category + "/" + id);
         }
         else if(category==="lost" || category==="found"){
-            navigate("/main_page/lost&found/" + name);
+            navigate("/main_page/lost&found/?specific=" + id);
         }
     };
 
@@ -244,8 +244,16 @@ function Products({allMessages, pull_data, deleteMessage, loading, chatId,firstM
                                             </button>
                                             <span style={{ width: '12px' }}></span>
                                             <div className="d-flex justify-content-center align-items-center" style={{ height:'80px', width: '80px', margin: '0px', padding: '0px' }}>
-                                                <img className="d-block w-100" style={{ borderRadius: '8px', height: '95%', objectFit: 'cover' }} src={allMessages[index].image_url == null ? Placeholder: allMessages[index].image_url }
-                                                    onClick={(e)=>goToItem(allMessages[index].category, allMessages[index].product_id,allMessages[index].product_name)}/>
+                                                <img
+                                                    role="button"
+                                                    className="d-block w-100"
+                                                    style={{ borderRadius: '8px', height: '95%', objectFit: 'cover' }}
+                                                    src={allMessages[index].image_url == null ? Placeholder : allMessages[index].image_url}
+                                                    onClick={(e) => {
+                                                        e.stopPropagation(); // This will stop the event from bubbling up
+                                                        goToItem(allMessages[index].category, allMessages[index].product_id, allMessages[index].product_name);
+                                                    }}
+                                                />
                                             </div>
 
                                         </div>
