@@ -118,12 +118,14 @@ function NavigationBarDefault() {
         setNotificationCount((prevCount)=> prevCount-1);
     }
 
-    const seeDetail = (notification) => {
-        if(notification.related_item ="CHAT"){
+    const seeDetail = (notification,index) => {
+        if(notification.related_item ==="CHAT"){
+            markSingle(notification.id,index);
             navigate("/messages/" + notification.related_item_id);
         }
         else{
-            navigate("/complaints/" + notification.related_item_id);
+            navigate("/complaints/" + notification.title);
+            markSingle(notification.id,index);
         }
     }
 
@@ -281,32 +283,28 @@ function NavigationBarDefault() {
                             </span>
                         }
                     </i>
-                    <Overlay  show={show} target={target} placement="bottom" container={ref.current} containerPadding={10} >
+                    <Overlay transition={true} rootClose={true} show={show} target={target} placement="bottom" container={ref.current} containerPadding={10} >
                         <Popover id="popover-contained">
                             <Popover.Header>
                                 <div className="d-flex align-items-center justify-content-between w-100"  >
                                     <a>Notifications</a>
-                                    <button onClick={markAll} className="btn"  style={{ marginLeft:'10px' ,fontFamily: 'Inter, sans-serif', fontSize:'11px',color:'white' , background:'#2d3648'}}>
+                                    <button onClick={markAll} className="btn"  style={{ marginLeft:'10px', padding:'4px' ,fontFamily: 'Inter, sans-serif', fontSize:'11px',color:'white' , background:'#2d3648'}}>
                                         Mark All
                                     </button>
                                 </div>
-
-
                             </Popover.Header>
-                            <Popover.Body >
-
+                            <Popover.Body>
                                 {Array(notifications.length).fill().map((_, index) => {
                                         return(
                                             <div key={index} style={{width:'240px', height:'inherit', background:'#EDF0F7', marginBottom:'10px', padding:'10px', borderRadius:'10px', border:'solid', borderWidth:'1.6px',borderColor:'#A0ABC0' }}>
                                                 <p style={{width:'100%',fontFamily: 'Inter, sans-serif', fontSize:'13px', marginBottom:'-2px'}}>{notifications[index] && notifications[index].description}</p>
-                                                <p style={{width:'100%',fontFamily: 'Inter, sans-serif', fontSize:'10px', marginBottom:'0px', marginTop:'0px', textAlign:'end'}}>{notifications[index] && getHourAndMinuteFromTime(notifications[index].timestamp)}</p>
+                                                <p style={{width:'100%',fontFamily: 'Inter, sans-serif', fontSize:'9px', marginBottom:'0px', marginTop:'0px', textAlign:'end'}}>{notifications[index] && getHourAndMinuteFromTime(notifications[index].timestamp)}</p>
                                                 <div className="d-flex justify-content-between" style={{width:'100%'}}>
-                                                    <button className="btn" onClick={()=>seeDetail(notifications[index])} style={{paddingTop:'2px', paddingBottom:'2px', fontFamily: 'Inter, sans-serif', fontSize:'11px',color:'white' , background:'#2d3648'}}>{notifications[index] && notifications[index].related_item==="CHAT" ? "See Message" : "See Complaint"}</button>
+                                                    <button className="btn" onClick={()=>seeDetail(notifications[index],index)} style={{paddingTop:'2px', paddingBottom:'2px', fontFamily: 'Inter, sans-serif', fontSize:'11px',color:'white' , background:'#2d3648'}}>{notifications[index] && notifications[index].related_item==="CHAT" ? "See Message" : "See Complaint"}</button>
                                                     <button className="btn" onClick={()=>markSingle(notifications[index].id,index)}  style={{paddingTop:'2px', paddingBottom:'2px',paddingLeft:'5px',paddingRight:'5px' , fontFamily: 'Inter, sans-serif', fontSize:'11px',color:'white' , background:'#2d3648'}}>
                                                         <i className="bi bi-x-circle"></i>
                                                     </button>
                                                 </div>
-
                                             </div>)
                                 })}
                             </Popover.Body>

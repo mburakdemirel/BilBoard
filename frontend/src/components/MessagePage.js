@@ -411,8 +411,8 @@ function Messages({chatId,participiant,loadingDelete,pull_first_message}) {
         //flex-grow-1
             <div className="d-flex flex-grow-1 justify-content-center align-items-center " data-aos="fade-left" data-aos-duration="600" style={{ width: '600px', height: '40vw', minHeight: '380px' }}>
                 <div  className="d-flex flex-column align-items-center" style={{ background: '#ffffff', fontSize: '12px', borderRadius: '10px', height: '100%', width: '95%' }} >
-                    <div className="d-flex flex-row align-items-center" style={{ height: '10%', width: '100%', paddingRight: '20px', paddingBottom: '10px', paddingLeft: '20px', paddingTop: '10px' }} >
-                        {(chatId && !loadingDelete) && <h1 className="d-flex justify-content-start" style={{ width: '50%', fontSize: '150%', fontFamily: 'Inter, sans-serif', marginBottom: '0px' }}
+                    <div className="d-flex flex-row align-items-center"  style={{ height: '10%', width: '100%', paddingRight: '20px', paddingBottom: '10px', paddingLeft: '20px', paddingTop: '10px' }} >
+                        {(chatId && !loadingDelete) && <h1 className="d-flex justify-content-start"  role="button" style={{ width: '50%', fontSize: '150%', fontFamily: 'Inter, sans-serif', marginBottom: '0px' }}
                          onClick={(e)=>navigate("/profile/"+ contact.contact_id)}> {contact && contact.contact_name + " " + contact.contact_surname}</h1>}
                     </div>
                     <hr style={{ width: '100%', margin: '0px' }} />
@@ -446,7 +446,7 @@ function Messages({chatId,participiant,loadingDelete,pull_first_message}) {
 
                             <input className="form-control-sm" type="text" style={{  fontSize:'1em', width: '90%',  background: '#edf0f7', borderRadius: '0px', borderTopLeftRadius: '8px', borderBottomLeftRadius: '8px', borderBottomRightRadius: '0px', borderTopRightRadius: '0px', borderStyle: 'none', borderTopWidth: '2px', borderTopStyle: 'none', borderRight: '2px solid #CBD2E0', borderBottomWidth: '2px', borderBottomStyle: 'none', borderLeft: '2px solid #CBD2E0' }}
                                    disabled={loading} value={newSendedMessage} onKeyDown={(e)=>{sendMessageWithEnter(e)}} onChange={(e)=> setNewSendedMessage(e.target.value)}/>
-                            <div className="d-flex align-items-center justify-content-center" onClick={(e)=>{sendMessage(e)}} style={{ width: '10%', height: '100%', borderStyle: 'none' }}>
+                            <div className="d-flex align-items-center justify-content-center" role="button" onClick={(e)=>{sendMessage(e)}} style={{ width: '10%', height: '100%', borderStyle: 'none' }}>
                                 <i className="bi bi-send-fill" style={{ fontSize: '20px' }} ></i>
                             </div>
                         </div>
