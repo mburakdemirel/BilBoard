@@ -118,15 +118,26 @@ function NavigationBarDefault() {
         setNotificationCount((prevCount)=> prevCount-1);
     }
 
-    const seeDetail = (notification,index) => {
+    const seeDetail = (selectedNotification,index) => {
         setShow(!show);
-        if(notification.related_item ==="CHAT"){
-            markSingle(notification.id,index);
-            navigate("/messages/" + notification.related_item_id);
+        if(selectedNotification.related_item ==="CHAT"){
+            notifications.forEach((notification, index) => {
+                if (notification.related_item_id == selectedNotification.related_item_id) {
+                    markSingle(notification.id, index);
+                }
+            });;
+
+
+            navigate("/messages/" + selectedNotification.related_item_id);
         }
         else{
-            navigate("/main_page/complaint/?search=" + notification.title);
-            markSingle(notification.id,index);
+            notifications.forEach((notification, index) => {
+                if (notification.related_item_id == selectedNotification.related_item_id) {
+                    markSingle(notification.id, index);
+                }
+            });
+
+            navigate("/main_page/complaint/?specific=" + selectedNotification.related_item_id);
         }
     }
 
