@@ -192,7 +192,7 @@ function EntryMainPage2(){
                     <div className="row gx-1 gy-3 h-100" style={{ margin: '0px', width: '100%', marginTop: '-21px' }}>
 
                         <div className="col shadow-sm p-0 " style={{ width: '45%', margin: '1%', height:'inherit' }}  data-aos="fade-right" data-aos-duration="600">
-                            <div className="d-flex flex-column" style={{ background: 'var(--bs-white)', fontSize: '12px', borderRadius: '10px', height: '100%', width: '100%', padding: '2%' }} data-bs-smooth-scroll="true">
+                            <div className="d-flex flex-column" style={{ background: 'var(--bs-white)', fontSize: '12px', borderRadius: '10px', height: '100%', width: '100%',  padding: products.filter(item =>item.category==="lost").length!== 0 ? '2%' : '0%'}} data-bs-smooth-scroll="true">
                                 <ul className="list-group" style={{ width: '100%', height: '100%', overflow: 'scroll' }} data-bs-smooth-scroll="true">
                                     {products.filter(item =>item.category==="lost").map((item,index) => (
                                         <li className="list-group-item" key={item.id} style={{ padding: '0px', paddingBottom: '10px', borderStyle: 'none', margin: '1%' }} data-aos="fade-right" data-aos-duration="700">
@@ -242,7 +242,7 @@ function EntryMainPage2(){
 
 
                         <div className="col shadow-sm p-0 "  style={{ width: '45%', margin: '1%' ,height:'inherit' }} data-aos="fade-left" data-aos-duration="600">
-                            <div className="d-flex flex-column" style={{ background: 'var(--bs-white)', fontSize: '12px', borderRadius: '10px', height: '100%', width: '100%', padding: '2%' }} data-bs-smooth-scroll="true">
+                            <div className="d-flex flex-column" style={{ background: 'var(--bs-white)', fontSize: '12px', borderRadius: '10px', height: '100%', width: '100%',  padding: products.filter(item =>item.category==="found").length!== 0 ? '2%' : '0%' }} data-bs-smooth-scroll="true">
                                 <ul className="list-group" style={{ width: '100%', height: '100%', overflow: 'scroll' }} data-bs-smooth-scroll="true">
                                     {products.filter(item =>item.category==="found").map((item,index) => (
                                         <li className="list-group-item" key={item.id} style={{ padding: '0px', paddingBottom: '10px', borderStyle: 'none', margin: '1%' }} data-aos="fade-left" data-aos-duration="700" >
