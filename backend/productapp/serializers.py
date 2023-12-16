@@ -7,6 +7,7 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
         fields = ['id', 'email', 'name', 'surname', 'profile_photo', 'rate_ratio', 'description', 'phone_number']
+        read_only_fields = fields
 
 
 class ProductImageSerializer(serializers.ModelSerializer):
@@ -69,7 +70,7 @@ class ProductUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = ['id', 'title', 'price', 'return_date', 'images', 'category', 'description', 'upload_date', 'product_type', 'user']
-        read_only_fields = ['id', 'user', 'upload_date']
+        read_only_fields = fields
 
 
 class ProductUpdateSerializer(serializers.ModelSerializer):

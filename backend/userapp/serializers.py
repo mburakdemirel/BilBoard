@@ -47,6 +47,7 @@ class DefaultUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = get_user_model()
         fields = ('id', 'email', 'name', 'surname', 'profile_photo', 'description', 'phone_number')
+        read_only_fields = fields
 
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):

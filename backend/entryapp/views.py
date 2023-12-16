@@ -47,12 +47,9 @@ class SerializerFactory:
         if entry_type == EntryType.LOSTANDFOUND:
             if action == ActionType.CREATE:
                 return serializers.CreateLostAndFoundEntrySerializer
-            elif action == ActionType.RETRIEVE:
-                return serializers.UserLostAndFoundEntrySerializer
-            else: #default
+            else:
                 return serializers.DefaultLostAndFoundEntrySerializer
         elif entry_type == EntryType.COMPLAINT:
-            # Assuming you have similar serializers for complaints
             if action == ActionType.CREATE:
                 return serializers.CreateComplaintEntrySerializer
             else:
@@ -64,7 +61,6 @@ class SerializerFactory:
 #Şu an lost ve found hepsini getiriyor conflict
 class UserLostAndFoundEntryViewSet(viewsets.ModelViewSet):
     """View for manage Lost and Found Entry APIs."""
-
     queryset = LostAndFoundEntry.objects.all()
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]

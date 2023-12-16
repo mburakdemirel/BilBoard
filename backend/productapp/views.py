@@ -95,7 +95,6 @@ class UserProductViewSet(ProductViewSet):
 
         # According to category delete cache, since instances are changed.
         if product_category == 'secondhand':
-            print("Invalidating cache", instance.id)
             cache.delete_pattern("secondhand_products_*")
         elif product_category == 'borrow':
             cache.delete_pattern("borrow_products_*")
@@ -353,21 +352,3 @@ def delete_product_photo(request, product_id, image_id):
         cache.delete_pattern("donation_products_*")
 
     return Response({"message": "Image deleted"}, status=200)
-
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def filter_products_by_price(request):
-    min_price = request.query_params.get('min_price', None)
-    max_price = request.query_params.get('max_price', None)
-
-    # İkinci el ürünler için filtreleme yapın
-    queryset = Product.objects.filter(category='secondhand')
-
-    # Fiyat filtrelerini uygula
-    if min_price:
-        queryset = queryset.filter(price__gte=min_price)
-    if max_price:
-        queryset = queryset.filter(price__lte=max_price)
-
-    serializer = serializers.ProductSerializer(queryset, many=True)
-    return Response(serializer.data)
