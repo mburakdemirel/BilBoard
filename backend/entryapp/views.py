@@ -19,7 +19,7 @@ redis_instance = get_redis_instance()
 def notification_util(notification_type: NotificationType, **kwargs):
     notification_header = notification_fields(
                 notification_type=notification_type,
-                category="complaint"
+                category="complaint",
                 contact_name=kwargs.get("contact_name"),
                 related_item_id=kwargs.get("related_item_id"),
                 complaint_name=kwargs.get("complaint_name"),
@@ -329,9 +329,8 @@ def vote_down_complaint(request):
 def list_voted_complaints(request):
     user = CustomUser.objects.get(email=request.user)
     count = user.upvoted_complaints.count() + user.downvoted_complaints.count()
-    serializer = SerializerFactory.get_serializer(entry_type=EntryType.COMPLAINT,action=ActionType.DEFAULT)
-    upvoted_complaints = serializer(user.upvoted_complaints, many=True)
-    downvoted_complaints = serializer(user.downvoted_complaints, many=True)
+    upvoted_complaints = serializers.ComplaintEntrySerializer(user.upvoted_complaints, many=True)
+    downvoted_complaints = serializers.ComplaintEntrySerializer(user.downvoted_complaints, many=True)
 
     if count == 0:
         return Response({"message": "There are no voted complaint of the user", })
