@@ -39,7 +39,6 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(verbose_name="email", max_length=100, unique=True)
     name = models.CharField(max_length=40)
     surname = models.CharField(max_length=40)
-    rate_ratio = models.FloatField(verbose_name="user rate", default=0.0)
     profile_photo = models.ImageField(upload_to='profile_photos/', blank=True, null=True)
     description = models.TextField(verbose_name="information about user", blank=True, null=True)
     phone_number = models.CharField(max_length=15, blank=True, null=True)
@@ -62,7 +61,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     def __str__(self) -> str:
         return self.email
 
-# Bismillahirrahmanirrahim
+
 class OnlineUserModel(models.Model):
     user = models.OneToOneField(
         get_user_model(),
@@ -97,7 +96,7 @@ class Product(models.Model):
 
     title = models.CharField(max_length=100)
     description = models.TextField(blank=True)
-    upload_date = models.DateField(auto_now=True) #bu ilerde içi silinecek ve daytime ile yüklendiği an
+    upload_date = models.DateField(auto_now=True)
     category = models.CharField(max_length=10, choices=CATEGORY_CHOICES)
     return_date = models.DateField(null=True, blank=True)
     product_type = models.CharField(max_length=30, default='other', choices=TYPE_CHOICES)
@@ -138,8 +137,7 @@ class LostAndFoundEntry(EntryBase):
         ('lost', 'Lost'),
         ('found', 'Found'),
     ]
-    #NULL VE BLANK I Sil db bozulmasın diye ekledim!!!!!!! SİL SİL SİL
-    category = models.CharField(max_length=10, choices=CATEGORY_CHOICES, null=True, blank=True)
+    category = models.CharField(max_length=10, choices=CATEGORY_CHOICES, blank=False)
 
     def _str_(self):
         return super()._str_()
@@ -229,11 +227,11 @@ class Notification(models.Model):
     )
     notification_type = models.CharField(max_length=100, choices=NOTIFICATION_CHOICES)
     title = models.CharField(max_length=100)
-    description = models.TextField(blank=True)
+    description = models.TextField(blank=False)
     timestamp = models.DateTimeField(auto_now_add=True)
     is_read = models.BooleanField(default=False)
-    related_item_id = models.IntegerField(blank=True, null=True)
-    related_item = models.CharField(max_length=100, choices=ITEM_CHOICES, blank=True, null=True)
+    related_item_id = models.IntegerField()
+    related_item = models.CharField(max_length=100, choices=ITEM_CHOICES)
 
     REQUIRED_FIELDS = ['receiver', 'type', 'title', 'description', 'related_item_id']
 
