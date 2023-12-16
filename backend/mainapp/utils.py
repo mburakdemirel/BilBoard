@@ -17,9 +17,9 @@ class NotificationType(enum.Enum):
 def notification_fields(notification_type: NotificationType, category, **kwargs):
     if notification_type == NotificationType.NEW_MESSAGE:
         product = None
-        if category in ['secondhand', 'borrow', 'donation']:
+        if category in ['Secondhand', 'Borrow', 'Donation']:
             product = Product.objects.get(id=kwargs.get('realted_item_id'))
-        elif category in ['lost', 'found']:
+        elif category in ['Lost', 'Found']:
             product = LostAndFoundEntry.objects.get(id=kwargs.get('realted_item_id'))
 
         return {
