@@ -58,8 +58,8 @@ function ProductMainPage() {
 
             axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
             if(pageType){
-                if(searchText!=null || minPrice!=null || maxPrice!=null || productType!=null){
-                    let url = 'http://127.0.0.1:8000/api/product/' + pageType;
+                if(searchText || minPrice!=null || maxPrice!=null || productType!=null){
+                    let url = 'http://127.0.0.1:8000/api/product' + pageType;
                     debugger;
                     if (searchText !== null && searchText !== "undefined") {
                         url += `?search=${searchText}`;

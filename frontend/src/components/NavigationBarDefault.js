@@ -23,6 +23,13 @@ function NavigationBarDefault() {
     const favoritesIdList = [];
     const [myProfile, setMyProfile] = useState(JSON.parse(localStorage.getItem('myProfile')));
 
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const minPrice = urlParams.get('min_price');
+    const maxPrice = urlParams.get('max_price');
+    const productType = urlParams.get('product_type')
+
+
     const {pageType,searchText} = useParams();
 
     const navigate = useNavigate();
@@ -234,7 +241,9 @@ function NavigationBarDefault() {
     const enterClick = (e) => {
         if(pageType){
             if(e.key === "Enter") {
-                navigate(window.location.pathname +  '?search=' + searchInput);
+
+                navigate(window.location.pathname +  '?search=' + searchInput + '&&min_price=' + minPrice + '&&max_price' + maxPrice + '&&product_type=' + productType);
+
             }
         }
     }
