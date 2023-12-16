@@ -172,8 +172,8 @@ function ProductDetailPage() {
     }, []);
 
     const closeImageViewer = () => {
+        setCurrentImage(currentImage);
         changeIsImageViewerOpen(false);
-        setCurrentImage(0);
         setIsViewerOpen(false);
     };
 
@@ -195,7 +195,7 @@ function ProductDetailPage() {
                     currentIndex={ currentImage }
                     disableScroll={ true }
                     closeOnClickOutside={ true }
-                    onClose={ closeImageViewer }
+                    onClose={ closeImageViewer}
                     style={{maxHeight:'50%'}}
                 />
 

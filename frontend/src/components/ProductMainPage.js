@@ -162,7 +162,7 @@ function ProductMainPage() {
                                     {Array(products.length).fill().map((_, index) => {
                                         if (true) {
                                             return(<div key={index} className="col-md-3 " style={{ minWidth:'150px', maxWidth: '18vw', padding: '1%' }}
-                                                        onClick={()=>sendProductDetailPage(products[index].id)}  data-aos="zoom-out" data-aos-duration="700" >
+                                                        onClick={()=>sendProductDetailPage(products[index].id)}  data-aos="zoom-in" data-aos-duration="600" >
                                                     <div  className="card shadow-sm p-0" style={{maxHeight:'35vw', height:'230px', borderRadius: '10px', borderStyle: 'none', padding: '5px', background: 'transparent', margin: '2%' }} >
                                                         <div className="card-body " style={{ borderRadius: '10px', width: '100%', height: '100%', padding: '0px' }}>
                                                             <img style={{ width: '100%', height: '100%', borderRadius:'10px'}} src={products[index].images && products[index].images.length > 0 ? products[index].images[0].image : Placeholder} width="247" height="247" />
