@@ -45,7 +45,9 @@ class CreateUserView(generics.CreateAPIView):
             # Send verification email
             # Change with a nice html template later on
             email_verification_token = jwt.encode({'user_id': user.id, 'email': user.email}, settings.SECRET_KEY, algorithm='HS256')
-            absolute_url = 'http://' + get_current_site(request).domain + reverse("user:verify_email") + f'?token={email_verification_token}'
+            # absolute_url = 'http://' + get_current_site(request).domain + reverse("user:verify_email") + f'?token={email_verification_token}'
+            absolute_url = 'http://' + "127.0.0.1:3000" + "/login/" + f'?token={email_verification_token}'
+
             subject = 'Welcome to Bilboard!'
             message =   f'Hi {user.name},\n\n' \
                         f'Please click on the link below to verify your email address:\n\n' \
