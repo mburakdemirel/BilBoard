@@ -75,7 +75,6 @@ class UserProductViewSet(ProductViewSet):
             cache.delete_pattern("donation_products_*")
         
     def perform_destroy(self, instance):
-        print("perform_destroy\n\n", instance.id)
         product_category = instance.category
 
         # delete photos of product from the system before destroying the product
@@ -193,7 +192,6 @@ class BorrowProductViewSet(ProductViewSet):
         ]
         #Create a single string with all parts separated by underscore
         cache_key = '_'.join(cache_key_parts)
-        print('\033[2;31;43m LOG1 \033[0;0m', cache_key)
 
         cached_data = cache.get(cache_key)
         if cached_data is not None:
@@ -326,7 +324,6 @@ def clicked_favorites(request):
 @api_view(['DELETE'])
 @permission_classes([IsAuthenticated])
 def delete_product_photo(request, product_id, image_id):
-    print("selam buraya gir\n\n\n")
     user = request.user
     try:
         product = Product.objects.get(id=product_id, user=user)
