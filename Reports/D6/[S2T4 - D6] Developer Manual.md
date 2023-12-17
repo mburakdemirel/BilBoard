@@ -52,7 +52,7 @@ Now the backend runs at ‘http://localhost:8000’.
 To build the frontend of this application, first you have to install Node.js and npm. You can install the latest version from the Node website: https://nodejs.org/en.
 
 After installing Node, navigate to the frontend folder by running `cd frontend` command in the terminal. After navigating to the frontend folder, run ‘npm install’ to install all dependencies. After the installations are done, run the frontend server using following command.\
-`npm start`\
+`npm start`
 
 You can access the site at ‘http://localhost:3000’.
 
