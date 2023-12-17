@@ -186,7 +186,8 @@ function ProfileArea({myProfile,func} ) {
     const [loading, setLoading] = useState(false);
     const [nameSurname, setNameSurname] = useState(myProfile.name + " " + myProfile.surname);
     const [email, setEmail] = useState(myProfile.email);
-
+    const [phone, setPhone] = useState(myProfile.phone_number);
+    const [description, setDescription] = useState(myProfile.description);
     const [editMode, setEditMode] = useState(false);
 
 
@@ -203,13 +204,14 @@ function ProfileArea({myProfile,func} ) {
                 </div>
                 <hr className="d-xxl-flex justify-content-xxl-center align-items-xxl-center" style={{ width: '100%', margin: '0px', marginTop: '10px', marginBottom: '10px' }} />
                 <div className="d-flex flex-row justify-content-between align-items-center align-content-around" style={{ height: 'initial', width: '100%', padding: '2%' }}>
-                    <p style={{ marginBottom: '0px', fontFamily: 'Inter, sans-serif', fontSize: '17px' }}>+90 546 877 39 27</p>
+                    <p style={{ marginBottom: '0px', fontFamily: 'Inter, sans-serif', fontSize: '17px' }}>{phone}</p>
                     <p style={{ marginBottom: '0px', fontFamily: 'Inter, sans-serif', fontSize: '17px' }}>{email}</p>
                 </div>
                 <hr className="d-xxl-flex justify-content-xxl-center align-items-xxl-center" style={{ width: '100%', margin: '0px', marginTop: '10px', marginBottom: '10px' }} />
                 <div className="d-flex flex-column justify-content-between align-items-center align-content-around align-items-xxl-start" style={{ height: '40%', width: '100%', minHeight: '100px', background: '#edf0f7', borderRadius: '10px', paddingRight: '5px', paddingLeft: '10px', paddingTop: '3px', maxHeight: '200px' }}>
-                    <div className="d-flex flex-row justify-content-between align-items-center align-content-around" style={{ height: '30%', width: '100%', minHeight: '40px' }}>
-                        <h1 style={{fontSize: '1.6em', fontFamily: 'Inter, sans-serif', marginLeft: '0px', justifyContent:'start' }}>About</h1>
+                    <div className="d-flex flex-column justify-content-between align-items-start" style={{ height: '30%', width: '100%', minHeight: '40px' }}>
+                        <h1 style={{fontSize: '1.6em', fontFamily: 'Inter, sans-serif', marginTop: '10px', justifyContent:'start' }}>About</h1>
+                        <p style={{ textAlign:'start',  fontFamily: 'Inter, sans-serif', fontSize: '13px' }}>{description}</p>
                     </div>
                 </div>
 
