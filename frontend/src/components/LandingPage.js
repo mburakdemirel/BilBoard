@@ -4,7 +4,7 @@ import './assets/css/aos.min.css';
 import './assets/css/animate.min.css';
 import AOS from 'aos';
 import Sıla from './assets/img/sıla.png'
-import Dilara from './assets/img/dilara.png'
+import Dilara from './assets/img/dilara2.png'
 import Yusuf from './assets/img/yusuf.png'
 import Burak from './assets/img/burak.png'
 import Eren from './assets/img/eren.png'
