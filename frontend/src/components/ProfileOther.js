@@ -144,7 +144,7 @@ function Products({myProfile, func}) {
                 <div
                     className="card-group d-flex d-xxl-flex flex-row justify-content-start flex-sm-nowrap flex-md-nowrap flex-lg-nowrap flex-xl-nowrap align-items-xxl-start flex-xxl-wrap"
                     style={{ maxHeight: '89%', overflow: 'auto', width:'93%' }}>
-                    {loading ? <div style={{width:'100%'}}><span className="spinner-border spinner-border" aria-hidden="true" ></span></div>
+                    {loading ? <div className="d-flex justify-content-center" style={{width:'100%'}}><span className="spinner-border spinner-border" aria-hidden="true" ></span></div>
                         :
                         <>
                             {Array(products.length).fill().map((_, index) => {

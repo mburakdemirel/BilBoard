@@ -317,7 +317,7 @@ function Products({myProfile, func, editMode}) {
 
 
                 <div className='card-group d-flex  justify-content-start' style={{ maxHeight: '80%', overflow: 'auto', width:'93%', flexWrap: rowOrColumn ? 'nowrap' : 'wrap', flexDirection: rowOrColumn ? 'column' : 'row' }}>
-                    {loading ? <div style={{width:'100%'}}><span className="spinner-border spinner-border" aria-hidden="true" ></span></div>
+                    {loading ? <div className="d-flex justify-content-center" style={{width:'100%'}}><span className="spinner-border spinner-border" aria-hidden="true" ></span></div>
                     :
                         <>
                             {showedProducts && Array(showedProducts.length).fill().map((_, index) => {
