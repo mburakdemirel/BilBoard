@@ -670,20 +670,6 @@ function ProfileArea({myProfile,func} ) {
                             {editMode ? loading ? <span className="spinner-border spinner-border-sm" aria-hidden="true"></span> : < i className = "bi bi-check-lg" > </i> : <i className="bi bi-pencil-square"></i> }
                         </button>
 
-                        {/*<OverlayTrigger
-                            placement="bottom"
-                            trigger="click"
-                            overlay={(
-                                <Popover id="popover-positioned-top" title="Popover top">
-                                    <strong>Holy guacamole!</strong> Check this info.
-                                </Popover>
-                            )}>
-                            <Button variant="success">
-                                Open Popover
-                            </Button>
-                        </OverlayTrigger>*/}
-
-
                     </div>) : (<></>)}
                 </div>
             </div>

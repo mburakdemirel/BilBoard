@@ -14,7 +14,6 @@ export function EntryForm({ isComplaint }) {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log("in submission");
         let entry = new FormData();
         entry.append("topic", topic);
         entry.append("description", description);

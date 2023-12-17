@@ -35,7 +35,6 @@ export function ProductAddForm({changeMode}) {
             axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
             axios.get(`${baseurl}/api/user/product/${id}/`)
             .then((response) => {
-                console.log(response);
                 setTitle(response.data.title);
                 setCategory(response.data.category);
                 setDescription(response.data.description);
@@ -57,7 +56,6 @@ export function ProductAddForm({changeMode}) {
             })
         }
         else {
-            console.log("hereeee");
             setTitle("");
             setCategory("donation");
             setDescription("");
@@ -72,7 +70,6 @@ export function ProductAddForm({changeMode}) {
     },[changeMode]);
 
     function handleImage(e) {
-        console.log(count);
         setErrMsg("");
         if (e.target.files.length > 5 || count > 5 || e.target.files.length + count > 5) {
             setErrMsg("You cannot upload more than 5 images.");
@@ -85,38 +82,30 @@ export function ProductAddForm({changeMode}) {
                 setPhoto(prevFiles => [...prevFiles, file]);
             }
         });
-        console.log(photo);
-
     }
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log(category);
         let product = new FormData();
         //common data areas
         product.append('title', title);
         product.append('category', category);
         product.append('description', description);
         product.append("product_type", type);
-        console.log(product.keys());
         if (category === "secondhand") {
-            console.log("In secondhand");
             product.append('price', price);
             //console.log({ title: title, category: category, description: description, price: price, product_photo: photo });
         }
         else if (category === "borrow") {
-            console.log("in borrow");
             let date_str = formatDate(new Date(returnDate));
             product.append('return_date', date_str);
             console.log(date_str);
         }
         if (photo) {
-            console.log("trying to post a photo");
             for (let i = 0; i < photo.length; i++) {
                 const element = photo[i];
                 product.append('product_photo', element, element.name);
             }
-            console.log(product.get('product_photo'));
         }
 
         console.log(product);
@@ -127,7 +116,6 @@ export function ProductAddForm({changeMode}) {
                 axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
                 const response = await axios.post(`${baseurl}/api/user/product/`, product, { headers: { 'Content-Type': 'multipart/form-data' } });
                 if (response.status === 200 || response.status === 201) {
-                    console.log("Post was successful");
                     navigate("/main_page/" + product.get('category'));
                 }
             }
@@ -148,8 +136,6 @@ export function ProductAddForm({changeMode}) {
               })
                 .then((response) => {
                   console.log("patch response: ", response);
-                  console.log("Discarded img: ", discardedImgs);
-              
                   const deleteRequests = discardedImgs.map((img) => {
                     return axios.delete(`${baseurl}/api/product/${id}/delete-product-photo/${img.id}/`, {
                       headers: { 'Authorization': localStorage.getItem('authorization') }
@@ -192,7 +178,6 @@ export function ProductAddForm({changeMode}) {
             
         }
         setCount(arr.length);
-        console.log(arr);
         setPhoto(arr);
     }
 
@@ -208,8 +193,6 @@ export function ProductAddForm({changeMode}) {
             }
         }
         setDiscardedImgs(discard);
-        console.log("discarded: ", discard);
-        console.log("stays: ", stay);
         setProdImg(stay);
         setCount(stay.length);
     }
