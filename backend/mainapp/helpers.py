@@ -45,7 +45,8 @@ def validate_profile_photo(profile_photo):
         "Content-Type": "application/octet-stream",
         "Ocp-Apim-Subscription-Key": "4042096c1951481d9859da0516043a96"
     }
-    image_data = profile_photo.read()
+    resized_image = resize_image(profile_photo)
+    image_data = resized_image.read()
     if profile_photo:
         response_face = requests.post(endpoint + "contentmoderator/moderate/v1.0/ProcessImage/FindFaces", headers=headers, data=image_data)
         if response_face.status_code == 200:
