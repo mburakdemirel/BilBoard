@@ -298,22 +298,29 @@ function Messages({chatId,participiant,loadingDelete,pull_first_message}) {
 
         if(chatId){
             axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
-            await axios.get("http://127.0.0.1:8000/chat/" + chatId + "/").then(response => {
+            try {
+                await axios.get("http://127.0.0.1:8000/chat/" + chatId + "/").then(response => {
 
-                if(response.data.messages){
-                    setMessages(response.data.messages);
-                }
-                if(response.data){
-                    console.log(response.data);
-                }
+                    if(response.data.messages){
+                        setMessages(response.data.messages);
+                    }
+                    if(response.data){
+                        console.log(response.data);
+                    }
 
 
-                setChat(response.data);
-                setLoading(false);
-              /*  setMessages(prevMessages => [...response.data.messages, ...prevMessages]);
-                setPage(prevPage => prevPage + 1);
-                setHasMore(response.data.messages.length >= 10);*/
-            })
+                    setChat(response.data);
+                    setLoading(false);
+                    /*  setMessages(prevMessages => [...response.data.messages, ...prevMessages]);
+                      setPage(prevPage => prevPage + 1);
+                      setHasMore(response.data.messages.length >= 10);*/
+                })
+            }
+            catch (e){
+                navigate("/messages");
+            }
+
+
         }
     }
 

@@ -129,10 +129,10 @@ function NavigationBarDefault() {
                 }
             });;
 
-
             navigate("/messages/" + selectedNotification.related_item_id);
         }
         else{
+            debugger;
             notifications.forEach((notification, index) => {
                 if (notification.related_item_id == selectedNotification.related_item_id) {
                     markSingle(notification.id, index);
@@ -307,7 +307,8 @@ function NavigationBarDefault() {
                                     </button>
                                 </div>
                             </Popover.Header>
-                            <Popover.Body>
+
+                            <Popover.Body style={{ maxHeight: '30vw', overflowY: 'auto' }}>
                                 {Array(notifications.length).fill().map((_, index) => {
                                         return(
                                             <div key={index} style={{width:'240px', height:'inherit', background:'#EDF0F7', marginBottom:'10px', padding:'10px', borderRadius:'10px', border:'solid', borderWidth:'1.6px',borderColor:'#A0ABC0' }}>
