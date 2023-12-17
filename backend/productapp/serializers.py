@@ -11,13 +11,13 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class ProductImageSerializer(serializers.ModelSerializer):
-    image_url = serializers.SerializerMethodField()
+    image = serializers.SerializerMethodField()
 
     class Meta:
         model = ProductImage
-        fields = ['id', 'image_url']
+        fields = ['id', 'image']
 
-    def get_image_url(self, obj):
+    def get_image(self, obj):
         if obj.image and hasattr(obj.image, 'url'):
             request = self.context.get('request')
             if request is not None:
