@@ -41,13 +41,19 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class DefaultUserSerializer(serializers.ModelSerializer):
-    """Serializer for the user object"""
-    #Tell djangorest, the model, fields and extra args that we want to pass to serializer
-    profile_photo = serializers.ImageField(required=False)
+    profile_photo = serializers.SerializerMethodField()
+
     class Meta:
         model = get_user_model()
         fields = ('id', 'email', 'name', 'surname', 'profile_photo', 'description', 'phone_number')
         read_only_fields = fields
+
+    def get_profile_photo(self, obj):
+        if obj.profile_photo:
+            request = self.context.get('request')
+            photo_url = obj.profile_photo.url
+            return request.build_absolute_uri(photo_url)
+        return None
 
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
