@@ -11,7 +11,7 @@ import ContextApi from "../context/ContextApi";
 
 
 
-function EntryMainPage2(){
+function ComplaintPage(){
     const{sendNewMessage} = useContext(ContextApi);
     const navigate = useNavigate();
     const urlParams = new URLSearchParams(window.location.search);
@@ -301,4 +301,4 @@ function EntryMainPage2(){
 
 };
 
-export default EntryMainPage2;
+export default ComplaintPage;

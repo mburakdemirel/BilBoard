@@ -11,7 +11,7 @@ import {Collapse, Button} from 'react-bootstrap';
 
 
 
-function EntryMainPage(){
+function LostFoundPage(){
     const urlParams = new URLSearchParams(window.location.search);
     const {pageType} = useParams();
     const searchText = urlParams.get('search');
@@ -357,4 +357,4 @@ function EntryMainPage(){
 
 };
 
-export default EntryMainPage;
+export default LostFoundPage;

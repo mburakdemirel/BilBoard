@@ -1,5 +1,4 @@
-import logo from './logo.svg';
-import './App.css';
+
 import '../src/components/assets/css/hideScrollBar.css';
 import LandingPage from "./components/LandingPage";
 import LoginPage from "./components/LoginPage";
@@ -17,7 +16,7 @@ import ContextApi from "./context/ContextApi";
 import {useState, useEffect} from "react";
 import { ProductAddForm } from './components/ProductAddForm';
 import { EntryForm } from './components/EntryForm';
-import EntryMainPage from "./components/EntryMainPage";
+import LostFoundPage from "./components/LostFoundPage";
 import ProtectedRoutes from './components/ProtectedRoutes';
 
 import MainPage from "./components/MainPage";
@@ -69,7 +68,7 @@ function App() {
 
                   <Route path='/main_page/:pageType/:searchText?' element={<ProtectedRoutes><NavigationBarDefault/><MainPage/></ProtectedRoutes>}> </Route>
                   <Route path='/entry' element={<ProtectedRoutes><NavigationBarDefault/><EntryForm/></ProtectedRoutes>}> </Route>
-                  <Route path='/complaints' element={<ProtectedRoutes><NavigationBarDefault/> <EntryMainPage/></ProtectedRoutes>}> </Route>
+                  <Route path='/complaints' element={<ProtectedRoutes><NavigationBarDefault/> <LostFoundPage/></ProtectedRoutes>}> </Route>
 
                   <Route path='/add_product' element={<ProtectedRoutes><NavigationBarDefault/><ProductAddForm changeMode={false}/></ProtectedRoutes>}></Route>
                   <Route path='/post_complaint' element={<ProtectedRoutes><NavigationBarDefault/><EntryForm isComplaint={true}></EntryForm></ProtectedRoutes>}></Route>
