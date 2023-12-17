@@ -1,5 +1,6 @@
 import logo from './logo.svg';
 import './App.css';
+import '../src/components/assets/css/hideScrollBar.css';
 import LandingPage from "./components/LandingPage";
 import LoginPage from "./components/LoginPage";
 import RegisterPage from "./components/RegisterPage";
