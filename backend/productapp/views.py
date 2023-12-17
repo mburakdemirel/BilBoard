@@ -154,7 +154,7 @@ class SecondhandProductViewSet(ProductViewSet):
         max_price = self.request.query_params.get('max_price', None)
         product_type = self.request.query_params.get('product_type', None)
 
-        queryset = Product.objects.filter(category='secondhand')
+        queryset = Product.objects.filter(category='secondhand').order_by('-id')
         if min_price:
             queryset = queryset.filter(price__gte=min_price)
         if max_price:
@@ -217,7 +217,7 @@ class BorrowProductViewSet(ProductViewSet):
         search_query = self.request.query_params.get('search', None)
         product_type = self.request.query_params.get('product_type', None)
 
-        queryset = Product.objects.filter(category='borrow')  
+        queryset = Product.objects.filter(category='borrow').order_by('-id')
 
         if product_type:
             queryset = queryset.filter(product_type=product_type)
@@ -274,7 +274,7 @@ class DonationProductViewSet(ProductViewSet):
         search_query = self.request.query_params.get('search', None)
         product_type = self.request.query_params.get('product_type', None)
 
-        queryset = Product.objects.filter(category='donation')  
+        queryset = Product.objects.filter(category='donation').order_by('-id')
 
         if product_type:
             queryset = queryset.filter(product_type=product_type)

@@ -126,7 +126,7 @@ class LostAndFoundEntryViewSet(viewsets.ReadOnlyModelViewSet):
 
     def get_queryset(self):
         """Retrieve all LaF entries or filter based on title using trigram similarity for fuzzy search."""
-        queryset = LostAndFoundEntry.objects.all()
+        queryset = LostAndFoundEntry.objects.all().order_by('-id')
         search_query = self.request.query_params.get('search', None)
         if search_query:
             queryset = queryset.annotate(
