@@ -461,16 +461,12 @@ function ProfileArea({myProfile,func} ) {
         setNewPassword("");
         setOldPassword("");
         let user = new FormData();
-
+        debugger;
         if(editMode){
             if(oldPassword) {
                 if(newPassword && newPasswordConfirm){
                     if (newPassword === newPasswordConfirm) {
-                        
-                        if(profileImg) {
-                            user = {...user, profile_photo: profileImg};
 
-                        }
                         user.append('name', newName);
                         user.append('surname', newSurname);
                         user.append("old_password", oldPassword);

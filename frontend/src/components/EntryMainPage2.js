@@ -225,7 +225,7 @@ function EntryMainPage2(){
                                                             </div>
                                                             <div className="d-flex flex-column justify-content-start align-items-center " style={{ height: '90%', margin: '1.5%', width: '30%', minWidth: '60px', background: '#EDF0F7', borderRadius: '10px' }}
                                                                  onClick={(e)=> goToProfile(item.user.id)}>
-                                                                <img className="rounded-circle" src={item.user.profile_photo ? item.user.profile_photo : ProfilePlaceholder} style={{ height: '70%', width: '70%', marginTop: '5%', marginBottom: '5%' }} alt="User" />
+                                                                <img className="rounded-circle" src={item.user.profile_photo ? item.user.profile_photo : ProfilePlaceholder} style={{height: '70%', width: '70%', marginTop: '5%', marginBottom: '5%' }} alt="User" />
                                                                 <h1 className="text-center d-flex justify-content-center align-items-center " style={{height:'25%', fontFamily: 'Inter, sans-serif', fontSize: '13px', width: '95%' }}>{item.user.name + " " + item.user.surname}</h1>
                                                             </div>
                                                         </div>
