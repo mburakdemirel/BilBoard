@@ -60,19 +60,19 @@ function ProductMainPage() {
                 if(searchText || minPrice!=null || maxPrice!=null || productType!=null){
                     let url = 'http://127.0.0.1:8000/api/product/' + pageType;
                     debugger;
-                    if (searchText != null && searchText !== "") {
+                    if (searchText != null && searchText !== "undefined") {
                         url += `?search=${searchText}`;
                     }
 
-                    if (minPrice != null && minPrice !== "") {
+                    if (minPrice != null && minPrice !== "undefined") {
                         url += url.includes('?') ? `&min_price=${minPrice}` : `?min_price=${minPrice}`;
                     }
 
-                    if (maxPrice != null && maxPrice !== "") {
+                    if (maxPrice != null && maxPrice !== "undefined") {
                         url += url.includes('?') ? `&max_price=${maxPrice}` : `?max_price=${maxPrice}`;
                     }
 
-                    if (productType != null && productType !== "") {
+                    if (productType != null && productType !== "undefined") {
                         url += url.includes('?') ? `&product_type=${productType}` : `?product_type=${productType}`;
                     }
                         try {
