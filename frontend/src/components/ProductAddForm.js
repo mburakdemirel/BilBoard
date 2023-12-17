@@ -101,7 +101,7 @@ export function ProductAddForm({changeMode}) {
             product.append('return_date', date_str);
             console.log(date_str);
         }
-        if (photo) {
+        if (photo.length > 0) {
             for (let i = 0; i < photo.length; i++) {
                 const element = photo[i];
                 product.append('product_photo', element, element.name);
@@ -177,7 +177,8 @@ export function ProductAddForm({changeMode}) {
             }
             
         }
-        setCount(arr.length);
+        console.log(arr.length);
+        setCount(arr.length + prodImg.length);
         setPhoto(arr);
     }
 
@@ -194,7 +195,7 @@ export function ProductAddForm({changeMode}) {
         }
         setDiscardedImgs(discard);
         setProdImg(stay);
-        setCount(stay.length);
+        setCount(stay.length + photo.length);
     }
 
     return (
@@ -225,7 +226,7 @@ export function ProductAddForm({changeMode}) {
                             <div >
                             <h3 className="text-center" style={{ fontFamily: 'Inter,sans-serif' }}>{!changeMode ? "Add a New Product":"Update Product"}</h3>
                             {errMsg && <div className="alert alert-danger" role="alert">{errMsg}</div>}
-                            <form onSubmit={handleSubmit} method="post" className="form-card" style={{ height: 'fit-content', margin: 'auto', width: '60%' }}>
+                            <form onSubmit={(e) => handleSubmit(e)} method="post" className="form-card" style={{ height: 'fit-content', margin: 'auto', width: '60%' }}>
                                 <div className="form-group col-xl-6 flex-column d-flex" style={{ width: '100%', paddingTop: '30px' }}>
                                     <div className="row justify-content-between text-left">
                                     <label className="form-control-label" style={{ textAlign: 'left',fontFamily: 'Inter, sans-serif' }}><h5>Title<small style={{color:'darkred', fontSize:'15px'}}> *</small></h5></label>
@@ -267,7 +268,7 @@ export function ProductAddForm({changeMode}) {
                                     <div className="row justify-content-between text-left">
                                         <h5 style={{ textAlign: 'left' , fontFamily: 'Inter, sans-serif', }}>Photos<small style={{color:'darkred', fontSize:'15px'}}> *</small></h5>
                                         <label className="form-control-label" htmlFor="FormControl" style={{ fontFamily: 'Inter, sans-serif', textAlign: 'left' }}>Choose files to upload (at most 5)</label>
-                                        <input required={!changeMode && !photo} name="product_photos" onChange={(e) => { handleImage(e); }}
+                                        <input required={!changeMode && photo.length === 0} name="product_photos" onChange={(e) => { handleImage(e); }}
                                             id="FormControl" type="file" accept="image/*" multiple></input>
                                         <div className="d-flex flex-row justify-content-center" style={{ width:'100%', marginBottom: '20px',}}>
                                             <div className="d-flex flex-row">
@@ -278,7 +279,7 @@ export function ProductAddForm({changeMode}) {
                                                             alt={`Preview ${index}`}
                                                             style={{ border: 'solid grey 1px', width: '100px', height: '100px', borderRadius: '5px', marginBottom: '5%' }}
                                                         />
-                                                        <button onClick={(e) => discardSelectedImg(e,index)} className="btn btn-primary" type="button" style={{ marginLeft:'5px', width: '40px', fontWeight: 'bold', background: '#0558b0', borderStyle: 'none', borderColor: '#0558b0', height: '40px' }}>
+                                                        <button disabled={count === 1 && changeMode} onClick={(e) => discardSelectedImg(e,index)} className="btn btn-primary" type="button" style={{ marginLeft:'5px', width: '40px', fontWeight: 'bold', background: '#0558b0', borderStyle: 'none', borderColor: '#0558b0', height: '40px' }}>
                                                             <i className="bi bi-x-lg"></i>
                                                         </button>
                                                     </div>

@@ -21,7 +21,6 @@ export function EntryForm({ isComplaint }) {
             entry.append("category", category);
             try {
                 axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
-                //const plainText = Array.from(entry.entries()).map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`).join('&');
                 const response = await axios.post("http://127.0.0.1:8000/api/user/laf-entry/", entry, { headers: { 'Content-Type': 'multipart/form-data' } });
                 if(response.status === 200 || response.status === 201) {
                     console.log("Post was successful");
@@ -47,7 +46,6 @@ export function EntryForm({ isComplaint }) {
                     entry.append("target_mail", targetMail);
                 }
                 axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
-                //const plainText = Array.from(entry.entries()).map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`).join('&');
                 const response = await axios.post("http://127.0.0.1:8000/api/user/complaint-entry/", entry, { headers: { 'Content-Type': 'multipart/form-data' } });
                 if(response.status === 200 || response.status === 201) {
                     console.log("Post was successful");
@@ -98,7 +96,7 @@ export function EntryForm({ isComplaint }) {
                                 {errMsg && <div className="alert alert-danger" role="alert">{errMsg}</div>}
                                 <div className="col-xl-6 flex-column d-flex " style={{ width: '100%' }}>
                                     <div className="form-group row justify-content-between text-center">
-                                        <label className="form-control-label"style={{ textAlign: 'left',fontFamily: 'Inter, sans-serif', marginTop: '2%',marginBottom:'2%' }}><h5>Topic/Title</h5></label>
+                                        <label className="form-control-label"style={{ textAlign: 'left',fontFamily: 'Inter, sans-serif', marginTop: '2%',marginBottom:'2%' }}><h5>Topic/Title<small style={{color:'darkred', fontSize:'15px'}}> *</small></h5></label>
                                         <input onChange={(e) => setTopic(e.target.value)} required type="text" placeholder="Title"
                                             className="form-control"
                                             style={{
@@ -134,7 +132,7 @@ export function EntryForm({ isComplaint }) {
                                     </div> : <></>}
 
                                     {!isComplaint ? <div className="form-group row justify-content-between text-center">
-                                        <label className="form-control-label" htmlFor="Category" style={{ textAlign: 'left',fontFamily: 'Inter, sans-serif',marginTop: '2%',marginBottom:'2%' }} ><h5>Choose Category</h5></label>
+                                        <label className="form-control-label" htmlFor="Category" style={{ textAlign: 'left',fontFamily: 'Inter, sans-serif',marginTop: '2%',marginBottom:'2%' }} ><h5>Choose Category<small style={{color:'darkred', fontSize:'15px'}}> *</small></h5></label>
                                         <select required onChange={(e) => {setCategory(e.target.value); console.log(e.target.value);}}
                                             id="Category"
                                             className="form-control"
@@ -154,12 +152,13 @@ export function EntryForm({ isComplaint }) {
                                         </select>
                                     </div> : <></>}
                                     <div className="form-group row justify-content-between text-center">
-                                        <label className="form-control-label" htmlFor="description" style={{ textAlign: 'left',fontFamily: 'Inter, sans-serif', marginTop: '2%',marginBottom:'2%' }}><h5>Enter Description</h5></label>
+                                        <label className="form-control-label" htmlFor="description" style={{ textAlign: 'left',fontFamily: 'Inter, sans-serif', marginTop: '2%',marginBottom:'2%' }}><h5>Enter Description<small style={{color:'darkred', fontSize:'15px'}}> *</small></h5></label>
                                         <textarea required onChange={(e) => { setDescription(e.target.value) }}
                                             id="description"
                                             placeholder="Description"
                                             rows={2}
                                             className="form-control"
+                                            maxLength={1000}
                                             style={{
                                                 fontFamily: 'Inter, sans-serif',
                                                 background: text_field_background,
