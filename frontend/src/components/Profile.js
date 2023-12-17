@@ -461,7 +461,6 @@ function ProfileArea({myProfile,func} ) {
         setNewPassword("");
         setOldPassword("");
         let user = new FormData();
-        debugger;
         if(editMode){
             if(oldPassword) {
                 if(newPassword && newPasswordConfirm){
@@ -474,7 +473,7 @@ function ProfileArea({myProfile,func} ) {
                         if(chosenImg) {
                             user.append("profile_photo", chosenImg, chosenImg.name);
                         }
-
+                        user.append("phone_number", newPhone);
                         updateUser(user);
                     } else {
                         window.alert("Passwords are not same!")
@@ -492,7 +491,7 @@ function ProfileArea({myProfile,func} ) {
                     user.append("profile_photo", chosenImg, chosenImg.name);
                     user.append("name", newName);
                     user.append("surname", newSurname);
-
+                    user.append("phone_number", newPhone);
                     updateUser(user);  
             }
             else{
@@ -542,7 +541,7 @@ function ProfileArea({myProfile,func} ) {
 
     function validatePhone(e) {
         const no = e.target.value;
-        const clearedNo = no.replace(/[^0-9-()+]/g, '');
+        const clearedNo = no.replace(/[^0-9-+]/g, '');
         setNewPhone(clearedNo);
     }
 
@@ -606,10 +605,10 @@ function ProfileArea({myProfile,func} ) {
                     {editMode
                         ?
                         <div className="d-flex flex-row " style={{width:'50%', padding:'0px', height:'37px'}}>
-                            <input className="form-control mb-3" value={newPhone} onChange={e=>validatePhone(e)} type="tel"  placeholder="Phone" style={inputStyles} required />
+                            <input maxLength={14} className="form-control mb-3" value={newPhone} onChange={e=>validatePhone(e)} type="tel"  placeholder="Phone" style={inputStyles} required />
                         </div>
                         :
-                        <p style={{ marginBottom: '0px', fontFamily: 'Inter, sans-serif', fontSize: '17px' }}>{phone}</p>
+                        <p style={{ marginBottom: '0px', fontFamily: 'Inter, sans-serif', fontSize: '17px' }}>Phone: {phone}</p>
                     }
                     <p style={{ marginBottom: '0px', fontFamily: 'Inter, sans-serif', fontSize: '17px' }}>{email}</p>
                 </div>

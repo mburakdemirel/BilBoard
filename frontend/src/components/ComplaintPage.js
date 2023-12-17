@@ -177,7 +177,7 @@ function ComplaintPage(){
 
         axios.post(`${baseurl}/api/complaint/vote-up/`, {complaint_id: id})
         .then((response) => {
-
+            console.log(response);
             setIsChanged(!isChanged);
 
             if(containsComplaint(id)==="upvotes"){
@@ -191,6 +191,7 @@ function ComplaintPage(){
             }
             setExpand(Array(expand.length).fill(false));
             products.sort((a, b) => parseInt(b.vote, 10) - parseInt(a.vote, 10));
+            console.log(products);
         })
         .catch((error) => {
             console.log(error);
@@ -201,7 +202,7 @@ function ComplaintPage(){
 
         axios.post(`${baseurl}/api/complaint/vote-down/`, {complaint_id: id})
         .then((response) => {
-
+            console.log(response);
             setIsChanged(!isChanged);
             if(containsComplaint(id)==="upvotes"){
                 products[index].vote= (parseInt(products[index].vote, 10) - 2).toString();
@@ -214,6 +215,7 @@ function ComplaintPage(){
             }
             setExpand(Array(expand.length).fill(false));
             products.sort((a, b) => parseInt(b.vote, 10) - parseInt(a.vote, 10));
+            console.log(products);
             // squeeze all expanded complaints while sorting.
             
         })
