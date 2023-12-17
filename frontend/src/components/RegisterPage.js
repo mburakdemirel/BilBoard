@@ -32,7 +32,6 @@ function RegisterPage(){
             surname: surname,
             password: password
         };
-        console.log(user);
 
         if(password!==confirmPassword){
             setError('Passwords are not same')
@@ -51,13 +50,14 @@ function RegisterPage(){
                 setLoading(false);
 
                 if (error.response) {
-                    console.log(error.response.data);
                     const {email, password} = error.response.data;
                     let errorMessage = '';
                     if (email) errorMessage += email;
                     if (email && password) errorMessage += "\n"; // Only add a newline if both errors exist
                     if (password) errorMessage += password;
-                    setError(errorMessage);
+                    if(error.response.data.non_field_errors[0]) {
+                        setError(error.response.data.non_field_errors[0]);
+                    }
 
                 } else if (error.request) {
                     setError('No response received from the server.');

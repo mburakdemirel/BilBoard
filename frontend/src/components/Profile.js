@@ -539,6 +539,12 @@ function ProfileArea({myProfile,func} ) {
         }
     };
 
+    function validatePhone(e) {
+        const no = e.target.value;
+        const clearedNo = no.replace(/[^0-9-()+]/g, '');
+        setNewPhone(clearedNo);
+    }
+
 
 
     const logOut = () => {
@@ -599,7 +605,7 @@ function ProfileArea({myProfile,func} ) {
                     {editMode
                         ?
                         <div className="d-flex flex-row " style={{width:'50%', padding:'0px', height:'37px'}}>
-                            <input className="form-control mb-3" value={newPhone} onChange={e=>setNewPhone(e.target.value)} type="tel"  placeholder="Phone" style={inputStyles} required />
+                            <input className="form-control mb-3" value={newPhone} onChange={e=>validatePhone(e)} type="tel"  placeholder="Phone" style={inputStyles} required />
                         </div>
                         :
                         <p style={{ marginBottom: '0px', fontFamily: 'Inter, sans-serif', fontSize: '17px' }}>{phone}</p>
@@ -650,15 +656,15 @@ function ProfileArea({myProfile,func} ) {
 
                             <i className="bi bi-trash"></i>
                         </button>
-                        <button
+                        {editMode ? <button
                             className="btn btn-primary d-flex d-xxl-flex justify-content-center align-items-center justify-content-xxl-center align-items-xxl-center"
                             type="button"
                             style={{ width: '40px', fontWeight: 'bold', background: '#2d3648', borderStyle: 'none', borderColor: '#2d3648', height: '90%' }}
                             onClick={cancelUpdate}
                         >
-                            {editMode ?  loading ? <span className="spinner-border spinner-border-sm" aria-hidden="true"></span> : <i className="bi bi-x-lg"></i>: <i className="bi bi-gear"></i>}
+                            {loading ? <span className="spinner-border spinner-border-sm" aria-hidden="true"></span> : <i className="bi bi-x-lg"></i>}
 
-                        </button>
+                        </button> : <></>}
 
                         <button
                             className="btn btn-primary d-flex d-xxl-flex justify-content-center align-items-center justify-content-xxl-center align-items-xxl-center"
