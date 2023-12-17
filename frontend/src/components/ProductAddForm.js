@@ -267,7 +267,7 @@ export function ProductAddForm({changeMode}) {
                                     <div className="row justify-content-between text-left">
                                         <h5 style={{ textAlign: 'left' , fontFamily: 'Inter, sans-serif', }}>Photos<small style={{color:'darkred', fontSize:'15px'}}> *</small></h5>
                                         <label className="form-control-label" htmlFor="FormControl" style={{ fontFamily: 'Inter, sans-serif', textAlign: 'left' }}>Choose files to upload (at most 5)</label>
-                                        <input required={!changeMode} name="product_photos" onChange={(e) => { handleImage(e); }}
+                                        <input required={!changeMode && !photo} name="product_photos" onChange={(e) => { handleImage(e); }}
                                             id="FormControl" type="file" accept="image/*" multiple></input>
                                         <div className="d-flex flex-row justify-content-center" style={{ width:'100%', marginBottom: '20px',}}>
                                             <div className="d-flex flex-row">
