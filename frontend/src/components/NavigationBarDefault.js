@@ -42,6 +42,7 @@ function NavigationBarDefault() {
         AOS.init();
         getProfile();
         getFavorites();
+
         if(isProfileChanged){
             changeProfile(false);
         }
@@ -82,13 +83,11 @@ function NavigationBarDefault() {
                 }
             };
 
-            return () => {
-                newSocket.close();
-            };
+
 
         }
 
-    }, []);
+    }, [myProfile]);
 
 
     const markAll = () => {
@@ -106,6 +105,7 @@ function NavigationBarDefault() {
 
     const markSingle = (notificationId,notificationIndex) => {
 
+        debugger;
         if(socket){
             socket.send(JSON.stringify({
                 "command": "mark_single",

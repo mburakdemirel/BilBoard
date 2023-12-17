@@ -153,14 +153,14 @@ function ProductMainPage() {
                             dataLength={products.length}
                             next={uploadProducts}
                             hasMore={hasMore}
-                            loader={<div style={{height:'50px'}}><span className="spinner-border spinner-border" aria-hidden="true" ></span></div>}
+                            loader={<div className="d-flex justify-content-center" style={{height:'50px', width:'100%'}}><span className="spinner-border spinner-border" aria-hidden="true" ></span></div>}
                             endMessage={<p></p>}
                         >
 
                             <div  className="container" style={{minWidth:'100vw',  paddingRight: '1%', paddingLeft: '1%' }} >
                                 <div className="row d-flex justify-content-center" style={{ minHeight:'100%',  marginRight: '5%', marginLeft: '5%' }}>
                                     {products.length==0 ?
-                                        <span style={{ fontSize: '18px',fontWeight:'bold' ,fontFamily: 'Inter, sans-serif' }}>Product(s) not found</span>
+                                        <span className="d-flex justify-content-center" style={{ width:'100%', fontSize: '18px',fontWeight:'bold' ,fontFamily: 'Inter, sans-serif' }}>Product(s) not found</span>
                                         :
                                         <>
                                             {Array(products.length).fill().map((_, index) => {
