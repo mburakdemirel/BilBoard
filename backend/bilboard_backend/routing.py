@@ -1,3 +1,7 @@
+"""
+Routing structure for the websocket connections.
+"""
+
 from django.urls import re_path, include
 from channels.routing import URLRouter
 from chatapp import routing as chat_routing

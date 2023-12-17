@@ -1,3 +1,7 @@
+"""
+Routing configuration for chatapp
+"""
+
 from django.urls import re_path
 from .consumers import (
     ChatConsumer,

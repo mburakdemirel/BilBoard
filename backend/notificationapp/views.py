@@ -1,10 +1,6 @@
-from django.shortcuts import render
-
-# Create your views here.
-
-def index(request):
-    return render(request, "notifications/index.html")
-
+"""
+This module contains the views for the notificationapp.
+"""
 from rest_framework.generics import (
     ListAPIView,
     RetrieveAPIView,

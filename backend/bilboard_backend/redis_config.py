@@ -1,3 +1,7 @@
+"""
+Redis config for bilboard_backend project.
+"""
+
 from django.core.cache import cache
 import time
 import redis

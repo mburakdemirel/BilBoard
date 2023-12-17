@@ -1,3 +1,7 @@
+"""
+Chat consumer for handling real-time messaging.
+"""
+
 import json
 
 from django.contrib.auth import get_user_model

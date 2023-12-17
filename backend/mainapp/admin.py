@@ -1,4 +1,6 @@
-"""Django admin customization"""
+"""
+Django admin customization
+"""
 
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
@@ -121,8 +123,6 @@ admin.site.register(models.CustomUser, UserAdmin)
 admin.site.register(models.Product, ProductAdmin)
 admin.site.register(models.LostAndFoundEntry, LostAndFoundEntryAdmin)
 admin.site.register(models.ComplaintEntry, ComplaintAdmin)
-
-# Test
 admin.site.register(models.Chat, ChatAdmin)
 admin.site.register(models.Message, MessageAdmin)
 admin.site.register(models.Notification, NotificationAdmin)

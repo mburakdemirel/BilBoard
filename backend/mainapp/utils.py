@@ -10,12 +10,18 @@ from mainapp.models import (
 )
 
 class NotificationType(enum.Enum):
+    """
+    Enum class for notification types.
+    """
     NEW_MESSAGE = 'new_message'
     UPVOTE = 'upvoted_complaint'
     DOWNVOTE = 'downvoted_complaint'
 
 
 def notification_fields(notification_type: NotificationType, category, **kwargs):
+    """
+    Utility function to create notification fields for the Notification model.
+    """
     if notification_type == NotificationType.NEW_MESSAGE:
         id_of_product = Chat.objects.get(id=kwargs.get('realted_item_id')).product_id
         product = None

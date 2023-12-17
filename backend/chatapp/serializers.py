@@ -12,15 +12,19 @@ class MessageSerializer(serializers.ModelSerializer):
 
 
 class ChatListSerializer(serializers.ModelSerializer):
+    # Fields to be represented differently
     participiants = serializers.StringRelatedField(many=True)
     product_name = serializers.StringRelatedField(read_only=True)
     image_url = serializers.StringRelatedField(read_only=True)
     last_message_timestamp = serializers.StringRelatedField(read_only=True)
+
+    # Meta class to specify model and fields
     class Meta:
         model = Chat
         fields = ('id', 'participiants', 'category', 'product_id', 'product_name', 'image_url', 'last_message_timestamp')
         read_only_fields = ('id', 'participiants')
 
+    # Method to represent data in a custom way
     def to_representation(self, instance):
         user = self.context['request'].user
         participiants = instance.participiants.all()
@@ -41,21 +45,18 @@ class ChatListSerializer(serializers.ModelSerializer):
                 representation['image_url'] = self.context['request'].build_absolute_uri(product_images.first().image.url)
             else:
                 representation['image_url'] = None
-            print(f'\033[1;34;40m{product_images}\033[0;0m') #test
         elif category in ['lost', 'found']:
             entry = LostAndFoundEntry.objects.get(id=product_id)
             representation['product_name'] = entry.topic
             representation['image_url'] = None
-
         last_message = instance.messages.order_by('-timestamp').first()
+
         # format timestamp to string representation of datetime
         representation['last_message_timestamp'] = last_message.timestamp.strftime("%d/%m/%Y, %H:%M:%S") if last_message is not None else None
-
-
-
         return representation
 
 class ChatSerializer(serializers.ModelSerializer):
+    # Category choices for keeping items of chats consistently
     CATEGORY_CHOICES = [
         ('secondhand', 'Secondhand'),
         ('borrow', 'Borrow'),
@@ -64,21 +65,25 @@ class ChatSerializer(serializers.ModelSerializer):
         ('found', 'Found'),
     ]
 
+    # Fields to be represented differently
     messages = serializers.SerializerMethodField(read_only=True)
     product_name = serializers.StringRelatedField(read_only=True)
     image_url = serializers.StringRelatedField(read_only=True)
     contact = serializers.StringRelatedField(read_only=True)
 
+    # Meta class to specify model and fields
     class Meta:
         model = Chat
         fields = ('id', 'participiants', 'messages', 'category', 'product_id', 'product_name', 'image_url', 'contact')
         read_only_fields = ('id',)
 
+    # Method to order messages by timestamp
     def get_messages(self, instance):
         messages = instance.messages.order_by('-timestamp').all()
         serializer = MessageSerializer(messages, many=True, read_only=True)
         return serializer.data
 
+    # Method to validate data
     def validate(self, attrs):
         current_user_id = self.context['request'].user.id
         if len(attrs.get('participiants')) != 1:
@@ -118,6 +123,7 @@ class ChatSerializer(serializers.ModelSerializer):
 
         return attrs
 
+    # Method to represent data in a custom way
     def to_representation(self, instance):
         user = self.context['request'].user
         participiants = instance.participiants.all()
@@ -128,14 +134,12 @@ class ChatSerializer(serializers.ModelSerializer):
             "contact_name": contact.first().name,
             "contact_surname": contact.first().surname,
         }
-
         category = instance.category
         product_id = instance.product_id
         if category in ['secondhand', 'borrow', 'donation']:
             product = Product.objects.get(id=product_id)
             representation['product_name'] = product.title
             product_images = ProductImage.objects.filter(product=product)
-            print(f'\033[1;34;40m{product_images}\033[0;0m') #test
             if product_images.exists():
                 representation['image_url'] = self.context['request'].build_absolute_uri(product_images.first().image.url)
             else:
@@ -146,11 +150,10 @@ class ChatSerializer(serializers.ModelSerializer):
             representation['image_url'] = None
         return representation
 
-
+    # Method to create chat
     def create(self, validated_data):
         current_user_id = self.context['request'].user.id
         participiants = validated_data.pop('participiants')
-
         possible_chat = Chat.objects.filter(participiants=current_user_id).filter(participiants__in=participiants).filter(category=validated_data.get('category')).filter(product_id=validated_data.get('product_id'))
 
         if possible_chat.exists():

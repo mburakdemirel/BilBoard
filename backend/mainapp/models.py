@@ -63,6 +63,9 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
 
 class OnlineUserModel(models.Model):
+    """
+    This model is used for determining whether a user is online or not in the chat.
+    """
     user = models.OneToOneField(
         get_user_model(),
         on_delete=models.CASCADE,
@@ -165,6 +168,9 @@ class ComplaintEntry(EntryBase):
 
 
 class Message(models.Model):
+    """
+    Default message model for chat.
+    """
     author = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
     content = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
@@ -173,6 +179,9 @@ class Message(models.Model):
         return str(self.author.id) +  " - " + self.timestamp.strftime("%d/%m/%Y, %H:%M:%S") + "-" + self.content + "\n"
 
 class Chat(models.Model):
+    """
+    Chat model of the application.
+    """
     CATEGORY_CHOICES = [
         ('secondhand', 'Secondhand'),
         ('borrow', 'Borrow'),
@@ -205,8 +214,9 @@ class Chat(models.Model):
 
 
 class Notification(models.Model):
-    """Notification model used for push notifications."""
-
+    """
+    Notification model used for push notifications.
+    """
     NOTIFICATION_CHOICES = [
         ('new_message', 'New Message'),
         ('upvoted_complaint', 'Upvoted Complaint'),

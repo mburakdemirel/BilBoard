@@ -1,30 +1,6 @@
-from mainapp.models import Chat
-
-
-# for testing purposes
-from django.shortcuts import render
-from django.contrib.auth.decorators import login_required
-from django.utils.safestring import mark_safe
-import json
-
-def index(request):
-    return render(request, "chat/index.html")
-
-def room(request, room_name):
-    chat = Chat.objects.get(id=room_name)
-    contact = chat.participiants.exclude(id=request.user.id).first()
-    payload = {
-        "room_name": mark_safe(json.dumps(room_name)),
-        "author": request.user,
-        "contact": contact,
-    }
-    return render(request, "chat/room.html", payload)
-
-
-
-
-
-# actual code
+"""
+Views for chatapp
+"""
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import get_user_model
 from django.db.models import Max
@@ -37,6 +13,7 @@ from rest_framework.generics import (
     UpdateAPIView,
 )
 
+from mainapp.models import Chat
 from .serializers import ChatSerializer, ChatListSerializer
 
 def get_user_or_404(user_id):
