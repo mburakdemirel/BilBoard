@@ -238,7 +238,10 @@ function ProductDetailPage() {
                             else if(product.category==="donation"){
                                 return(
                                         loading ? <span className="placeholder placeholder-glow col-3" style={{height:'40px'}}></span> :
-                                            <h1 className=" d-flex align-items-center" style={{ ...headingStyle, fontSize: '2.4em', fontWeight: 'bold' }}></h1>
+                                            <h1 className=" d-flex align-items-center" style={{
+                                                ...headingStyle,
+                                                fontWeight: 'bold'
+                                            }}>{"Free"} </h1>
                                 )
                             }
 

@@ -207,6 +207,7 @@ function NavigationBarDefault() {
 
             axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
             const {data} = await axios.get('http://127.0.0.1:8000/api/user/my-favorites/');
+            console.log("favotires", data);
             data.message.forEach((product) => favoritesIdList.push(product.id));
             localStorage.setItem('favoritesObjects', JSON.stringify(data.message));
 

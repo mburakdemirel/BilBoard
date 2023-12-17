@@ -139,7 +139,9 @@ function Products({myProfile, func, editMode}) {
             }
             else{
                 if(favorites){
+                    console.log(favorites);
                     setShowedProducts(favorites.filter(favorite => favorite.category === filteredProductsType));
+                    console.log(showedProducts);
                 }
                 else{
                     setShowedProducts([]);
