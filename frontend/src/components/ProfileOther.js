@@ -33,6 +33,7 @@ function ProfileOther() {
             // Create the GET request
             axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
             const {data} = await axios.post('http://127.0.0.1:8000/api/user/get-user-by-id/', {user_id:id}) ;
+            console.log(data);
 
             setMyProfile(data);
         }
@@ -84,8 +85,8 @@ function Products({myProfile, func}) {
         try{
             setLoading(true);
             axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
-            const {data} = await axios.post('http://127.0.0.1:8000/api/products/by-id/', {user_id: myProfile.id});
-
+                const {data} = await axios.post('http://127.0.0.1:8000/api/products/by-id/', {user_id: myProfile.id});
+            console.log(products);
             setProducts(data);
 
 
@@ -152,7 +153,7 @@ function Products({myProfile, func}) {
                                                 data-aos="zoom-in" data-aos-duration="600">
                                         <div className="card-body" style={{ width: '100%', height: '100%', padding: '0' }}
                                              onClick={()=>sendProductDetailPage(products[index].id,products[index].category)}>
-                                            <img style={{ width: '100%', height: '100%' }} src={PlaceHolder} alt={`Product ${index}`}/>
+                                            <img style={{ width: '100%', height: '100%' }} src={products[index].images && products[index].images.length > 0 ? products[index].images[0].image : Placeholder} alt={`Product ${index}`}/>
                                             <div style={{height: '40px', width: '100%', marginTop: '-40px', background: '#21252955', position: 'relative', borderBottomRightRadius: '10px', borderBottomLeftRadius: '10px', paddingTop: '3px', paddingBottom: '3px', paddingRight: '5px', paddingLeft: '5px'}}>
                                                 <h1 className="text-center text-truncate d-flex d-xxl-flex justify-content-start align-items-start justify-content-xxl-start"
                                                     style={{width: '100%', fontSize: '14px', fontFamily: 'Inter, sans-serif', marginBottom: '0px',color:'white'}}>{products[index].title}</h1>
@@ -196,7 +197,7 @@ function ProfileArea({myProfile,func} ) {
                 style={{background: '#ffffff', fontSize: '12px', borderRadius: '10px', height: '100%', width: '95%', padding: '5%', paddingTop: '2%',}}>
 
                 <div className="d-flex d-xxl-flex flex-column justify-content-center align-items-center align-items-xxl-center" style={{ height: 'initial', width: '100%' }}>
-                    <img className="rounded-circle" src={Placeholder} style={{ height: '150px', width: '150px', marginBottom: '30px' }} alt="User Profile" />
+                    <img className="rounded-circle" src={myProfile.profile_photo ? myProfile.profile_photo : Placeholder} style={{ height: '150px', width: '150px', marginBottom: '30px' }} alt="User Profile" />
                     <h1 className="text-center" style={{ width: '100%',  fontSize: '258%', fontFamily: 'Inter, sans-serif', marginBottom: '20px', fontWeight: 'bold' }}>
                         {nameSurname}</h1>
                 </div>

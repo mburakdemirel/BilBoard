@@ -5,6 +5,8 @@ import { useParams} from "react-router-dom";
 import axios from "axios";
 import InfiniteScroll from 'react-infinite-scroll-component';
 import AOS from "aos";
+import ProfilePlaceholder from "./assets/img/default_profile.webp";
+
 import {Collapse, Button} from 'react-bootstrap';
 
 
@@ -321,7 +323,7 @@ function EntryMainPage(){
                                                                     </div>
                                                                     <div className="d-flex flex-column justify-content-center align-items-center" style={{  margin: '0.7%', width: '65%', minWidth: '60px', background: '#EDF0F7', borderRadius: '10px'}}
                                                                          onClick={(e)=> goToProfile(products[index].user.id)}>
-                                                                        <img className="rounded-circle" src={products[index].user.profile_photo ? products[index].user.profile_photo : PlaceHolder} style={{ height: '70%', width: '70%', marginTop: '5%', marginBottom: '5%' }} />
+                                                                        <img className="rounded-circle" src={products[index].user.profile_photo ? products[index].user.profile_photo : ProfilePlaceholder} style={{ height: '70%', width: '70%', marginTop: '5%', marginBottom: '5%' }} />
                                                                         <h1 className="d-flex justify-content-center" style={{ fontFamily: 'Inter, sans-serif', fontSize: '14px', width: '95%' }}>{`${products[index].user.name} ${products[index].user.surname}`}</h1>
                                                                     </div>
                                                                 </div>

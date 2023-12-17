@@ -164,7 +164,6 @@ function Products({myProfile, func, editMode}) {
             }
 
 
-            debugger;
             if(category){
                 if(category==="list-my-voted-complaints"){
 

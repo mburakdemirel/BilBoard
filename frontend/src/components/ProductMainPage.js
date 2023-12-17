@@ -54,12 +54,12 @@ function ProductMainPage() {
 
     const uploadProducts = async () => {
         try{
-            debugger;
+
             axios.defaults.headers.common['Authorization'] = localStorage.getItem('authorization');
             if(pageType){
                 if(searchText || minPrice!=null || maxPrice!=null || productType!=null){
                     let url = 'http://127.0.0.1:8000/api/product/' + pageType;
-                    debugger;
+
                     if (searchText != null && searchText !== "undefined") {
                         url += `?search=${searchText}`;
                     }
@@ -76,7 +76,7 @@ function ProductMainPage() {
                         url += url.includes('?') ? `&product_type=${productType}` : `?product_type=${productType}`;
                     }
                         try {
-                        debugger;
+
                             const {data} = await axios.get(url);
                             const productData = data.results ? data.results : data;
                             if(productData) {
@@ -97,7 +97,6 @@ function ProductMainPage() {
 
                    try {
                        const {data} = await axios.get('http://127.0.0.1:8000/api/product/' + pageType + `?page=${page}`);
-
                        const productData = data.results ? data.results : data;
                        if(productData) {
                            setProducts(prevProducts => [...prevProducts, ...productData]);

@@ -16,6 +16,7 @@ import {isDisabled} from "@testing-library/user-event/dist/utils";
 import {useContext} from "react";
 import ContextApi from "../context/ContextApi";
 import Carousel from 'react-bootstrap/Carousel';
+import ProfilePlaceholder from "./assets/img/default_profile.webp";
 
 import AOS from "aos";
 import {Placeholder} from "react-bootstrap";
@@ -256,7 +257,7 @@ function ProductDetailPage() {
                                 {loading ? <span className="placeholder col-5 h-50"></span> : <h1 style={sellerNameStyle}>{product.user.name + " " + product.user.surname}</h1>}
                                 {loading ? <span className="placeholder col-5 h-25"></span> : <h1 style={sellerPhoneStyle}>{product.user.phone_number}</h1>}
                             </div>
-                            <img className="rounded-circle mb-3 fit-cover" data-bss-hover-animate="pulse" src={loading? PlaceholderPhoto :product.user.profile_photo} style={imageStyle} />
+                            <img className="rounded-circle mb-3 fit-cover" data-bss-hover-animate="pulse" src={loading || !product.user.profile_photo ? ProfilePlaceholder :product.user.profile_photo} style={imageStyle} />
                         </div>
                         <hr style={hrStyle} />
                         <div className="d-flex flex-row justify-content-between align-items-center" style={{ height: '10%', width: '100%', minHeight: '40px', maxHeight: '50px' }}>
