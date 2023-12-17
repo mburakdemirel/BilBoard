@@ -4,6 +4,12 @@
 .DS_Store
 **/.env
 
+#pycache
+__pycache__/
+
+#Reports
+# reports/
+
 #Virtual environment
 #I named mine venv if you named it smt. else please add it here.
 backend/venv/
@@ -39,3 +45,6 @@ backend/db.sqlite3
 backend/media
 backend/dump.rdb
 backend/**/dump.rdb
+backend/__pycache__/
+backend/db.sqlite3
+backend/media
