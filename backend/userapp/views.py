@@ -219,7 +219,7 @@ def ForgetPassword(request):
 def ListMyFavorites(request):
     user = CustomUser.objects.get(email=request.user)
     count = user.favorited_products.count()
-    serializer = serializers.ProductSerializer(user.favorited_products, many=True)
+    serializer = serializers.ProductSerializer(user.favorited_products, many=True, context={'request': request})
     if count == 0:
         return Response({"message": "There are no favorited products of user", })
     else:
