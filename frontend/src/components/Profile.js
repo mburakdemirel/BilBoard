@@ -250,9 +250,9 @@ function Products({myProfile, func, editMode}) {
     };
 
     const deleteFav = async (product) => {
-
+        debugger;
         const {data} = await axios.post('http://127.0.0.1:8000/api/product/clicked-favorites/', {product_id: product.id}) ;
-
+        console.log(data);
         setFavorites((current) =>
             current.filter((favorite) => favorite.id !== product.id)
         );
@@ -325,7 +325,7 @@ function Products({myProfile, func, editMode}) {
                                     return(
                                         <div className="card d-flex align-items-center" key={index} id="product" style={{width: '168px', height: '168px', borderRadius: '10px', borderStyle: 'none', borderBottomStyle: 'none', padding: '5px',maxHeight:'168px',minHeight:'168px' ,minWidth: '168px', maxWidth: '168px',}}
                                              data-aos="zoom-in" data-aos-duration="600">
-                                            {editMode &&
+                                            {editMode && uploadedOrFavorites==="uploaded" &&
                                                 <button
                                                     className="btn btn-primary position-relative d-flex align-items-center justify-content-center rounded-circle"
                                                     type="button"
