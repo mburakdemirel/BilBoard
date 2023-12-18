@@ -358,7 +358,7 @@ export function ProductAddForm({changeMode}) {
                                     </div>) : <></>}
                                     {(category === "borrow") ? (<div className="row justify-content-between text-left">
                                         <label htmlFor="date" className="form-control-label" style={{ textAlign : 'left',fontFamily: 'Inter, sans-serif'}}><h5>Return Date<small style={{color:'darkred', fontSize:'15px'}}> *</small></h5></label>
-                                        <input value={returnDate} readOnly={category !== "borrow"} required={category === "borrow"} onChange={(e) => { setReturnDate(e.target.value); console.log(e.target.value) }} id="date" className="form-control" style={{
+                                        <input value={returnDate} min={formatDate(new Date())} readOnly={category !== "borrow"} required={category === "borrow"} onChange={(e) => { setReturnDate(e.target.value); console.log(e.target.value) }} id="date" className="form-control" style={{
                                             fontFamily: 'Inter, sans-serif',
                                             background: text_field_background,
                                             borderRadius: '10px',
