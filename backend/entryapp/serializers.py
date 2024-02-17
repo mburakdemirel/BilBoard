@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from mainapp.models import LostAndFoundEntry, CustomUser, ComplaintEntry
 import requests
+import os
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -43,7 +44,7 @@ class CreateComplaintEntrySerializer(serializers.ModelSerializer):
         headers = {
             "Content-Type": "text/plain",
             #ENV e taşı key'i x.api_key yap
-            "Ocp-Apim-Subscription-Key": "4042096c1951481d9859da0516043a96"
+            "Ocp-Apim-Subscription-Key": os.environ.get('FACE_DESCR_MODERATOR_KEY')
         }
         data = description.encode("utf-8")
 
