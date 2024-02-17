@@ -14,3 +14,4 @@ django-redis==5.4.0
 requests==2.31.0
 channels-redis==4.1.0
 azure-ai-contentsafety==1.0.0
+python-dotenv==1.0.0
