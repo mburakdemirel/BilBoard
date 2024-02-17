@@ -5,6 +5,7 @@ from azure.core.credentials import AzureKeyCredential
 from azure.ai.contentsafety.models import AnalyzeImageOptions, ImageData
 from rest_framework import serializers
 import requests
+import os
 
 def resize_image(image, max_size=2048):
     with Image.open(image) as img:
@@ -20,7 +21,7 @@ def validate_image_safety(image, count):
 
     image_data = resized_image.read()
 
-    client = ContentSafetyClient('https://bugbunnycontentsafety.cognitiveservices.azure.com', AzureKeyCredential('8edc66e999cf4d1093171f7e73558532'))
+    client = ContentSafetyClient('https://bugbunnycontentsafety.cognitiveservices.azure.com', AzureKeyCredential(os.environ.get('IMAGE_MODERATOR_KEY')))
     request_safety = AnalyzeImageOptions(image=ImageData(content=image_data))
 
     response_safety = client.analyze_image(request_safety)
@@ -40,15 +41,15 @@ def validate_email(email):
     return email
 
 def validate_profile_photo(profile_photo):
-    endpoint = "https://bilboard-contentmoderator.cognitiveservices.azure.com/"
+    pp_endpoint = "https://bilboard-contentmoderator.cognitiveservices.azure.com/"
     headers = {
         "Content-Type": "application/octet-stream",
-        "Ocp-Apim-Subscription-Key": "4042096c1951481d9859da0516043a96"
+        "Ocp-Apim-Subscription-Key": os.environ.get('FACE_DESCR_MODERATOR_KEY')
     }
     resized_image = resize_image(profile_photo)
     image_data = resized_image.read()
     if profile_photo:
-        response_face = requests.post(endpoint + "contentmoderator/moderate/v1.0/ProcessImage/FindFaces", headers=headers, data=image_data)
+        response_face = requests.post(pp_endpoint + "contentmoderator/moderate/v1.0/ProcessImage/FindFaces", headers=headers, data=image_data)
         if response_face.status_code == 200:
             result_face = response_face.json()
             if result_face['Count'] == 0:
@@ -56,7 +57,7 @@ def validate_profile_photo(profile_photo):
         else:
             raise serializers.ValidationError("Error on azure connection")
 
-        client = ContentSafetyClient('https://bugbunnycontentsafety.cognitiveservices.azure.com', AzureKeyCredential('8edc66e999cf4d1093171f7e73558532'))
+        client = ContentSafetyClient('https://bugbunnycontentsafety.cognitiveservices.azure.com', AzureKeyCredential(os.environ.get('IMAGE_MODERATOR_KEY')))
         request_safety = AnalyzeImageOptions(image=ImageData(content=image_data))
         response_safety = client.analyze_image(request_safety)
 
